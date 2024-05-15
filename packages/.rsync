@@ -1,0 +1,6 @@
++ /server/
++ /shared/
++ /package.json
++ /pnpm*.yaml
+- node_modules/
+- /*
