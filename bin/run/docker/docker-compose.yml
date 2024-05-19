@@ -1,0 +1,42 @@
+services:
+  front:
+    profiles: ["production"]
+    image: daquiz/front:latest
+    container_name: daquiz_front
+    ports:
+      - "${FRONT_PORT}:3000"
+    restart: always
+    depends_on:
+      - server
+
+  server:
+    profiles: ["production"]
+    image: daquiz/server:latest
+    container_name: daquiz_server
+    env_file:
+      - ../../../packages/server/.env
+    ports:
+      - "${SERVER_PORT}:8080"
+    restart: always
+    volumes:
+      - ${SERVER_MEDIA_PATH}:/home/node/media:ro
+
+  mongo:
+    profiles: ["local", "production"]
+    image: mongo:8.0-rc
+    container_name: daquiz_mongo
+    restart: always
+    ports:
+      - "${DB_PORT}:27017"
+    env_file:
+      - .env.db
+
+  mongo-express:
+    profiles: ["local"]
+    image: mongo-express
+    container_name: daquiz_mongo-express
+    restart: always
+    ports:
+      - "${DB_EXPRESS_PORT}:8081"
+    env_file:
+      - .env.me

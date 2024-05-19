@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+DIR="$(realpath "$(dirname "$0")")"
+PROJECT_ROOT=$(realpath "$DIR"/../..)
+
+set -a
+# shellcheck disable=SC1091
+. "$PROJECT_ROOT"/bin/run/.env
+set +a
+
+cd "$DIR/docker" || exit 1
+
+docker compose --profile "$ENV" up -d
