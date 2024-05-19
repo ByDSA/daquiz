@@ -9,8 +9,16 @@ export class NotFoundInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle()
       .pipe(tap(data => {
-        if (data === undefined || data === null)
+        if (isNullOrUndefined(data) || isObjectWithDataNullOrUndefined(data))
           throw new NotFoundException(this.msg ?? "Resource not found");
       } ));
   }
+}
+
+function isNullOrUndefined(value: unknown): boolean {
+  return value === undefined || value === null;
+}
+
+function isObjectWithDataNullOrUndefined(value: NonNullable<unknown>): boolean {
+  return typeof value === "object" && "data" in value && isNullOrUndefined(value.data);
 }
