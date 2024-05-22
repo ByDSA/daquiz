@@ -7,6 +7,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import configuration from "./config/configuration";
 import { QuestionsAnswersModule } from "./questions-answers/modules";
+import { QuestionAnswerCheckingModule } from "./questions-answers/modules/checking/modules";
 import { TextQuestionTextAnswerModule } from "./questions-answers/modules/text_text/modules";
 import { TextQuestionsModule } from "./questions/text-question/modules";
 
@@ -48,6 +49,10 @@ import { TextQuestionsModule } from "./questions/text-question/modules";
         children: [{
           path: "text-question/text-answer",
           module: TextQuestionTextAnswerModule,
+        },
+        {
+          path: "checking",
+          module: QuestionAnswerCheckingModule,
         }],
       },
     ]),

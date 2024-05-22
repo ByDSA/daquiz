@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { QuestionAnswer, documentToEntity } from "./db/schemas";
 import { CreateQuestionAnswerDto } from "./dtos";
-import { ID, QuestionAnswerEntity } from "./models";
+import { QuestionAnswerEntity } from "./models";
 import { AnswerID, AnswerType } from "#/answers/models";
 import { UnknownAnswerVO } from "#/answers/models/unknown";
 import { TextAnswersService } from "#/answers/text-answer/services";
@@ -14,13 +14,16 @@ import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/
 import { neverCase } from "#/utils/typescript";
 
 type FindOneOptions = Partial<{
-  includeRelations: boolean;
+  includeRelations: {
+    question?: boolean;
+    answer?: boolean;
+  };
 }>;
 
 @Injectable()
 export class QuestionsAnswersService implements
 CreateOneAndGetService<CreateQuestionAnswerDto, QuestionAnswerEntity>,
-FindOneService<ID, QuestionAnswerEntity>,
+FindOneService<QuestionAnswerEntity["id"], QuestionAnswerEntity>,
 FindAllService<QuestionAnswerEntity> {
   constructor(
     @InjectModel(QuestionAnswer.name) private readonly QuestionAnswerModel: Model<QuestionAnswer>,
@@ -36,7 +39,7 @@ FindAllService<QuestionAnswerEntity> {
     return documentToEntity(created);
   }
 
-  async findOne(id: ID, options?: FindOneOptions): Promise<QuestionAnswerEntity | null> {
+  async findOne(id: QuestionAnswerEntity["id"], options?: FindOneOptions): Promise<QuestionAnswerEntity | null> {
     const doc = await this.QuestionAnswerModel.findById(id).exec();
 
     if (!doc)
@@ -44,23 +47,55 @@ FindAllService<QuestionAnswerEntity> {
 
     const entity = documentToEntity(doc);
 
-    if (options?.includeRelations) {
+    if (options?.includeRelations)
+      await this.#addRelations(entity, options.includeRelations);
+
+    return entity;
+  }
+
+  async #addRelations(entity: QuestionAnswerEntity, includeRelations: Required<FindOneOptions>["includeRelations"]): Promise<void> {
+    const promises: Promise<unknown>[] = [];
+
+    if (includeRelations.question) {
       const questionService = this.#getQuestionServiceByType(entity.questionType);
-      const questionPromise = questionService.findOne(entity.questionId);
-      const answerService = this.#getAnswerServiceByType(entity.answerType);
-      const answerPromise = answerService.findOne(entity.answerId);
+      const questionPromise = questionService.findOne(entity.questionId)
+        .then((q) => {
+          if (q)
+            entity.question = q;
+        } );
 
-      await Promise.all([questionPromise, answerPromise]);
-
-      const question = await questionPromise;
-      const answer = await answerPromise;
-
-      if (question)
-        entity.question = question;
-
-      if (answer)
-        entity.answer = answer;
+      promises.push(questionPromise);
     }
+
+    if (includeRelations.answer) {
+      const answerService = this.#getAnswerServiceByType(entity.answerType);
+      const answerPromise = answerService.findOne(entity.answerId)
+        .then((a) => {
+          if (a)
+            entity.answer = a;
+        } );
+
+      promises.push(answerPromise);
+    }
+
+    await Promise.all(promises);
+  }
+
+  async findOneByQuestionId(
+    questionId: QuestionID,
+    options?: FindOneOptions,
+  ): Promise<QuestionAnswerEntity | null> {
+    const doc = await this.QuestionAnswerModel.findOne( {
+      questionId,
+    } ).exec();
+
+    if (!doc)
+      return null;
+
+    const entity = documentToEntity(doc);
+
+    if (options?.includeRelations)
+      await this.#addRelations(entity, options.includeRelations);
 
     return entity;
   }

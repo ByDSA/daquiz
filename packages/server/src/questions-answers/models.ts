@@ -12,7 +12,7 @@ export type QuestionAnswerVO = {
   answer?: UnknownAnswerVO;
 };
 
-export type ID = string;
+type ID = string;
 
 export type QuestionAnswerEntity = QuestionAnswerVO & {
   id: ID;

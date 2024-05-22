@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { QuestionsAnswersController } from "../controllers";
 import { QuestionsAnswersDBModule } from "../db/db.module";
 import { QuestionsAnswersService } from "../services";
+import { QuestionAnswerCheckingModule } from "./checking/modules";
 import { TextQuestionTextAnswerModule } from "./text_text/modules";
 import { TextQuestionsService } from "#/questions/text-question/services";
 import { TextQuestionsDBModule } from "#/questions/text-question/modules";
@@ -15,6 +16,7 @@ import { TextAnswersDBModule } from "#/answers/text-answer/modules";
     TextAnswersDBModule,
     // Submodules
     TextQuestionTextAnswerModule,
+    QuestionAnswerCheckingModule,
   ],
   controllers: [QuestionsAnswersController],
   providers: [
