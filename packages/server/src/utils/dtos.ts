@@ -1,7 +1,11 @@
-export type ResultOneDto<T> = {
+import { IsObject, ValidateNested } from "class-validator";
+
+export class ResultOneDto<T> {
+  @IsObject()
+  @ValidateNested()
   data: T | null;
 };
 
-export type ResultManyDto<T> = {
+export class ResultManyDto<T> {
   data: T[];
 };

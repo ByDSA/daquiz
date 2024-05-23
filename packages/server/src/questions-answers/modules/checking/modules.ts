@@ -4,12 +4,12 @@ import { QuestionAnswerCheckingService } from "./services";
 import { TextAnswersModule } from "#/answers/text-answer/modules";
 import { QuestionsAnswersDBModule } from "#/questions-answers/db/db.module";
 import { QuestionsAnswersService } from "#/questions-answers/services";
-import { TextQuestionsModule } from "#/questions/text-question/modules";
+import { QuestionsModule } from "#/questions/modules";
 
 @Module( {
   imports: [
     QuestionsAnswersDBModule,
-    TextQuestionsModule,
+    QuestionsModule,
     TextAnswersModule,
   ],
   controllers: [QuestionAnswerCheckingController],

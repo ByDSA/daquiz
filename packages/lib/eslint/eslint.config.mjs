@@ -1,3 +1,4 @@
+import customPlugin from "./custom-plugins/eslint-plugin-custom.mjs";
 import airbnbMod from "./eslint.config.airbnb.mjs";
 import importMod from "./eslint.config.import.mjs";
 import jestMod from "./eslint.config.jest.mjs";
@@ -10,6 +11,7 @@ const formatRules = {
     2,
     {
       SwitchCase: 1,
+      ignoredNodes: ["PropertyDefinition"], // Props after decorator
     },
   ],
   "lines-between-class-members": ["error", "always"],
@@ -281,6 +283,11 @@ const settings = {
     },
   },
 };
+const customPluginsRules = {
+  "custom/indent-after-decorator": "error",
+  "custom/no-blank-lines-after-decorator": "error",
+  "custom/no-blank-lines-between-decorators": "error",
+};
 
 export default [
   {
@@ -299,8 +306,13 @@ export default [
       import: importMod.plugin,
       jest: jestMod.plugin,
       "@stylistic/ts": stylisticMod.plugin,
+      // Custom plugins
+      custom: customPlugin,
     },
-    rules: globalRules,
+    rules: {
+      ...globalRules,
+      ...customPluginsRules,
+    },
   },
   ...overrideConfigs,
 ];

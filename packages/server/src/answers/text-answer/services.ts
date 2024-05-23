@@ -3,18 +3,18 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { TextAnswer, textAnswerDocumentToEntity } from "./db";
 import { CreateTextAnswerDto } from "./dtos";
-import { ID, TextAnswerEntity } from "./models";
+import { TextAnswerEntity } from "./models";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 
 @Injectable()
 export class TextAnswersService implements
 CreateOneAndGetService<CreateTextAnswerDto, TextAnswerEntity>,
-FindOneService<ID, TextAnswerEntity>,
+FindOneService<TextAnswerEntity>,
 FindAllService<TextAnswerEntity> {
-  constructor(@InjectModel(TextAnswer.name) private TextQuestionModel: Model<TextAnswer>) {}
+  constructor(@InjectModel(TextAnswer.name) private TextAnswerModel: Model<TextAnswer>) {}
 
-  async createOneAndGet(createtextQuestionDto: CreateTextAnswerDto): Promise<TextAnswerEntity> {
-    const doc = new this.TextQuestionModel(createtextQuestionDto);
+  async createOneAndGet(dto: CreateTextAnswerDto): Promise<TextAnswerEntity> {
+    const doc = new this.TextAnswerModel(dto);
     const createdDoc = await doc.save();
 
     if (!createdDoc)
@@ -24,7 +24,7 @@ FindAllService<TextAnswerEntity> {
   }
 
   async findOne(id: string): Promise<TextAnswerEntity | null> {
-    const doc = await this.TextQuestionModel.findById(id).exec();
+    const doc = await this.TextAnswerModel.findById(id).exec();
 
     if (!doc)
       return null;
@@ -33,7 +33,7 @@ FindAllService<TextAnswerEntity> {
   }
 
   async findAll(): Promise<TextAnswerEntity[]> {
-    const docs = await this.TextQuestionModel.find().exec();
+    const docs = await this.TextAnswerModel.find().exec();
 
     if (!docs)
       throw new Error("Failed to find text answers");

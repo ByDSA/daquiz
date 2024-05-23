@@ -1,25 +1,25 @@
 import { Module } from "@nestjs/common";
 import { QuestionsAnswersDBModule } from "../../db/db.module";
 import { QuestionsAnswersService } from "../../services";
-import { TextQuestionTextAnswerController } from "./controllers";
-import { TextQuestionTextAnswerService } from "./services";
-import { TextQuestionsService } from "#/questions/text-question/services";
-import { TextQuestionsDBModule } from "#/questions/text-question/modules";
+import { QuestionTextAnswerController } from "./controllers";
+import { QuestionTextAnswerService } from "./services";
+import { QuestionsService } from "#/questions/services";
+import { QuestionsDBModule } from "#/questions/modules";
 import { TextAnswersService } from "#/answers/text-answer/services";
 import { TextAnswersDBModule } from "#/answers/text-answer/modules";
 
 @Module( {
   imports: [
-    TextQuestionsDBModule,
+    QuestionsDBModule,
     TextAnswersDBModule,
     QuestionsAnswersDBModule,
   ],
-  controllers: [TextQuestionTextAnswerController],
+  controllers: [QuestionTextAnswerController],
   providers: [
-    TextQuestionTextAnswerService,
+    QuestionTextAnswerService,
     QuestionsAnswersService,
-    TextQuestionsService,
+    QuestionsService,
     TextAnswersService,
   ],
 } )
-export class TextQuestionTextAnswerModule {}
+export class QuestionTextAnswerModule {}

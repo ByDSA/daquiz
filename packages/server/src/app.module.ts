@@ -7,9 +7,10 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import configuration from "./config/configuration";
 import { QuestionsAnswersModule } from "./questions-answers/modules";
+import { QuestionTextAnswerModule } from "./questions-answers/modules/answer-text/modules";
 import { QuestionAnswerCheckingModule } from "./questions-answers/modules/checking/modules";
-import { TextQuestionTextAnswerModule } from "./questions-answers/modules/text_text/modules";
-import { TextQuestionsModule } from "./questions/text-question/modules";
+import { QuestionsModule } from "./questions/modules";
+import { QuizzesModule } from "./quizzes/modules";
 
 @Module( {
   imports: [
@@ -27,11 +28,11 @@ import { TextQuestionsModule } from "./questions/text-question/modules";
       },
       inject: [ConfigService],
     } ),
-    TextQuestionsModule,
+    QuestionsModule,
     RouterModule.register([
       {
         path: "questions",
-        module: TextQuestionsModule,
+        module: QuestionsModule,
       },
     ]),
     TextAnswersModule,
@@ -48,12 +49,19 @@ import { TextQuestionsModule } from "./questions/text-question/modules";
         module: QuestionsAnswersModule,
         children: [{
           path: "text-question/text-answer",
-          module: TextQuestionTextAnswerModule,
+          module: QuestionTextAnswerModule,
         },
         {
           path: "checking",
           module: QuestionAnswerCheckingModule,
         }],
+      },
+    ]),
+    QuizzesModule,
+    RouterModule.register([
+      {
+        path: "quizzes",
+        module: QuizzesModule,
       },
     ]),
   ],

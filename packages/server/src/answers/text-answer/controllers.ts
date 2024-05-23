@@ -2,14 +2,14 @@ import { Body, Controller, Get, Param, Post, UseInterceptors } from "@nestjs/com
 import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
 import { ObjectIdPipe } from "src/utils/validation";
 import { CreateTextAnswerDto, ResultManyTextAnswerDto, ResultOneTextAnswerDto } from "./dtos";
-import { ID } from "./models";
+import { TextAnswerID } from "./models";
 import { TextAnswersService } from "./services";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 
 @Controller("text")
 export class TextAnswersController
 implements CreateOneAndGetController<CreateTextAnswerDto, ResultOneTextAnswerDto>,
-FindOneController<ID, ResultOneTextAnswerDto>,
+FindOneController<TextAnswerID, ResultOneTextAnswerDto>,
 FindAllController<ResultManyTextAnswerDto> {
   constructor(private readonly textAnswersService: TextAnswersService) {}
 
@@ -26,7 +26,7 @@ FindAllController<ResultManyTextAnswerDto> {
 
   @Get(":id")
   @UseInterceptors(new NotFoundInterceptor("Answer not found"))
-  async findOne(@Param("id", ObjectIdPipe) id: ID): Promise<ResultOneTextAnswerDto> {
+  async findOne(@Param("id", ObjectIdPipe) id: TextAnswerID): Promise<ResultOneTextAnswerDto> {
     const found = await this.textAnswersService.findOne(id);
 
     return {

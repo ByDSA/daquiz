@@ -6,8 +6,8 @@ export interface CreateOneAndGetService<REQ_DTO, ENTITY> {
   createOneAndGet: (dto: REQ_DTO)=> Promise<ENTITY>;
 }
 
-export interface FindOneService<ID_DTO, ENTITY> {
-  findOne: (id: ID_DTO)=> Promise<ENTITY | null>;
+export interface FindOneService<ENTITY extends {id: unknown}> {
+  findOne: (id: ENTITY["id"])=> Promise<ENTITY | null>;
 }
 
 export interface FindAllService<ENTITY> {

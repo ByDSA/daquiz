@@ -1,11 +1,11 @@
-import { IsBoolean, IsObject, IsOptional } from "class-validator";
+import { IsBoolean, IsOptional, ValidateNested } from "class-validator";
 import { UnknownAnswerVO } from "#/answers/models/unknown";
 
 export class QuestionAnswerCheckingDto {
-  @IsObject()
-    answer: UnknownAnswerVO;
+  @ValidateNested()
+  answer: UnknownAnswerVO;
 
-    @IsBoolean()
-    @IsOptional()
-      askForCorrectAnswer?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  askForCorrectAnswer?: boolean;
 };

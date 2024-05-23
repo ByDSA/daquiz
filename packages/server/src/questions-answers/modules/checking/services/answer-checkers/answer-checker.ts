@@ -1,16 +1,15 @@
-import { QuestionAnswerEntity } from "#/questions-answers/models";
-import { QuestionID, QuestionType } from "#/questions/models";
-import { UnknownQuestionVO } from "#/questions/models/unknown";
-import { AllOrNothing } from "#/utils/typescript";
+import { QuestionAnswerID } from "#/questions-answers/models";
+import { QuestionID, QuestionVO } from "#/questions/models";
 
-type QuestionPartProps = AllOrNothing<
-  { question: UnknownQuestionVO; questionType: QuestionType }
-  > & {questionId?: QuestionID};
+type QuestionPartProps = {
+  question?: QuestionVO;
+  questionId?: QuestionID;
+};
 
 export type AnswerCheckerProps<ANSWER> = QuestionPartProps & {
   requestAnswer: ANSWER;
   correctAnswer?: ANSWER;
-  questionAnswerId?: QuestionAnswerEntity["id"];
+  questionAnswerId?: QuestionAnswerID;
 };
 
 export type AnswerCheckerReturn<_ANSWER> = Promise<{

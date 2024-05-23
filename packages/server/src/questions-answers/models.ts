@@ -1,19 +1,32 @@
+import { Type } from "class-transformer";
+import { IsObject, IsOptional, IsString } from "class-validator";
 import { AnswerID, AnswerType } from "#/answers/models";
 import { UnknownAnswerVO } from "#/answers/models/unknown";
-import { QuestionID, QuestionType } from "#/questions/models";
-import { UnknownQuestionVO } from "#/questions/models/unknown";
+import { QuestionID, QuestionVO } from "#/questions/models";
 
-export type QuestionAnswerVO = {
-  questionType: QuestionType;
+export class QuestionAnswerVO {
+  @IsString()
   questionId: QuestionID;
-  question?: UnknownQuestionVO;
+
+  @IsObject()
+  @IsOptional()
+  @Type(() => QuestionVO)
+  question?: QuestionVO;
+
+  @IsString()
   answerType: AnswerType;
+
+  @IsString()
   answerId: AnswerID;
+
+  @IsObject()
+  @IsOptional()
   answer?: UnknownAnswerVO;
 };
 
-type ID = string;
+export type QuestionAnswerID = string;
 
-export type QuestionAnswerEntity = QuestionAnswerVO & {
-  id: ID;
+export class QuestionAnswerEntity extends QuestionAnswerVO {
+  @IsString()
+  id: QuestionAnswerID;
 };

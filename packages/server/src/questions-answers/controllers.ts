@@ -1,21 +1,21 @@
 import { Body, Controller, Get, Param, Post, Query, UseInterceptors } from "@nestjs/common";
 import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
-import { ObjectIdPipe } from "src/utils/validation";
-import { CreateQuestionAnswerDto, ResultManyTextQuestionDto, ResultOneTextQuestionDto } from "./dtos";
-import { QuestionAnswerEntity } from "./models";
+import { BooleanPipe, ObjectIdPipe } from "src/utils/validation";
+import { CreateQuestionAnswerDto, ResultManyQuestionDto, ResultOneQuestionDto } from "./dtos";
+import { QuestionAnswerID } from "./models";
 import { QuestionsAnswersService } from "./services";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 
 @Controller()
 export class QuestionsAnswersController implements
-  CreateOneAndGetController<CreateQuestionAnswerDto, ResultOneTextQuestionDto>,
-  FindOneController<QuestionAnswerEntity["id"], ResultOneTextQuestionDto>, FindAllController<ResultManyTextQuestionDto> {
+  CreateOneAndGetController<CreateQuestionAnswerDto, ResultOneQuestionDto>,
+  FindOneController<QuestionAnswerID, ResultOneQuestionDto>,
+  FindAllController<ResultManyQuestionDto> {
   constructor(private readonly questionsAnswersService: QuestionsAnswersService) {}
 
   @Post()
-  async createOneAndGet(@Body() dto: CreateQuestionAnswerDto): Promise<ResultOneTextQuestionDto> {
+  async createOneAndGet(@Body() dto: CreateQuestionAnswerDto): Promise<ResultOneQuestionDto> {
     const data = await this.questionsAnswersService.createOneAndGet( {
-      questionType: dto.questionType,
       questionId: dto.questionId,
       answerId: dto.answerId,
       answerType: dto.answerType,
@@ -27,11 +27,12 @@ export class QuestionsAnswersController implements
   }
 
   @Get(":id")
-  @UseInterceptors(new NotFoundInterceptor("Question not found"))
+  @UseInterceptors(new NotFoundInterceptor("Question-Answer not found"))
   async findOne(
-    @Param("id", ObjectIdPipe) id: QuestionAnswerEntity["id"],
-    @Query("includeRelations") includeRelations: boolean = false,
-  ): Promise<ResultOneTextQuestionDto> {
+    @Param("id", ObjectIdPipe) id: QuestionAnswerID,
+    @Query("includeRelations") includeRelationsStr?: string,
+  ): Promise<ResultOneQuestionDto> {
+    const includeRelations = new BooleanPipe().transform(includeRelationsStr);
     const found = await this.questionsAnswersService.findOne(id, {
       includeRelations: {
         question: includeRelations,
@@ -45,7 +46,7 @@ export class QuestionsAnswersController implements
   }
 
   @Get()
-  async findAll(): Promise<ResultManyTextQuestionDto> {
+  async findAll(): Promise<ResultManyQuestionDto> {
     const data = await this.questionsAnswersService.findAll();
 
     return {

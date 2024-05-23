@@ -2,27 +2,30 @@ import { Module } from "@nestjs/common";
 import { QuestionsAnswersController } from "../controllers";
 import { QuestionsAnswersDBModule } from "../db/db.module";
 import { QuestionsAnswersService } from "../services";
+import { QuestionTextAnswerModule } from "./answer-text/modules";
 import { QuestionAnswerCheckingModule } from "./checking/modules";
-import { TextQuestionTextAnswerModule } from "./text_text/modules";
-import { TextQuestionsService } from "#/questions/text-question/services";
-import { TextQuestionsDBModule } from "#/questions/text-question/modules";
+import { QuestionsService } from "#/questions/services";
+import { QuestionsDBModule } from "#/questions/modules";
 import { TextAnswersService } from "#/answers/text-answer/services";
 import { TextAnswersDBModule } from "#/answers/text-answer/modules";
 
 @Module( {
   imports: [
     QuestionsAnswersDBModule,
-    TextQuestionsDBModule,
+    QuestionsDBModule,
     TextAnswersDBModule,
     // Submodules
-    TextQuestionTextAnswerModule,
+    QuestionTextAnswerModule,
     QuestionAnswerCheckingModule,
   ],
   controllers: [QuestionsAnswersController],
   providers: [
     QuestionsAnswersService,
-    TextQuestionsService,
+    QuestionsService,
     TextAnswersService,
+  ],
+  exports: [
+    QuestionsAnswersService,
   ],
 } )
 export class QuestionsAnswersModule {}

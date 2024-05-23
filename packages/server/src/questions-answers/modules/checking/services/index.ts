@@ -42,8 +42,6 @@ export class QuestionAnswerCheckingService {
     if (questionAnswer.question) {
       (answerCheckerProps as AnswerCheckerProps<UnknownAnswerVO>)
         .question = questionAnswer.question;
-      (answerCheckerProps as AnswerCheckerProps<UnknownAnswerVO>)
-        .questionType = questionAnswer.questionType;
     }
 
     const checked = await answerChecker(answerCheckerProps);

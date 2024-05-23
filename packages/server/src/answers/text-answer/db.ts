@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types, model } from "mongoose";
 import { TextAnswerEntity } from "./models";
 
 @Schema( {
@@ -10,12 +10,14 @@ export class TextAnswer {
     type: String,
     required: true,
   } )
-    text: string;
+  text: string;
 }
 
 export type TextAnswerDocument = HydratedDocument<TextAnswer>;
 
 export const TextAnswerSchema = SchemaFactory.createForClass(TextAnswer);
+
+export const TextAnswerModel = model(TextAnswer.name, TextAnswerSchema);
 
 export const textAnswerDocumentToEntity = (doc: TextAnswerDocument): TextAnswerEntity => {
   return {
@@ -23,4 +25,11 @@ export const textAnswerDocumentToEntity = (doc: TextAnswerDocument): TextAnswerE
     id: doc._id.toString(),
     text: doc.text,
   };
+};
+
+export const entityToDocument = (entity: TextAnswerEntity): TextAnswerDocument => {
+  return new TextAnswerModel( {
+    _id: new Types.ObjectId(entity.id),
+    text: entity.text,
+  } );
 };
