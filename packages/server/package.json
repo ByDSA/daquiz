@@ -30,9 +30,9 @@
   "scripts": {
     "build": "nest build",
     "start": "nest start",
-    "start:debug": "nest start --debug --watch",
-    "start:dev": "nest start --watch",
-    "start:prod": "node dist/main",
+    "start:debug": "NODE_ENV=development nest start --debug --watch",
+    "start:dev": "NODE_ENV=development nest start --watch",
+    "start:prod": "NODE_ENV=production node dist/main",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
