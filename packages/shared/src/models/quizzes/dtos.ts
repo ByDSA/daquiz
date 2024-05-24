@@ -15,6 +15,6 @@ export class AddQuestionsAnswersDto {
   questionsAnswersIds!: QuestionAnswerID[];
 }
 
-export class ResultOneTextAnswerDto extends ResultOneDto<QuizEntity> { };
+export class ResultOneQuizDto extends ResultOneDto<QuizEntity> { };
 
-export class ResultManyTextAnswerDto extends ResultManyDto<QuizEntity> { };
+export class ResultManyQuizDto extends ResultManyDto<QuizEntity> { };
