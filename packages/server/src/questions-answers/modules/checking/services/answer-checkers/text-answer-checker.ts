@@ -1,6 +1,6 @@
+import { TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
+import { WithRequired } from "#shared/utils/typescript";
 import { AnswerChecker, AnswerCheckerProps, AnswerCheckerReturn } from "./answer-checker";
-import { TextAnswerVO } from "#/answers/text-answer/models";
-import { WithRequired } from "#/utils/typescript";
 
 type TextAnswerCheckerProps = WithRequired<AnswerCheckerProps<TextAnswerVO>, "correctAnswer">;
 

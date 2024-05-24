@@ -1,4 +1,4 @@
-import { TextAnswerVO } from "../text-answer/models";
+import { TextAnswerVO } from "../text-answers/TextAnswer";
 
 export type UnknownAnswerVO = TextAnswerVO;
 

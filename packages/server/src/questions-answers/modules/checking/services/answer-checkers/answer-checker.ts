@@ -1,5 +1,5 @@
-import { QuestionAnswerID } from "#/questions-answers/models";
-import { QuestionID, QuestionVO } from "#/questions/models";
+import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionID, QuestionVO } from "#shared/models/questions/Question";
 
 type QuestionPartProps = {
   question?: QuestionVO;

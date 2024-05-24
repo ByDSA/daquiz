@@ -1,9 +1,9 @@
 import { IsBoolean, IsOptional, ValidateNested } from "class-validator";
-import { UnknownAnswerVO } from "#/answers/models/unknown";
+import { UnknownAnswerVO } from "src/models/answers/unknown-answers/UnknownAnswer";
 
 export class QuestionAnswerCheckingDto {
   @ValidateNested()
-  answer: UnknownAnswerVO;
+  answer!: UnknownAnswerVO;
 
   @IsOptional()
   @IsBoolean()

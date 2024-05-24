@@ -1,9 +1,9 @@
+import { TextAnswerID } from "#shared/models/answers/text-answers/TextAnswer";
+import { CreateTextAnswerDto, ResultManyTextAnswerDto, ResultOneTextAnswerDto } from "#shared/models/answers/text-answers/dtos";
 import { Body, Controller, Get, Param, Post, UseInterceptors } from "@nestjs/common";
-import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
-import { ObjectIdPipe } from "src/utils/validation";
-import { CreateTextAnswerDto, ResultManyTextAnswerDto, ResultOneTextAnswerDto } from "./dtos";
-import { TextAnswerID } from "./models";
 import { TextAnswersService } from "./services";
+import { ObjectIdPipe } from "#/utils/validation";
+import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 
 @Controller("text")

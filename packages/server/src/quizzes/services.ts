@@ -1,9 +1,9 @@
+import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
+import { AddQuestionsAnswersDto, CreateQuizDto } from "#shared/models/quizzes/dtos";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Quiz, quizDocumentToEntity } from "./db";
-import { AddQuestionsAnswersDto, CreateQuizDto } from "./dtos";
-import { QuizEntity, QuizID } from "./models";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 import { QuestionsAnswersService } from "#/questions-answers/services";
 import { QuestionAnswerDocument, questionAnswerEntityToDocument } from "#/questions-answers/db/schemas";

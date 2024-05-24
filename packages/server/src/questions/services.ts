@@ -1,10 +1,10 @@
 
+import { QuestionEntity, QuestionID } from "#shared/models/questions/Question";
+import { CreateQuestionDto } from "#shared/models/questions/dtos";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Question, documentToEntity } from "./db";
-import { CreateQuestionDto } from "./dtos";
-import { QuestionEntity, QuestionID } from "./models";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 
 @Injectable()

@@ -1,11 +1,11 @@
+import { UnknownAnswerVO } from "#shared/models/answers/unknown-answers/UnknownAnswer";
+import { parseAnswer } from "#shared/models/answers/validation";
+import { WithRequired } from "#shared/utils/typescript";
+import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { AnswerCheckerProps } from "./answer-checkers/answer-checker";
 import { getAnswerCheckerByType } from "./answer-checkers/get-checker";
-import { UnknownAnswerVO } from "#/answers/models/unknown";
-import { parseAnswer } from "#/answers/models/validation";
 import { QuestionsAnswersService } from "#/questions-answers/services";
-import { WithRequired } from "#/utils/typescript";
-import { assertDefined } from "#/utils/validation/asserts";
 
 type CheckAnswerProps = WithRequired<AnswerCheckerProps<UnknownAnswerVO>, "questionAnswerId"> & {
   includeQuestion?: boolean;

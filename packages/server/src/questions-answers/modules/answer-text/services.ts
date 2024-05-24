@@ -1,12 +1,12 @@
 
+import { AnswerType } from "#shared/models/answers/Answer";
+import { QuestionTextAnswerEntity } from "#shared/models/questions-answers/text-answers/QuestionTextAnswer";
+import { CreateQuestionTextAnswerDto } from "#shared/models/questions-answers/text-answers/dtos";
 import { Injectable } from "@nestjs/common";
 import { QuestionsAnswersService } from "../../services";
-import { CreateQuestionTextAnswerDto } from "./dtos";
-import { QuestionTextAnswerEntity } from "./models";
-import { AnswerType } from "#/answers/models";
-import { TextAnswersService } from "#/answers/text-answer/services";
-import { QuestionsService } from "#/questions/services";
 import { CreateOneAndGetService } from "#/utils/services/crud";
+import { QuestionsService } from "#/questions/services";
+import { TextAnswersService } from "#/answers/text-answer/services";
 
 @Injectable()
 export class QuestionTextAnswerService implements

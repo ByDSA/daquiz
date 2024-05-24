@@ -1,9 +1,9 @@
+import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
+import { CreateTextAnswerDto } from "#shared/models/answers/text-answers/dtos";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { TextAnswer, textAnswerDocumentToEntity } from "./db";
-import { CreateTextAnswerDto } from "./dtos";
-import { TextAnswerEntity } from "./models";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 
 @Injectable()

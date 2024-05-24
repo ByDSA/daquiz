@@ -1,18 +1,18 @@
 import { IsString } from "class-validator";
-import { QuizEntity, QuizID } from "./models";
-import { QuestionAnswerID } from "#/questions-answers/models";
+import { QuestionAnswerID } from "../questions-answers/QuestionAnswer";
+import { QuizEntity, QuizID } from "./Quiz";
 import { ResultManyDto, ResultOneDto } from "#/utils/dtos";
 
 export class CreateQuizDto {
   @IsString()
-  name: QuizID;
+  name!: QuizID;
 };
 
 export class AddQuestionsAnswersDto {
   @IsString( {
     each: true,
   } )
-  questionsAnswersIds: QuestionAnswerID[];
+  questionsAnswersIds!: QuestionAnswerID[];
 }
 
 export class ResultOneTextAnswerDto extends ResultOneDto<QuizEntity> { };

@@ -1,5 +1,5 @@
+import { AnswerType } from "#shared/models/answers/Answer";
 import { textAnswerChecker } from "./text-answer-checker";
-import { AnswerType } from "#/answers/models";
 
 export function getAnswerCheckerByType(type: AnswerType) {
   switch (type) {

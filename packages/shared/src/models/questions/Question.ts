@@ -24,13 +24,13 @@ class Multimedia {
 
 class Choice extends Multimedia {
   @IsString()
-  value: string;
+  value!: string;
 };
 
 class Group extends Multimedia {
   @IsArray()
   @Type(() => Choice)
-  choices: Choice[];
+  choices!: Choice[];
 };
 
 export class QuestionVO extends Multimedia {
@@ -48,5 +48,5 @@ export type QuestionID = string;
 
 export class QuestionEntity extends QuestionVO {
   @IsString()
-  id: QuestionID;
+  id!: QuestionID;
 };

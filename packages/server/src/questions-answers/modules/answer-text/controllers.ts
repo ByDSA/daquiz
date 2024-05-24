@@ -1,5 +1,5 @@
+import { CreateQuestionTextAnswerDto, ResultOneQuestionTextAnswerDto } from "#shared/models/questions-answers/text-answers/dtos";
 import { Body, Controller, Post } from "@nestjs/common";
-import { CreateQuestionTextAnswerDto, ResultOneQuestionTextAnswerDto } from "./dtos";
 import { QuestionTextAnswerService } from "./services";
 import { CreateOneAndGetController } from "#/utils/controllers/crud";
 

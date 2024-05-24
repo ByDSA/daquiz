@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.1"
+  },
+  "description": "",
+  "devDependencies": {
+    "@types/jest": "29.5.12",
+    "@types/node": "20.12.12",
+    "jest": "workspace:../node_modules/jest",
+    "tsc-alias": "1.8.10"
+  },
+  "main": "build/index.js",
+  "name": "shared",
+  "scripts": {
+    "build": "pnpm build:clean && pnpm build:raw",
+    "build:clean": "rm -rf build",
+    "build:raw": "tsc -p tsconfig-build.json && tsc-alias -p tsconfig-build.json",
+    "test": "NODE_ENV=test jest",
+    "test:coverage": "pnpm run test --coverage",
+    "test:coverage:clean": "rm -rf coverage",
+    "test:watch": "pnpm run test --watch"
+  },
+  "version": "1.0.0"
+}

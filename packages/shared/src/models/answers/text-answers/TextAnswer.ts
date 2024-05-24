@@ -1,17 +1,17 @@
 import { IsString } from "class-validator";
-import { AnswerID } from "../models";
+import { AnswerID } from "../Answer";
 import { parseObject } from "#/utils/validation/objects";
 
 export class TextAnswerVO {
   @IsString()
-  text: string;
+  text!: string;
 };
 
 export type TextAnswerID = AnswerID;
 
 export class TextAnswerEntity extends TextAnswerVO {
   @IsString()
-  id: TextAnswerID;
+  id!: TextAnswerID;
 };
 
 export function parseTextAnswer(obj: object): Promise<TextAnswerVO> {

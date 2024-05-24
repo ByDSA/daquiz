@@ -1,11 +1,11 @@
+import { AnswerType } from "#shared/models/answers/Answer";
+import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionEntity } from "#shared/models/questions/Question";
+import { neverCase } from "#shared/utils/typescript";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, HydratedDocument, Types, model } from "mongoose";
-import { QuestionAnswerEntity } from "../models";
-import { documentToEntity as answerDocumentToEntity, entityToDocument as answerEntityToDocument } from "#/answers/db";
-import { AnswerType } from "#/answers/models";
 import { QuestionDocument, QuestionSchema, documentToEntity as questionDocumentToEntity, entityToDocument as questionEntityToDocument } from "#/questions/db";
-import { QuestionEntity } from "#/questions/models";
-import { neverCase } from "#/utils/typescript";
+import { documentToEntity as answerDocumentToEntity, entityToDocument as answerEntityToDocument } from "#/answers/db";
 
 enum QuestionAnswerPopulate {
   QUESTION_PUBLIC_KEY = "question",

@@ -1,9 +1,9 @@
+import { QuestionID } from "#shared/models/questions/Question";
+import { CreateQuestionDto, ResultManyQuestionDto, ResultOneQuestionDto } from "#shared/models/questions/dtos";
 import { Body, Controller, Get, Param, Post, UseInterceptors } from "@nestjs/common";
-import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
 import { ObjectIdPipe } from "src/utils/validation";
-import { CreateQuestionDto, ResultManyQuestionDto, ResultOneQuestionDto } from "./dtos";
-import { QuestionID } from "./models";
 import { QuestionsService } from "./services";
+import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 
 @Controller()

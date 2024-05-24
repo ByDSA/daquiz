@@ -1,18 +1,18 @@
 import { IsOptional, IsString, ValidateNested } from "class-validator";
-import { AnswerID } from "#/answers/models";
-import { TextAnswerVO } from "#/answers/text-answer/models";
-import { QuestionID, QuestionVO } from "#/questions/models";
+import { AnswerID } from "src/models/answers/Answer";
+import { TextAnswerVO } from "src/models/answers/text-answers/TextAnswer";
+import { QuestionID, QuestionVO } from "src/models/questions/Question";
 
 export class QuestionTextAnswerVO {
   @IsString()
-  questionId: QuestionID;
+  questionId!: QuestionID;
 
   @IsOptional()
   @ValidateNested()
   question?: QuestionVO;
 
   @IsString()
-  answerId: AnswerID;
+  answerId!: AnswerID;
 
   @IsOptional()
   @ValidateNested()
@@ -21,5 +21,5 @@ export class QuestionTextAnswerVO {
 
 export class QuestionTextAnswerEntity extends QuestionTextAnswerVO {
   @IsString()
-  id: string;
+  id!: string;
 };

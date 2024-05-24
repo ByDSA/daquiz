@@ -1,13 +1,13 @@
 import { IsString } from "class-validator";
-import { QuestionTextAnswerEntity } from "./models";
+import { QuestionTextAnswerEntity } from "./QuestionTextAnswer";
 import { ResultOneDto } from "#/utils/dtos";
 
 export class CreateQuestionTextAnswerDto {
   @IsString()
-  question: string;
+  question!: string;
 
   @IsString()
-  answer: string;
+  answer!: string;
 };
 
 export class ResultOneQuestionTextAnswerDto extends ResultOneDto<QuestionTextAnswerEntity> {};

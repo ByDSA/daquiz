@@ -1,9 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isObjectId } from "#shared/utils/validation";
 import { BadRequestException, PipeTransform } from "@nestjs/common";
-
-function isObjectId(value: string): boolean {
-  return /^[0-9a-fA-F]{24}$/.test(value);
-}
-
 export class ObjectIdPipe implements PipeTransform<string, string> {
   transform(value: string): string {
     if (!isObjectId(value))

@@ -1,6 +1,6 @@
-import { parseTextAnswer } from "../text-answer/models";
-import { UnknownAnswerVO } from "./unknown";
-import { AnswerType } from ".";
+import { AnswerType } from "./Answer";
+import { parseTextAnswer } from "./text-answers/TextAnswer";
+import { UnknownAnswerVO } from "./unknown-answers/UnknownAnswer";
 import { neverCase } from "#/utils/typescript";
 
 export function parseAnswer(

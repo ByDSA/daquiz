@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    ".vscode": true,
+    "bin": true,
+    "build": true,
+    "node_modules": true
+  }
+}

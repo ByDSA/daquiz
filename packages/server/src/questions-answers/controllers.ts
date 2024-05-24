@@ -1,8 +1,8 @@
+import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { CreateQuestionAnswerDto, ResultManyQuestionDto, ResultOneQuestionDto } from "#shared/models/questions-answers/dtos";
 import { Body, Controller, Get, Param, Post, Query, UseInterceptors } from "@nestjs/common";
 import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
 import { BooleanPipe, ObjectIdPipe } from "src/utils/validation";
-import { CreateQuestionAnswerDto, ResultManyQuestionDto, ResultOneQuestionDto } from "./dtos";
-import { QuestionAnswerID } from "./models";
 import { QuestionsAnswersService } from "./services";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 

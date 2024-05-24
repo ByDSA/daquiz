@@ -1,6 +1,6 @@
+import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, model } from "mongoose";
-import { TextAnswerEntity } from "./models";
 
 @Schema( {
   collection: "text-answers",

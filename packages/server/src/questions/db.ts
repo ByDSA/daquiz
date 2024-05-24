@@ -1,6 +1,6 @@
+import { QuestionEntity } from "#shared/models/questions/Question";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, model } from "mongoose";
-import { QuestionEntity } from "./models";
 
 @Schema( {
   collection: "questions",

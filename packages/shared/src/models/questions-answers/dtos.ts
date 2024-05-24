@@ -1,16 +1,16 @@
 import { IsString } from "class-validator";
-import { QuestionAnswerEntity, QuestionAnswerVO } from "./models";
+import { QuestionAnswerEntity, QuestionAnswerVO } from "./QuestionAnswer";
 import { ResultManyDto, ResultOneDto } from "#/utils/dtos";
 
 export class CreateQuestionAnswerDto {
   @IsString()
-  questionId: QuestionAnswerVO["questionId"];
+  questionId!: QuestionAnswerVO["questionId"];
 
   @IsString()
-  answerType: QuestionAnswerVO["answerType"];
+  answerType!: QuestionAnswerVO["answerType"];
 
   @IsString()
-  answerId: QuestionAnswerVO["answerId"];
+  answerId!: QuestionAnswerVO["answerId"];
 };
 
 export class ResultOneQuestionDto extends ResultOneDto<QuestionAnswerEntity> { };

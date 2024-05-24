@@ -1,9 +1,9 @@
+import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { CreateQuestionAnswerDto } from "#shared/models/questions-answers/dtos";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { QuestionAnswer, populateAnswer, populateQuestion, questionAnswerDocumentToEntity } from "./db/schemas";
-import { CreateQuestionAnswerDto } from "./dtos";
-import { QuestionAnswerEntity, QuestionAnswerID } from "./models";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 import { TextAnswersService } from "#/answers/text-answer/services";
 
