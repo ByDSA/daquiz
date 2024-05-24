@@ -4,32 +4,73 @@ const plugin = {
     version: "0.0.1",
   },
   rules: {
+    "no-leading-blank-lines": {
+      meta: {
+        fixable: "code",
+      },
+      create(context) {
+        const checkNode = (node) => {
+          const sourceCode = context.getSourceCode();
+          const lines = sourceCode.lines;
+          let line = 0;
+          while (line < lines.length && lines[line].trim() === '') {
+              context.report({
+                  node,
+                  loc: { line: line + 1, column: 0 },
+                  message: "Leading blank lines are not allowed.",
+                  fix: function(fixer) {
+                      const rangeStart = sourceCode.getIndexFromLoc({ line: line + 1, column: 0 });
+                      const rangeEnd = sourceCode.getIndexFromLoc({ line: line + 2, column: 0 });
+                      return fixer.removeRange([rangeStart, rangeEnd]);
+                  }
+              });
+              line++;
+            }
+        };
+        return {
+          Program: checkNode,
+        };
+      },
+    },
     "no-blank-lines-after-decorator": {
       meta: {
         fixable: "code",
       },
       create(context) {
-        return {
-          PropertyDefinition(node) {
-            const { decorators } = node;
+        function checkNode(node) {
+          const { decorators } = node;
 
-            if (decorators && decorators.length > 0) {
-              const decorator = decorators.at(-1);
-              const decoratorLine = decorator.loc.end.line;
-              const propertyLine = node.key.loc.start.line;
+          if (decorators && decorators.length > 0) {
+            const decorator = decorators.at(-1);
+            const decoratorLine = decorator.loc.end.line;
+            let nodeLoc;
+            let nodeRange;
+            if (node.type === 'ClassDeclaration') {
+              nodeLoc = node.loc;
+              nodeRange = node.range;
+            } else {
+              nodeLoc = node.key.loc;
+              nodeRange = node.key.range;
+            }
 
-             if (decoratorLine + 1 !== propertyLine) {
-               context.report( {
-                  node,
-                  message: "There should be no blank lines after a decorator.",
-                  fix: function(fixer) {
-                    const range = [decorator.range[1], node.key.range[0] - node.key.loc.start.column];
-                    return fixer.replaceTextRange(range, '\n');
-                  }
-                } );
-              }
+            let nodeLine = nodeLoc.start.line;
+
+            if (decoratorLine + 1 !== nodeLine) {
+             context.report( {
+                node,
+                message: "There should be no blank lines after a decorator.",
+                fix: function(fixer) {
+                  const range = [decorator.range[1], nodeRange[0] - nodeLoc.start.column];
+                  return fixer.replaceTextRange(range, '\n');
+                }
+              } );
+            }
           }
-          },
+        };
+        return {
+          PropertyDefinition: checkNode,
+          MethodDefinition: checkNode,
+          ClassDeclaration: checkNode,
         };
       },
     },

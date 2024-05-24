@@ -1,6 +1,7 @@
+import path from "node:path";
 import monorepoConfig from "../eslint.config.mjs";
 
-// Next lint no es compatible con ESLint 9 (mayo 2024)
+// TODO: Next lint no es compatible con ESLint 9 (mayo 2024)
 const nextConfig = [
   {
     files: ["**/*.ts", "**/*.tsx"],
@@ -10,27 +11,25 @@ const nextConfig = [
     },
   },
 ];
+const packageDir = path.join(import.meta.url, "..").slice("file:".length);
 const projectConfig = [
   {
-    files: ["**/*.ts"],
+    files: ["**/*.ts{,x}"],
     rules: {
-      "import/no-internal-modules": "off",
-    },
-  },
-  {
-    files: ["**/*.tsx"],
-    rules: {
+      ...nextConfig[0].rules,
       "react/prop-types": "off",
       "import/no-default-export": "off",
       "import/no-internal-modules": ["error", {
-        allow: ["next/**"],
+        allow: ["next/**", "*shared/**"],
+      }],
+      "import/no-extraneous-dependencies": ["error", {
+        packageDir,
       }],
     },
   },
 ];
 const ret = [
   ...monorepoConfig,
-  ...nextConfig,
   ...projectConfig,
 ];
 

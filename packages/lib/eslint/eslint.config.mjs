@@ -188,36 +188,6 @@ const globalRules = {
   "no-case-declarations": "error",
   "no-fallthrough": "error",
 };
-const backendConfig = [
-  {
-    files: [
-      "*{s,S}ervice*.{ts,js}",
-      "*{r,R}epository*.{ts,js}",
-      "*{c,C}ontroller*.{ts,js}",
-    ],
-    rules: {
-      "require-await": "off",
-      "class-methods-use-this": "off",
-    },
-  },
-  {
-    files: ["index.ts", "{,*.}o{d,r}m.{ts,js}", "utils.ts"],
-    rules: {
-      "import/prefer-default-export": "off",
-    },
-  },
-  {
-    files: ["{,*.}odm.{ts,js}", "Repository.{ts,js}"],
-    rules: {
-      "no-underscore-dangle": [
-        "error",
-        {
-          allow: ["_id"],
-        },
-      ],
-    },
-  },
-];
 const testingConfig = [
   {
     files: ["**/*.e2e.spec.ts", "**/*.spec.ts", "**/test/**/*.ts", "**/tests/**/*.ts", "**/*.test.tsx"],
@@ -236,7 +206,6 @@ const libEslintConfig = [
 ];
 const overrideConfigs = [
   ...testingConfig,
-  ...backendConfig,
   {
     files: ["index.ts", "utils.ts"],
     rules: {
@@ -287,6 +256,7 @@ const customPluginsRules = {
   "custom/indent-after-decorator": "error",
   "custom/no-blank-lines-after-decorator": "error",
   "custom/no-blank-lines-between-decorators": "error",
+  "custom/no-leading-blank-lines": "error",
 };
 
 export default [

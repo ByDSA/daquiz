@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { isObjectId } from "#shared/utils/validation";
 import { BadRequestException, PipeTransform } from "@nestjs/common";
 export class ObjectIdPipe implements PipeTransform<string, string> {
