@@ -3,6 +3,9 @@ import { IsArray, IsOptional, IsString } from "class-validator";
 import { QuestionAnswerEntity, QuestionAnswerID } from "../questions-answers/QuestionAnswer";
 
 export class QuizVO {
+  @IsString()
+  name!: string;
+
   @IsArray()
   questionAnswersIds!: QuestionAnswerID[];
 

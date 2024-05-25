@@ -8,6 +8,12 @@ import { QuestionAnswerDocument, QuestionAnswerSchema, questionAnswerDocumentToE
 } )
 export class Quiz {
   @Prop( {
+    type: String,
+    required: true,
+  } )
+  name: string;
+
+  @Prop( {
     type: [QuestionAnswerSchema],
     required: true,
   } )
@@ -22,6 +28,7 @@ export const quizDocumentToEntity = (doc: QuizDocument): QuizEntity => {
   return {
     // eslint-disable-next-line no-underscore-dangle
     id: doc._id.toString(),
+    name: doc.name,
     // eslint-disable-next-line no-underscore-dangle
     questionAnswersIds: doc.questionsAnswers.map((qa) => qa._id.toString()),
     questionAnswers: doc.questionsAnswers.map(questionAnswerDocumentToEntity),
