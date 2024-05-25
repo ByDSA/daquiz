@@ -30,7 +30,7 @@ FindAllController<ResultManyTextAnswerDto> {
     const found = await this.textAnswersService.findOne(id);
 
     return {
-      data: found,
+      data: found ?? undefined,
     };
   }
 

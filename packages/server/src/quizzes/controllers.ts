@@ -31,7 +31,7 @@ FindAllController<ResultManyQuizDto> {
     const found = await this.quizzesService.findOne(id);
 
     return {
-      data: found,
+      data: found ?? undefined,
     };
   }
 

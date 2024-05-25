@@ -3,7 +3,7 @@ export interface CreateOneService<REQ_DTO> {
 }
 
 export interface CreateOneAndGetService<REQ_DTO, ENTITY> {
-  createOneAndGet: (dto: REQ_DTO)=> Promise<ENTITY>;
+  createOneAndGet: (...params: Parameters<CreateOneService<REQ_DTO>["createOne"]>)=> Promise<ENTITY>;
 }
 
 export interface FindOneService<ENTITY extends {id: unknown}> {
@@ -12,4 +12,12 @@ export interface FindOneService<ENTITY extends {id: unknown}> {
 
 export interface FindAllService<ENTITY> {
   findAll: ()=> Promise<ENTITY[]>;
+}
+
+export interface PatchOneService<DTO, ENTITY extends {id: unknown}> {
+  patchOne: (id: ENTITY["id"], props: DTO)=> Promise<void>;
+}
+
+export interface PatchOneAndGetService<DTO, ENTITY extends {id: unknown}> {
+  patchOneAndGet: (...params: Parameters<PatchOneService<DTO, ENTITY>["patchOne"]>)=> Promise<ENTITY | null>;
 }

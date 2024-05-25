@@ -1,11 +1,15 @@
-import { IsObject, ValidateNested } from "class-validator";
+import { IsArray, IsObject, IsOptional, ValidateNested } from "class-validator";
 
 export class ResultOneDto<T> {
+  @IsOptional()
   @IsObject()
   @ValidateNested()
-  data!: T | null;
+  data?: T;
 };
 
 export class ResultManyDto<T> {
-  data!: T[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  data?: T[];
 };
