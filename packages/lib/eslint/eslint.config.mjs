@@ -72,7 +72,9 @@ const globalRules = {
         multiline: true,
         minProperties: 1,
       },
-      ObjectExpression: "always",
+      ObjectExpression: {
+        minProperties: 1,
+      },
       ObjectPattern: "never",
     },
   ],

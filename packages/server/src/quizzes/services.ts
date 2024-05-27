@@ -61,7 +61,6 @@ FindAllService<QuizEntity> {
       for (const questionAnswer of quiz.questionAnswers) {
         if (questionAnswer.questionId === id && questionAnswer.question) {
           questionAnswer.question = extend(
-            // eslint-disable-next-line object-curly-newline
             {},
             questionAnswer.question,
             partialVO,
@@ -89,7 +88,6 @@ FindAllService<QuizEntity> {
           && questionAnswer.answer) {
           questionAnswer.answer = extend(
             true,
-            // eslint-disable-next-line object-curly-newline
             {},
             questionAnswer.answer,
             valueObject,
