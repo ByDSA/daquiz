@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import urlJoin from "../../../../shared/build/utils/urls/urlJoin";
-import { assertDefined } from "../../../../shared/build/utils/validation/asserts";
+import urlJoin from "../../../../../shared/build/utils/urls/urlJoin";
+import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 
 export type UseDataRet<T> = {
   data: T | undefined;
