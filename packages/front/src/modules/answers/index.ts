@@ -1,0 +1,3 @@
+export {
+  patchOneTextAnswerAndGet,
+} from "./fetching";

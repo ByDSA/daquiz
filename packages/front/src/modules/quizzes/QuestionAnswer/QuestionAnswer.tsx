@@ -1,8 +1,8 @@
 import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionAnswer";
 import { useState } from "react";
 import styles from "./styles.module.css";
-import { patchOneQuestionAndGet } from "#/modules/questions";
-import { patchOneTextAnswerAndGet } from "#/modules/answers/fetching";
+import { patchOneQuestionAndGet } from "#modules/questions";
+import { patchOneTextAnswerAndGet } from "#modules/answers";
 type Props = {
   data: QuestionAnswerEntity;
 };

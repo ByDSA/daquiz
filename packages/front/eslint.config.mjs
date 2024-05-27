@@ -20,7 +20,7 @@ const projectConfig = [
       "react/prop-types": "off",
       "import/no-default-export": "off",
       "import/no-internal-modules": ["error", {
-        allow: ["next/**", "*shared/**"],
+        allow: ["next/**", "*shared/**", "\\\#modules/*", "\\\#modules/utils/**"],
       }],
       "import/no-extraneous-dependencies": ["error", {
         packageDir,

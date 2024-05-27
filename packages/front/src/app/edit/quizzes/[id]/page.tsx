@@ -1,8 +1,7 @@
 "use client";
 
 import styles from "./page.module.css";
-import { useQuiz } from "#/modules/quizzes/fetching";
-import { Quiz } from "#modules/quizzes";
+import { Quiz, useQuiz } from "#modules/quizzes";
 
 type Params = {
   params: {
