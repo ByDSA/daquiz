@@ -4,7 +4,7 @@ import { QuestionEntity } from "#shared/models/questions/Question";
 import { neverCase } from "#shared/utils/typescript";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, HydratedDocument, Types, model } from "mongoose";
-import { QuestionDocument, QuestionSchema, documentToEntity as questionDocumentToEntity, entityToDocument as questionEntityToDocument } from "#/questions/db";
+import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEntityToDocument } from "#/questions/db";
 import { documentToEntity as answerDocumentToEntity, entityToDocument as answerEntityToDocument } from "#/answers/db";
 
 enum QuestionAnswerPopulate {

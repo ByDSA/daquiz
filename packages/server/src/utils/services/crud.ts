@@ -15,7 +15,7 @@ export interface FindAllService<ENTITY> {
 }
 
 export interface PatchOneService<DTO, ENTITY extends {id: unknown}> {
-  patchOne: (id: ENTITY["id"], props: DTO)=> Promise<void>;
+  patchOne: (id: ENTITY["id"], dto: DTO)=> Promise<void>;
 }
 
 export interface PatchOneAndGetService<DTO, ENTITY extends {id: unknown}> {

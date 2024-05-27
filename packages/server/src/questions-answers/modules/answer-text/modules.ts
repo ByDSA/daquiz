@@ -3,23 +3,21 @@ import { QuestionsAnswersDBModule } from "../../db/db.module";
 import { QuestionsAnswersService } from "../../services";
 import { QuestionTextAnswerController } from "./controllers";
 import { QuestionTextAnswerService } from "./services";
-import { QuestionsService } from "#/questions/services";
-import { QuestionsDBModule } from "#/questions/modules";
-import { TextAnswersService } from "#/answers/text-answer/services";
-import { TextAnswersDBModule } from "#/answers/text-answer/modules";
+import { QuestionsModule } from "#/questions/modules";
+import { EventsModule } from "#/events/module";
+import { TextAnswersModule } from "#/answers/text-answer/modules";
 
 @Module( {
   imports: [
-    QuestionsDBModule,
-    TextAnswersDBModule,
+    TextAnswersModule,
     QuestionsAnswersDBModule,
+    QuestionsModule,
+    EventsModule,
   ],
   controllers: [QuestionTextAnswerController],
   providers: [
     QuestionTextAnswerService,
     QuestionsAnswersService,
-    QuestionsService,
-    TextAnswersService,
   ],
 } )
 export class QuestionTextAnswerModule {}

@@ -7,6 +7,11 @@ export class CreateTextAnswerDto {
   text!: string;
 };
 
+export class PatchOneTextAnswerDto {
+  @IsString()
+  text!: string;
+};
+
 export class ResultOneTextAnswerDto extends ResultOneDto<TextAnswerEntity> {};
 
 export class ResultManyTextAnswerDto extends ResultManyDto<TextAnswerEntity> {};

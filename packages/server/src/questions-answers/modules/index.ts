@@ -4,16 +4,16 @@ import { QuestionsAnswersDBModule } from "../db/db.module";
 import { QuestionsAnswersService } from "../services";
 import { QuestionTextAnswerModule } from "./answer-text/modules";
 import { QuestionAnswerCheckingModule } from "./checking/modules";
-import { QuestionsService } from "#/questions/services";
-import { QuestionsDBModule } from "#/questions/modules";
-import { TextAnswersService } from "#/answers/text-answer/services";
-import { TextAnswersDBModule } from "#/answers/text-answer/modules";
+import { QuestionsModule } from "#/questions/modules";
+import { EventsModule } from "#/events/module";
+import { TextAnswersModule } from "#/answers/text-answer/modules";
 
 @Module( {
   imports: [
     QuestionsAnswersDBModule,
-    QuestionsDBModule,
-    TextAnswersDBModule,
+    QuestionsModule,
+    TextAnswersModule,
+    EventsModule,
     // Submodules
     QuestionTextAnswerModule,
     QuestionAnswerCheckingModule,
@@ -21,8 +21,6 @@ import { TextAnswersDBModule } from "#/answers/text-answer/modules";
   controllers: [QuestionsAnswersController],
   providers: [
     QuestionsAnswersService,
-    QuestionsService,
-    TextAnswersService,
   ],
   exports: [
     QuestionsAnswersService,

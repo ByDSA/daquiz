@@ -1,17 +1,13 @@
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 import { QuestionsController } from "./controllers";
-import { Question, QuestionSchema } from "./db";
+import { QuestionsDBModule } from "./db";
 import { QuestionsService } from "./services";
-
-export const QuestionsDBModule = MongooseModule.forFeature([{
-  name: Question.name,
-  schema: QuestionSchema,
-}]);
+import { EventsModule } from "#/events/module";
 
 @Module( {
   imports: [
     QuestionsDBModule,
+    EventsModule,
   ],
   controllers: [QuestionsController],
   providers: [QuestionsService],

@@ -1,17 +1,13 @@
 import { Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
 import { TextAnswersController } from "./controllers";
-import { TextAnswer, TextAnswerSchema } from "./db";
+import { TextAnswersDBModule } from "./db";
 import { TextAnswersService } from "./services";
-
-export const TextAnswersDBModule = MongooseModule.forFeature([{
-  name: TextAnswer.name,
-  schema: TextAnswerSchema,
-}]);
+import { EventsModule } from "#/events/module";
 
 @Module( {
   imports: [
     TextAnswersDBModule,
+    EventsModule,
   ],
   controllers: [TextAnswersController],
   providers: [TextAnswersService],

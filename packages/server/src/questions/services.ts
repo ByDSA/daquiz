@@ -1,24 +1,52 @@
-import { QuestionEntity, QuestionID } from "#shared/models/questions/Question";
-import { CreateQuestionDto } from "#shared/models/questions/dtos";
-import { Injectable } from "@nestjs/common";
+import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
+import { CreateOneQuestionDto, PatchOneQuestionDto } from "#shared/models/questions/dtos";
+import { assertDefined } from "#shared/utils/validation/asserts";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Question, documentToEntity } from "./db";
-import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
+import { Question, questionDocumentToEntity } from "./db";
+import { CreateOneAndGetService, FindAllService, FindOneService, PatchOneAndGetService } from "#/utils/services/crud";
+import { EventDBEmitter } from "#/events/EventDBEmitter";
 
 @Injectable()
 export class QuestionsService implements
-CreateOneAndGetService<CreateQuestionDto, QuestionEntity>,
+CreateOneAndGetService<CreateOneQuestionDto, QuestionEntity>,
 FindOneService<QuestionEntity>,
-FindAllService<QuestionEntity> {
-  constructor(@InjectModel(Question.name) private QuestionModel: Model<Question>) {}
+FindAllService<QuestionEntity>,
+PatchOneAndGetService<PatchOneQuestionDto, QuestionEntity> {
+  constructor(
+    @InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
+    private readonly dbEventEmitter: EventDBEmitter,
+  ) {
+    this.dbEventEmitter.onPatch(QuestionEntity, (event) => {
+      console.log("LOG", "Question Patch Event", event);
+    } );
+  }
 
-  async createOneAndGet(dto: CreateQuestionDto): Promise<QuestionEntity> {
+  async patchOneAndGet(id: string, props: QuestionVO): Promise<QuestionEntity | null> {
+    const updateResult = await this.QuestionModel.updateOne( {
+      _id: id,
+    }, props).exec();
+
+    if (updateResult.matchedCount !== 1)
+      throw new NotFoundException("Failed to find question to update");
+
+    if (updateResult.modifiedCount !== 1)
+      return null;
+
+    const found = await this.findOne(id);
+
+    assertDefined(found, "Failed to find updated question");
+
+    return found;
+  }
+
+  async createOneAndGet(dto: CreateOneQuestionDto): Promise<QuestionEntity> {
     let created = new this.QuestionModel(dto);
 
     created = await created.save();
 
-    return documentToEntity(created);
+    return questionDocumentToEntity(created);
   }
 
   async findOne(id: QuestionID): Promise<QuestionEntity | null> {
@@ -27,12 +55,12 @@ FindAllService<QuestionEntity> {
     if (!doc)
       return null;
 
-    return documentToEntity(doc);
+    return questionDocumentToEntity(doc);
   }
 
   async findAll(): Promise<QuestionEntity[]> {
     const docs = await this.QuestionModel.find().exec();
 
-    return docs.map(documentToEntity);
+    return docs.map(questionDocumentToEntity);
   }
 }
