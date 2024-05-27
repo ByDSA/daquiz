@@ -1,18 +1,11 @@
 import { AnswerType } from "#shared/models/answers/Answer";
+import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
 import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity } from "#shared/models/questions/Question";
-import { neverCase } from "#shared/utils/typescript";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, HydratedDocument, Types, model } from "mongoose";
+import { HydratedDocument, Types, model } from "mongoose";
 import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEntityToDocument } from "#/questions/db";
-import { documentToEntity as answerDocumentToEntity, entityToDocument as answerEntityToDocument } from "#/answers/db";
-
-enum QuestionAnswerPopulate {
-  QUESTION_PUBLIC_KEY = "question",
-  QUESTION_VIRTUAL_KEY = "fullQuestion",
-  ANSWER_PUBLIC_KEY = "answer",
-  TEXT_ANSWER_VIRTUAL_KEY = "text-answer",
-};
+import { TextAnswerDocument, textAnswerDocumentToEntity, textAnswerEntityToDocument } from "#/answers/text-answer/db";
 
 @Schema( {
   collection: "questions-answers",
@@ -23,6 +16,12 @@ export class QuestionAnswer {
     required: true,
   } )
   questionId: Types.ObjectId;
+
+  @Prop( {
+    type: QuestionSchema,
+    required: false,
+  } )
+  question?: QuestionDocument;
 
   @Prop( {
     type: String,
@@ -38,16 +37,10 @@ export class QuestionAnswer {
   answerId: Types.ObjectId;
 
   @Prop( {
-    type: QuestionSchema,
-    required: false,
-  } )
-  [QuestionAnswerPopulate.QUESTION_PUBLIC_KEY]: QuestionDocument;
-
-  @Prop( {
     type: Object,
     required: false,
   } )
-  [QuestionAnswerPopulate.ANSWER_PUBLIC_KEY]: Document;
+  answer?: object;
 }
 
 export type QuestionAnswerDocument = HydratedDocument<QuestionAnswer>;
@@ -67,94 +60,51 @@ export const questionAnswerDocumentToEntity = (
     answerId: doc.answerId.toString(),
   };
 
-  if (doc[QuestionAnswerPopulate.QUESTION_PUBLIC_KEY]) {
-    entity.question = questionDocumentToEntity(
-  doc[QuestionAnswerPopulate.QUESTION_PUBLIC_KEY] as any,
-    );
-  }
+  if (doc.question)
+    entity.question = questionDocumentToEntity(doc.question);
 
-  if (doc[QuestionAnswerPopulate.ANSWER_PUBLIC_KEY]) {
-    entity.answer = answerDocumentToEntity(
-      doc[QuestionAnswerPopulate.ANSWER_PUBLIC_KEY],
-      doc.answerType,
-    );
-  }
+  if (doc.answer)
+    entity.answer = textAnswerDocumentToEntity(doc.answer as TextAnswerDocument);
 
   return entity;
 };
 
+type EntityToDocumentOptions = {
+  includeRelations?: {
+    question?: boolean;
+    answer?: boolean;
+  };
+};
 export const questionAnswerEntityToDocument = (
   entity: QuestionAnswerEntity,
+  options?: EntityToDocumentOptions,
 ): QuestionAnswerDocument => {
-  const doc: QuestionAnswerDocument = new QuestionAnswerModel( {
+  const docObj: QuestionAnswer & {_id: Types.ObjectId} = {
     _id: new Types.ObjectId(entity.id),
     questionId: new Types.ObjectId(entity.questionId),
     answerType: entity.answerType,
     answerId: new Types.ObjectId(entity.answerId),
-  } );
+  };
 
-  if (entity.question) {
+  if (options?.includeRelations?.question && entity.question) {
     const questionEntity: QuestionEntity = {
       id: entity.questionId,
       ...entity.question,
     };
 
-    doc[QuestionAnswerPopulate.QUESTION_PUBLIC_KEY] = questionEntityToDocument(questionEntity);
+    docObj.question = questionEntityToDocument(questionEntity);
   }
 
-  if (entity.answer) {
-    const answerEntity: unknown = {
+  if (options?.includeRelations?.answer && entity.answer) {
+    const textAnswerEntity: TextAnswerEntity = {
       id: entity.answerId,
       ...entity.answer,
     };
 
-    doc[QuestionAnswerPopulate.ANSWER_PUBLIC_KEY] = answerEntityToDocument(
-      answerEntity,
-      entity.answerType,
-    );
+    docObj.answer = textAnswerEntityToDocument(textAnswerEntity);
   }
+
+  const doc: QuestionAnswerDocument = new QuestionAnswerModel(docObj);
 
   return doc;
 };
-
-export function populateQuestion(question: Document): Promise<any> {
-  return question.populate(QuestionAnswerPopulate.QUESTION_PUBLIC_KEY);
-}
-
-QuestionAnswerSchema.virtual(QuestionAnswerPopulate.QUESTION_VIRTUAL_KEY, {
-  ref: "Question",
-  localField: "questionId",
-  foreignField: "_id",
-  justOne: true,
-} );
-
-QuestionAnswerSchema.virtual(QuestionAnswerPopulate.TEXT_ANSWER_VIRTUAL_KEY, {
-  ref: "TextAnswer",
-  localField: "answerId",
-  foreignField: "_id",
-  justOne: true,
-} );
-
-// eslint-disable-next-line require-await
-export async function populateAnswer(answer: Document, answerType: AnswerType): Promise<unknown> {
-  switch (answerType) {
-    case AnswerType.TEXT:
-    {
-      return answer.populate(QuestionAnswerPopulate.TEXT_ANSWER_VIRTUAL_KEY).then(() => {
-        answer[
-          QuestionAnswerPopulate.ANSWER_PUBLIC_KEY
-        ] = answer[QuestionAnswerPopulate.TEXT_ANSWER_VIRTUAL_KEY];
-        delete answer[QuestionAnswerPopulate.TEXT_ANSWER_VIRTUAL_KEY];
-      } );
-    }
-    default:
-      neverCase(answerType);
-  }
-}
-
-QuestionAnswerSchema.set("toObject", {
-  virtuals: true,
-} );
-QuestionAnswerSchema.set("toJSON", {
-  virtuals: true,
-} );

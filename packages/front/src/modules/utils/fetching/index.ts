@@ -1,4 +1,4 @@
-import { ResultOneDto } from "#shared/utils/dtos";
+import { ResultCommon, ResultOneDto } from "#shared/utils/dtos";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 
 export * from "./swr";
@@ -21,14 +21,16 @@ export async function fetchPatchOneAndGet<ENTITY extends UnknownEntity, DTO>(
   } );
   const responseJson: ResultOneDto<ENTITY> = await response.json();
 
+  checkForErrors(response, responseJson);
+
   return responseJson;
 }
 
 export async function fetchCreateOneAndGet<ENTITY extends UnknownEntity, DTO>(
-  enityUrl: string,
+  entityUrl: string,
   dto: DTO,
 ): Promise<ResultOneDto<ENTITY>> {
-  const response = await fetch(enityUrl, {
+  const response = await fetch(entityUrl, {
     method: "POST",
     body: JSON.stringify(dto),
     headers: {
@@ -37,5 +39,15 @@ export async function fetchCreateOneAndGet<ENTITY extends UnknownEntity, DTO>(
   } );
   const responseJson: ResultOneDto<ENTITY> = await response.json();
 
+  checkForErrors(response, responseJson);
+
   return responseJson;
+}
+
+export function checkForErrors(response: Response, responseJson?: ResultCommon) {
+  if (!response.ok) {
+    throw new Error(responseJson?.message, {
+      cause: responseJson ?? response,
+    } );
+  }
 }

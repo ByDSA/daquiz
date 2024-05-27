@@ -10,4 +10,5 @@ export {
   partialDocumentToPartialEntity as partialQuestionDocumentToPartialEntity,
   documentToEntity as questionDocumentToEntity,
   entityToDocument as questionEntityToDocument,
+  modelName as questionModelName,
 } from "./adapters";

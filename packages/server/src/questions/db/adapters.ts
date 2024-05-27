@@ -13,8 +13,7 @@ export const documentToEntity = (doc: QuestionDocument): QuestionEntity => {
 export const partialDocumentToPartialEntity = (
   doc: Partial<QuestionDocument>,
 ): Partial<QuestionEntity> => {
-  const partial: Partial<QuestionEntity> = {
-  };
+  const partial: Partial<QuestionEntity> = {};
 
   if (doc._id)
     partial.id = doc._id.toString();
@@ -25,7 +24,9 @@ export const partialDocumentToPartialEntity = (
   return partial;
 };
 
-const QuestionModel = model("Question", QuestionSchema);
+export const modelName = "Question";
+
+const QuestionModel = model(modelName, QuestionSchema);
 
 export const entityToDocument = (entity: QuestionEntity): QuestionDocument => {
   return new QuestionModel( {

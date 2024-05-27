@@ -3,8 +3,9 @@ import { CreateQuestionAnswerDto } from "#shared/models/questions-answers/dtos";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { QuestionAnswer, populateAnswer, populateQuestion, questionAnswerDocumentToEntity } from "./db/schemas";
+import { QuestionAnswer, questionAnswerDocumentToEntity } from "./db/schemas";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
+import { QuestionsService } from "#/questions/services";
 import { TextAnswersService } from "#/answers/text-answer/services";
 
 type FindOneOptions = Partial<{
@@ -21,6 +22,7 @@ FindOneService<QuestionAnswerEntity>,
 FindAllService<QuestionAnswerEntity> {
   constructor(
     @InjectModel(QuestionAnswer.name) private readonly QuestionAnswerModel: Model<QuestionAnswer>,
+    private readonly questionsService: QuestionsService,
     private readonly textAnswersService: TextAnswersService,
   ) {}
 
@@ -41,23 +43,33 @@ FindAllService<QuestionAnswerEntity> {
     if (!doc)
       return null;
 
+    const entity = questionAnswerDocumentToEntity(doc);
+
+    // Population
+
     const populatePromises: Promise<any>[] = [];
 
     if (options?.includeRelations?.question) {
-      const p = populateQuestion(doc);
+      const p = this.questionsService.findOne(entity.questionId)
+        .then((got) => {
+          if (got)
+            entity.question = got;
+        } );
 
       populatePromises.push(p);
     }
 
     if (options?.includeRelations?.answer) {
-      const p = populateAnswer(doc, doc.answerType);
+      const p = this.textAnswersService.findOne(entity.answerId)
+        .then((got) => {
+          if (got)
+            entity.answer = got;
+        } );
 
       populatePromises.push(p);
     }
 
     await Promise.all(populatePromises);
-
-    const entity = questionAnswerDocumentToEntity(doc);
 
     return entity;
   }

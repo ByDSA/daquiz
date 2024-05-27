@@ -106,7 +106,12 @@ FindAllService<QuizEntity> {
     const result = await this.QuizModel.updateOne( {
       _id: id,
     }, {
-      questionsAnswers: questionsAnswers.map(questionAnswerEntityToDocument),
+      questionsAnswers: questionsAnswers.map(qa=> questionAnswerEntityToDocument(qa, {
+        includeRelations: {
+          question: true,
+          answer: true,
+        },
+      } )),
     } ).exec();
 
     return result;
@@ -144,7 +149,12 @@ FindAllService<QuizEntity> {
       if (!questionAnswerEntity)
         throw new BadRequestException("Failed to find question answer");
 
-      const doc = questionAnswerEntityToDocument(questionAnswerEntity);
+      const doc = questionAnswerEntityToDocument(questionAnswerEntity, {
+        includeRelations: {
+          question: true,
+          answer: true,
+        },
+      } );
 
       questionsAnswersDocs.push(doc);
     }

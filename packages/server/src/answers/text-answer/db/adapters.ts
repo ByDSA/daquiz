@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { TextAnswerEntity as Entity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Types, model } from "mongoose";
-import { DocumentOdm, SchemaOdm, SchemaOdmClass } from "./schema";
+import { DocumentOdm, SchemaOdm } from "./schema";
 
 export const docToEntity = (doc: DocumentOdm): Entity => {
   return {
@@ -11,7 +11,9 @@ export const docToEntity = (doc: DocumentOdm): Entity => {
   };
 };
 
-const ModelOdm = model(SchemaOdmClass.name, SchemaOdm);
+export const modelName = "TextAnswer";
+
+export const ModelOdm = model(modelName, SchemaOdm);
 
 export const entityToDoc = (entity: Entity): DocumentOdm => {
   return new ModelOdm( {
@@ -23,8 +25,7 @@ export const entityToDoc = (entity: Entity): DocumentOdm => {
 export const partialDocumentToPartialEntity = (
   doc: Partial<DocumentOdm>,
 ): Partial<Entity> => {
-  const partial: Partial<Entity> = {
-  };
+  const partial: Partial<Entity> = {};
 
   if (doc._id)
     partial.id = doc._id.toString();

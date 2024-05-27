@@ -7,6 +7,7 @@ export {
 export {
   docToEntity as textAnswerDocumentToEntity,
   entityToDoc as textAnswerEntityToDocument,
+  modelName as textAnswerModelName,
 } from "./adapters";
 
 export {

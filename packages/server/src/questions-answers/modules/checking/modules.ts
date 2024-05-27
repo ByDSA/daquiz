@@ -1,20 +1,18 @@
 import { Module } from "@nestjs/common";
+import { QuestionsAnswersServiceModule } from "../service.module";
 import { QuestionAnswerCheckingController } from "./controllers";
 import { QuestionAnswerCheckingService } from "./services";
-import { TextAnswersModule } from "#/answers/text-answer/modules";
-import { QuestionsAnswersDBModule } from "#/questions-answers/db/db.module";
-import { QuestionsAnswersService } from "#/questions-answers/services";
 import { QuestionsModule } from "#/questions/modules";
+import { TextAnswersModule } from "#/answers/text-answer/modules";
 
 @Module( {
   imports: [
-    QuestionsAnswersDBModule,
+    QuestionsAnswersServiceModule,
     QuestionsModule,
     TextAnswersModule,
   ],
   controllers: [QuestionAnswerCheckingController],
   providers: [
-    QuestionsAnswersService,
     QuestionAnswerCheckingService,
   ],
 } )

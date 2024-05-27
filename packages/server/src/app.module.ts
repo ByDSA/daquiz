@@ -48,7 +48,7 @@ import { QuizzesModule } from "./quizzes/modules";
         path: "questions-answers",
         module: QuestionsAnswersModule,
         children: [{
-          path: "text-question/text-answer",
+          path: "text-answer",
           module: QuestionTextAnswerModule,
         },
         {
