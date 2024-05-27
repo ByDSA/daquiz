@@ -1,10 +1,13 @@
 {
   "dependencies": {
+    "#shared": "workspace:../shared/build",
     "next": "14.2.3",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
+    "#sharedSrc": "workspace:../shared/src",
     "@types/node": "20.12.12",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",

@@ -1,0 +1,26 @@
+.main {
+  padding: 0.5em 1em;
+  margin: 0.5em;
+  border: 1px solid black;
+  border-radius: 2em;
+  font-size: 1.25em;
+  min-width: 600px;
+
+  & > header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & > section {
+    font-size: 0.75em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background-color: lightgray;
+    cursor: pointer;
+  }
+}

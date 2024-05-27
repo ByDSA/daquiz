@@ -1,0 +1,32 @@
+.main {
+  padding: 0.25em;
+  margin: 0.5em;
+  border: 1px solid black;
+  border-radius: 2em;
+  min-width: 600px;
+}
+
+.main > section > header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.question {
+  color: blue;
+  margin-bottom: 0.5em;
+}
+
+.answer {
+  color: green;
+}
+
+.question,
+.answer {
+  text-align: center;
+  &:hover {
+    color: hsl(24, 70%, 50%);
+    cursor: pointer;
+  }
+}
