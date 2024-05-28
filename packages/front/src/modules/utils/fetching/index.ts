@@ -44,6 +44,19 @@ export async function fetchCreateOneAndGet<ENTITY extends UnknownEntity, DTO>(
   return responseJson;
 }
 
+export async function fetchDeleteOneAndGet<ENTITY extends UnknownEntity>(
+  entityUrl: string,
+): Promise<ResultOneDto<ENTITY>> {
+  const response = await fetch(entityUrl, {
+    method: "DELETE",
+  } );
+  const responseJson: ResultOneDto<ENTITY> = await response.json();
+
+  checkForErrors(response, responseJson);
+
+  return responseJson;
+}
+
 export function checkForErrors(response: Response, responseJson?: ResultCommon) {
   if (!response.ok) {
     throw new Error(responseJson?.message, {

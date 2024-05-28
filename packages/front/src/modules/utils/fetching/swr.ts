@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import urlJoin from "../../../../../shared/build/utils/urls/urlJoin";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 
@@ -6,6 +6,7 @@ export type UseDataRet<T> = {
   data: T | undefined;
   isLoading: boolean;
   error: Error | undefined;
+  revalidate: ()=> Promise<any>;
 };
 type Fetcher<T> = (url: string)=> Promise<T>;
 export function generateFetcher<T>(): Fetcher<T> {
@@ -19,11 +20,13 @@ type UseData<T> = ()=> UseDataRet<T>;
 export function generateUseData<T extends {data?: unknown}>(url: string, fetcher: Fetcher<T>): UseData<T["data"]> {
   return () => {
     const { data: response, error, isLoading } = useSWR(url, fetcher);
+    const revalidate = () => mutate(url);
 
     return {
       data: response?.data,
       isLoading,
       error,
+      revalidate,
     };
   };
 }
@@ -34,11 +37,13 @@ export function generateUseDataWithId<T extends {data?: unknown}>(url: string, f
     assertDefined(id, "id is required");
     const actualUrl = urlJoin(url, id);
     const { data: response, error, isLoading } = useSWR(actualUrl, fetcher);
+    const revalidate = () => mutate(actualUrl);
 
     return {
       data: response?.data,
       isLoading,
       error,
+      revalidate,
     };
   };
 }

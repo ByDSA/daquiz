@@ -1,6 +1,6 @@
 import { AnswerType } from "#shared/models/answers/Answer";
 import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
-import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
 import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
 import { AddQuestionsAnswersDto, CreateQuizDto } from "#shared/models/quizzes/dtos";
@@ -167,6 +167,24 @@ FindAllService<QuizEntity> {
 
     if (!doc)
       throw new BadRequestException("Failed to add questions answers");
+
+    return quizDocumentToEntity(doc);
+  }
+
+  async removeOneQuestionAnswer(
+    id: QuizID,
+    questionAnswerId: QuestionAnswerID,
+  ): Promise<QuizEntity> {
+    const doc = await this.QuizModel.findByIdAndUpdate(id, {
+      $pull: {
+        questionsAnswers: {
+          _id: questionAnswerId,
+        },
+      },
+    } ).exec();
+
+    if (!doc)
+      throw new BadRequestException("Failed to remove question answer");
 
     return quizDocumentToEntity(doc);
   }

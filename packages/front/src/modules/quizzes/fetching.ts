@@ -1,5 +1,5 @@
 import { ResultManyQuizDto, ResultOneQuizDto } from "#shared/models/quizzes/dtos";
-import { checkForErrors, generateFetcher, generateUseData, generateUseDataWithId } from "#modules/utils/fetching";
+import { checkForErrors, fetchDeleteOneAndGet, generateFetcher, generateUseData, generateUseDataWithId } from "#modules/utils/fetching";
 
 const URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/quizzes";
 const fetcherQuizzes = generateFetcher<ResultManyQuizDto>();
@@ -24,4 +24,18 @@ export async function addQuestionAnswer(id: string, questionsAnswersIds: string[
   } );
 
   checkForErrors(response);
+}
+
+type RemoveOneQuestionTextAnswerAndGetProps = {
+  id: string;
+  questionAnswerId: string;
+};
+const genDeleteOneUrl = ( { id, questionAnswerId }: RemoveOneQuestionTextAnswerAndGetProps) => `${URL}/${id}/remove/${questionAnswerId}`;
+
+export async function removeOneQuestionAnswer(
+  props: RemoveOneQuestionTextAnswerAndGetProps,
+) {
+  const url = genDeleteOneUrl(props);
+
+  await fetchDeleteOneAndGet(url);
 }

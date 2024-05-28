@@ -1,7 +1,8 @@
 import { TextAnswerID } from "#shared/models/answers/text-answers/TextAnswer";
+import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuizID } from "#shared/models/quizzes/Quiz";
 import { AddQuestionsAnswersDto, CreateQuizDto, ResultManyQuizDto, ResultOneQuizDto } from "#shared/models/quizzes/dtos";
-import { Body, Controller, Get, Param, Post, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from "@nestjs/common";
 import { QuizzesService } from "./services";
 import { ObjectIdPipe } from "#/utils/validation";
 import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
@@ -52,5 +53,13 @@ FindAllController<ResultManyQuizDto> {
     await this.quizzesService.addQuestionsAnswers(id, {
       questionsAnswersIds: dto.questionsAnswersIds,
     } );
+  }
+
+  @Delete(":id/remove/:questionAnswerId")
+  async removeQuestionsAnswers(
+    @Param("id", ObjectIdPipe) id: QuizID,
+    @Param("questionAnswerId", ObjectIdPipe) questionAnswerId: QuestionAnswerID,
+  ): Promise<void> {
+    await this.quizzesService.removeOneQuestionAnswer(id, questionAnswerId);
   }
 }
