@@ -1,14 +1,16 @@
 "use client";
 
 import styles from "./page.module.css";
-import { Quiz, useQuiz } from "#modules/quizzes";
+import { useQuiz } from "#modules/quizzes";
+import Game from "#modules/quizzes/Game/Game";
 
 type Params = {
   params: {
   id: string;
   };
 };
-export default function Page( { params }: Params) {
+
+export default function Home( { params }: Params) {
   const { data: quiz, error, revalidate } = useQuiz(params.id);
 
   return (
@@ -17,7 +19,7 @@ export default function Page( { params }: Params) {
       {
         quiz && <>
           <h1>{quiz.name}</h1>
-          <Quiz data={quiz} revalidateData={revalidate}/>
+          <Game quizId={quiz.id} />
         </>
       }
     </main>

@@ -3,6 +3,9 @@
   margin: 0.5em;
   border: 1px solid black;
   border-radius: 2em;
+}
+
+.minWidth {
   min-width: 600px;
 }
 
@@ -28,5 +31,25 @@
   &:hover {
     color: hsl(24, 70%, 50%);
     cursor: pointer;
+  }
+}
+
+.actionBlock {
+  display: flex;
+  justify-content: right;
+  margin: 0 1em;
+  margin-bottom: 0.25em;
+
+  & > * {
+    padding: 0.25em 0.5em;
+  }
+
+  .removeButton {
+    color: red;
+
+    &:hover {
+      color: blue;
+      cursor: pointer;
+    }
   }
 }

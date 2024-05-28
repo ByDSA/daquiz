@@ -18,7 +18,9 @@
     align-items: center;
     justify-content: center;
   }
+}
 
+.clickable {
   &:hover {
     background-color: lightgray;
     cursor: pointer;

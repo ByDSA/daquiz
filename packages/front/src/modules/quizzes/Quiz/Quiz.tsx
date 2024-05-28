@@ -5,13 +5,14 @@ import { neverCase } from "../../../../../shared/build/utils/typescript";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 import { QuestionTextAnswer } from "../QuestionAnswer";
 import { createOneQuestionTextAnswerAndGet } from "../QuestionAnswer/fetching";
-import { addQuestionAnswer } from "../fetching";
+import { addQuestionAnswer, removeOneQuestionAnswer } from "../fetching";
 import styles from "./styles.module.css";
 
 type Props = {
   data: QuizEntity | undefined;
+  revalidateData: ()=> Promise<any>;
 };
-const Quiz = ( { data }: Props) => {
+const Quiz = ( { data, revalidateData }: Props) => {
   if (!data)
     return null;
 
@@ -26,12 +27,16 @@ const Quiz = ( { data }: Props) => {
         <QuestionTextAnswer
           key={questionAnswer.id}
           data={questionAnswer}
-          onRemove={( { inputData } )=>{
-            console.log("Remove");
-            console.log(inputData.id);
+          onRemove={async ()=>{
+            await removeOneQuestionAnswer( {
+              id: data.id,
+              questionAnswerId: questionAnswer.id,
+            } );
+
+            await revalidateData();
           }}/>
       ))}
-      <AddNewQuestionAnswer quizId={data.id} />
+      <AddNewQuestionAnswer quizId={data.id} revalidateData={revalidateData}/>
     </>
   );
 };
@@ -44,8 +49,9 @@ function questionsLocale(questionsLength: number) {
 
 type AddNewQuestionAnswerProps = {
   quizId: string;
+  revalidateData: ()=> Promise<any>;
 };
-const AddNewQuestionAnswer = ( { quizId }: AddNewQuestionAnswerProps) => {
+const AddNewQuestionAnswer = ( { quizId, revalidateData }: AddNewQuestionAnswerProps) => {
   const [answerType, setAnswerType] = useState(AnswerType.TEXT);
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setAnswerType(event.target.value as AnswerType);
@@ -55,13 +61,14 @@ const AddNewQuestionAnswer = ( { quizId }: AddNewQuestionAnswerProps) => {
     <h2>Añadir nueva pregunta:</h2>
     <form onSubmit={genOnSubmitHandler( {
       quizId,
+      revalidateData,
     } )}>
       <input type="text" placeholder="Pregunta" name="question-text"/>
       <fieldset>
         <legend>Tipo de respuesta:</legend>
         {
           Object.values(AnswerType).map((type) => (
-            <article>
+            <article key={type.toString()}>
               <input type="radio" name="answer-type" id={"answerType-input-" + type} value={type} checked={answerType === type} onChange={onChangeHandler}/>
               <label htmlFor="text">{answerTypeLocale(type)}</label>
             </article>
@@ -92,11 +99,15 @@ const inputsByAnswerType = (answerType: AnswerType) => {
 
 type GenOnSubmitHandlerProps = {
   quizId: string;
+  revalidateData: ()=> Promise<any>;
 };
-const genOnSubmitHandler = ( { quizId }: GenOnSubmitHandlerProps) => {
+const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps) => {
   return async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const { currentTarget } = event;
+
+    console.log(currentTarget);
+    const formData = new FormData(currentTarget);
     const answerType = formData.get("answer-type") as AnswerType;
 
     assertDefined(answerType);
@@ -129,6 +140,8 @@ const genOnSubmitHandler = ( { quizId }: GenOnSubmitHandlerProps) => {
         throw error;
       } );
 
-    event.currentTarget.reset();
+    await revalidateData();
+
+    currentTarget.reset();
   };
 };

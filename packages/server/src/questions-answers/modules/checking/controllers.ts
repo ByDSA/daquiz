@@ -1,5 +1,5 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
 import { QuestionAnswerCheckingDto } from "#shared/models/questions-answers/checking/dtos";
+import { Body, Controller, Param, Post } from "@nestjs/common";
 import { QuestionAnswerCheckingService } from "./services";
 
 @Controller()
