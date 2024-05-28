@@ -1,13 +1,23 @@
 import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionTextAnswerEntity } from "#shared/models/questions-answers/text-answers/QuestionTextAnswer";
 import { useState } from "react";
 import styles from "./styles.module.css";
 import { patchOneQuestionAndGet } from "#modules/questions";
 import { patchOneTextAnswerAndGet } from "#modules/answers";
-type Props = {
-  data: QuestionAnswerEntity;
+import { classNames } from "#/modules/utils/styling";
+
+type OnRemoveProps = {
+  inputData: QuestionTextAnswerEntity;
+  currentData: QuestionAnswerEntity;
 };
-const QuestionAnswer = ( { data }: Props) => {
+
+type Props = {
+  data: QuestionTextAnswerEntity;
+  onRemove?: (props: OnRemoveProps)=> void;
+};
+const QuestionTextAnswer = ( { data, onRemove }: Props) => {
   const [questionText, setQuestionText] = useState(data.question?.text);
+  const [answerType] = useState(data.answer?.type);
   const [answerText, setAnswerText] = useState(data.answer?.text);
   const questionOnClickHandler = async () => {
     const question = prompt("Enter your question:", questionText);
@@ -35,9 +45,19 @@ const QuestionAnswer = ( { data }: Props) => {
     if (got.data)
       setAnswerText(got.data.text);
   };
+  const getCurrentData = () => ( {
+    id: data.id,
+    questionId: data.questionId,
+    answerType: answerType,
+    answerId: data.answerId,
+  } );
 
   return (
-    <div className={styles.main}>
+    <div className={classNames(styles.main, styles.minWidth)}>
+      {onRemove && <section className={styles.actionBlock} onClick={()=>onRemove( {
+        inputData: data,
+        currentData: getCurrentData(),
+      } )}><article className={styles.removeButton}>X</article></section>}
       <section className={styles.question} onClick={questionOnClickHandler}>
         <header>Pregunta:</header>
         <p>{questionText}</p>
@@ -50,4 +70,4 @@ const QuestionAnswer = ( { data }: Props) => {
   );
 };
 
-export default QuestionAnswer;
+export default QuestionTextAnswer;

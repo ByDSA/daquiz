@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from "react";
 import { AnswerType } from "../../../../../shared/build/models/answers/Answer";
 import { neverCase } from "../../../../../shared/build/utils/typescript";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import QuestionAnswer from "../QuestionAnswer";
+import { QuestionTextAnswer } from "../QuestionAnswer";
 import { createOneQuestionTextAnswerAndGet } from "../QuestionAnswer/fetching";
 import { addQuestionAnswer } from "../fetching";
 import styles from "./styles.module.css";
@@ -23,7 +23,13 @@ const Quiz = ( { data }: Props) => {
     <>
       {questionsAnswersInfo}
       {questionAnswers?.map((questionAnswer) => (
-        <QuestionAnswer key={questionAnswer.id} data={questionAnswer} />
+        <QuestionTextAnswer
+          key={questionAnswer.id}
+          data={questionAnswer}
+          onRemove={( { inputData } )=>{
+            console.log("Remove");
+            console.log(inputData.id);
+          }}/>
       ))}
       <AddNewQuestionAnswer quizId={data.id} />
     </>

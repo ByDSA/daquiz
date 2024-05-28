@@ -1,3 +1,3 @@
 export {
-  default,
-} from "./QuestionAnswer";
+  default as QuestionTextAnswer,
+} from "./QuestionTextAnswer";
