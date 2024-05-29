@@ -1,4 +1,5 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { AnswerCheckResult } from "#shared/models/questions-answers/checking/AnswerCheckResult";
 import { QuestionID, QuestionVO } from "#shared/models/questions/Question";
 
 type QuestionPartProps = {
@@ -12,10 +13,6 @@ export type AnswerCheckerProps<ANSWER> = QuestionPartProps & {
   questionAnswerId?: QuestionAnswerID;
 };
 
-export type AnswerCheckerReturn<_ANSWER> = Promise<{
-  isCorrect: boolean;
-}>;
-
 export type AnswerChecker<ANSWER> = (
   props: AnswerCheckerProps<ANSWER>
-)=> AnswerCheckerReturn<ANSWER>;
+)=> Promise<AnswerCheckResult>;

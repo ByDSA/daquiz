@@ -7,3 +7,9 @@ export class PatchEventDB<T extends {id: unknown}> extends EventDB<T> {
 
   updateResult: {matchedCount: number; modifiedCount: number};
 }
+
+export class CreateEventDB<T extends {id: unknown}> extends EventDB<T> {
+  id: T["id"];
+
+  valueObject: Partial<Omit<T, "id">>;
+}

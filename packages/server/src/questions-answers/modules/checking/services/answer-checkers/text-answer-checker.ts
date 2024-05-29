@@ -1,15 +1,14 @@
 import { TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
+import { AnswerCheckResult } from "#shared/models/questions-answers/checking/AnswerCheckResult";
 import { WithRequired } from "#shared/utils/typescript";
-import { AnswerChecker, AnswerCheckerProps, AnswerCheckerReturn } from "./answer-checker";
+import { AnswerChecker, AnswerCheckerProps } from "./answer-checker";
 import { extractRegexParts } from "#/utils/regexp";
 
 type TextAnswerCheckerProps = WithRequired<AnswerCheckerProps<TextAnswerVO>, "correctAnswer">;
 
-type TextAnswerCheckerReturn = AnswerCheckerReturn<TextAnswerVO>;
-
 export const textAnswerChecker: AnswerChecker<TextAnswerVO> = (
   { correctAnswer, requestAnswer }: TextAnswerCheckerProps,
-): TextAnswerCheckerReturn => {
+): Promise<AnswerCheckResult> => {
   const parts = extractRegexParts(correctAnswer.text);
   let isCorrect: boolean;
 

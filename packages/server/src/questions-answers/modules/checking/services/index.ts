@@ -6,6 +6,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { AnswerCheckerProps } from "./answer-checkers/answer-checker";
 import { getAnswerCheckerByType } from "./answer-checkers/get-checker";
 import { QuestionsAnswersService } from "#/questions-answers/services";
+import { HistoryEntriesService } from "#/historyEntries/services";
 
 type CheckAnswerProps = WithRequired<AnswerCheckerProps<UnknownAnswerVO>, "questionAnswerId"> & {
   includeQuestion?: boolean;
@@ -15,6 +16,7 @@ type CheckAnswerProps = WithRequired<AnswerCheckerProps<UnknownAnswerVO>, "quest
 export class QuestionAnswerCheckingService {
   constructor(
     private readonly questionsAnswersService: QuestionsAnswersService,
+    private readonly historyEntriesService: HistoryEntriesService,
   ) {}
 
   async checkAnswer( { requestAnswer, questionAnswerId, includeQuestion }: CheckAnswerProps) {
@@ -44,8 +46,17 @@ export class QuestionAnswerCheckingService {
         .question = questionAnswer.question;
     }
 
-    const checked = await answerChecker(answerCheckerProps);
+    const checkResult = await answerChecker(answerCheckerProps);
 
-    return checked;
+    this.historyEntriesService.createOne( {
+      enteredAnswer: {
+        answer: requestAnswer,
+        answerType,
+      },
+      checkResult,
+      questionAnswerId,
+    } );
+
+    return checkResult;
   }
 }

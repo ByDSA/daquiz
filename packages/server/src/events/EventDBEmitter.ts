@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import { Injectable } from "@nestjs/common";
-import { EventDB, PatchEventDB } from "./EventDB";
+import { CreateEventDB, EventDB, PatchEventDB } from "./EventDB";
 import { EventDBType } from "./EventDBType";
 
 type Listener<T extends {id: unknown}> = (event: EventDB<T>)=> void;
@@ -50,5 +50,12 @@ export class EventDBEmitter {
     event: PatchEventDB<T>,
   ): this {
     return this.#emit(entityClass, EventDBType.PATCH, event);
+  }
+
+  emitCreate<T extends {id: unknown}>(
+    entityClass: new ()=> T,
+    event: CreateEventDB<T>,
+  ): this {
+    return this.#emit(entityClass, EventDBType.CREATE, event);
   }
 }
