@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
 import { IsArray, IsOptional, IsString } from "class-validator";
-import { QuestionAnswerEntity, QuestionAnswerID } from "../questions-answers/QuestionAnswer";
+import { QuestionAnswerID } from "../questions-answers/QuestionAnswer";
+import { QuestionAnswerInQuizEntity } from "./QuestionAnswerInQuiz";
 
 export class QuizVO {
   @IsString()
@@ -11,8 +12,8 @@ export class QuizVO {
 
   @IsArray()
   @IsOptional()
-  @Type(() => QuestionAnswerEntity)
-  questionAnswers?: QuestionAnswerEntity[];
+  @Type(() => QuestionAnswerInQuizEntity)
+  questionAnswers?: QuestionAnswerInQuizEntity[];
 };
 
 export type QuizID = string;

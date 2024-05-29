@@ -3,7 +3,7 @@ import { CreateQuestionAnswerDto } from "#shared/models/questions-answers/dtos";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { QuestionAnswer, questionAnswerDocumentToEntity } from "./db/schemas";
+import { QuestionAnswer, QuestionAnswerDocument, questionAnswerDocumentToEntity } from "./db";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 import { QuestionsService } from "#/questions/services";
 import { TextAnswersService } from "#/answers/text-answer/services";
@@ -75,7 +75,7 @@ FindAllService<QuestionAnswerEntity> {
   }
 
   async findAll(_options?: FindOneOptions): Promise<QuestionAnswerEntity[]> {
-    const docs = await this.QuestionAnswerModel.find().exec();
+    const docs: QuestionAnswerDocument[] = await this.QuestionAnswerModel.find().exec();
 
     return docs.map(questionAnswerDocumentToEntity);
   }

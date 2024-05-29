@@ -1,7 +1,7 @@
 import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
-import { QuestionAnswerDocument, QuestionAnswerSchema, questionAnswerDocumentToEntity } from "#/questions-answers/db/schemas";
+import { QuestionAnswerInQuizDocument, QuestionAnswerInQuizSchema, docToEntity as questionAnswerInQuizDocToEntity } from "./QuestionAnswerInQuiz";
 
 @Schema( {
   collection: "quizzes",
@@ -14,23 +14,23 @@ export class Quiz {
   name: string;
 
   @Prop( {
-    type: [QuestionAnswerSchema],
+    type: [QuestionAnswerInQuizSchema],
     required: true,
   } )
-  questionsAnswers: QuestionAnswerDocument[];
+  questionsAnswers: QuestionAnswerInQuizDocument[];
 }
 
 export type QuizDocument = HydratedDocument<Quiz>;
 
 export const QuizSchema = SchemaFactory.createForClass(Quiz);
 
-export const quizDocumentToEntity = (doc: QuizDocument): QuizEntity => {
+export const docToEntity = (doc: QuizDocument): QuizEntity => {
   return {
     // eslint-disable-next-line no-underscore-dangle
     id: doc._id.toString(),
     name: doc.name,
     // eslint-disable-next-line no-underscore-dangle
     questionAnswersIds: doc.questionsAnswers.map((qa) => qa._id.toString()),
-    questionAnswers: doc.questionsAnswers.map(questionAnswerDocumentToEntity),
+    questionAnswers: doc.questionsAnswers.map(questionAnswerInQuizDocToEntity),
   };
 };

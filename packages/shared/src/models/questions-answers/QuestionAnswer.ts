@@ -8,16 +8,16 @@ export class QuestionAnswerVO {
   @IsString()
   questionId!: QuestionID;
 
-  @IsObject()
-  @IsOptional()
-  @Type(() => QuestionVO)
-  question?: QuestionVO;
-
   @IsString()
   answerType!: AnswerType;
 
   @IsString()
   answerId!: AnswerID;
+
+  @IsObject()
+  @IsOptional()
+  @Type(() => QuestionVO)
+  question?: QuestionVO;
 
   @IsObject()
   @IsOptional()

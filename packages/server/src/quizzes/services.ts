@@ -1,17 +1,17 @@
 import { AnswerType } from "#shared/models/answers/Answer";
 import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
-import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
+import { QuestionAnswerInQuizEntity, questionAnswerEntityToQuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
 import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
 import { AddQuestionsAnswersDto, CreateQuizDto } from "#shared/models/quizzes/dtos";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import extend from "just-extend";
 import { Model } from "mongoose";
-import { Quiz, quizDocumentToEntity } from "./db";
+import { QuestionAnswerInQuizDocument, Quiz, questionAnswerInQuizEntityToDocument, quizDocumentToEntity } from "./db";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 import { QuestionsAnswersService } from "#/questions-answers/services";
-import { QuestionAnswerDocument, questionAnswerEntityToDocument } from "#/questions-answers/db/schemas";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
 @Injectable()
@@ -21,7 +21,7 @@ FindOneService<QuizEntity>,
 FindAllService<QuizEntity> {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    private readonly questionsAnsersService: QuestionsAnswersService,
+    private readonly questionsAnswersService: QuestionsAnswersService,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
     this.dbEventEmitter.onPatch(
@@ -102,16 +102,11 @@ FindAllService<QuizEntity> {
     }
   }
 
-  async #updateOneQuestionsAnswers(id: QuizID, questionsAnswers: QuestionAnswerEntity[]) {
+  async #updateOneQuestionsAnswers(id: QuizID, questionsAnswers: QuestionAnswerInQuizEntity[]) {
     const result = await this.QuizModel.updateOne( {
       _id: id,
     }, {
-      questionsAnswers: questionsAnswers.map(qa=> questionAnswerEntityToDocument(qa, {
-        includeRelations: {
-          question: true,
-          answer: true,
-        },
-      } )),
+      questionsAnswers: questionsAnswers.map(qa=> questionAnswerInQuizEntityToDocument(qa)),
     } ).exec();
 
     return result;
@@ -136,10 +131,10 @@ FindAllService<QuizEntity> {
   }
 
   async addQuestionsAnswers(id: QuizID, dto: AddQuestionsAnswersDto): Promise<QuizEntity> {
-    const questionsAnswersDocs: QuestionAnswerDocument[] = [];
+    const questionsAnswersDocs: QuestionAnswerInQuizDocument[] = [];
 
     for (const questionAnswerId of dto.questionsAnswersIds) {
-      const questionAnswerEntity = await this.questionsAnsersService.findOne(questionAnswerId, {
+      const questionAnswerEntity = await this.questionsAnswersService.findOne(questionAnswerId, {
         includeRelations: {
           question: true,
           answer: true,
@@ -149,12 +144,10 @@ FindAllService<QuizEntity> {
       if (!questionAnswerEntity)
         throw new BadRequestException("Failed to find question answer");
 
-      const doc = questionAnswerEntityToDocument(questionAnswerEntity, {
-        includeRelations: {
-          question: true,
-          answer: true,
-        },
-      } );
+      const questionAnswerInQuizEntity = questionAnswerEntityToQuestionAnswerInQuizEntity(
+        questionAnswerEntity,
+      );
+      const doc = questionAnswerInQuizEntityToDocument(questionAnswerInQuizEntity);
 
       questionsAnswersDocs.push(doc);
     }
