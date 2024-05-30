@@ -1,5 +1,6 @@
-import { ResultManyQuizDto, ResultOneQuizDto } from "#shared/models/quizzes/dtos";
-import { checkForErrors, fetchDeleteOneAndGet, generateFetcher, generateUseData, generateUseDataWithId } from "#modules/utils/fetching";
+import { QuizEntity } from "#shared/models/quizzes/Quiz";
+import { CreateQuizDto, ResultManyQuizDto, ResultOneQuizDto } from "#shared/models/quizzes/dtos";
+import { checkForErrors, fetchCreateOneAndGet, fetchDeleteOneAndGet, generateFetcher, generateUseData, generateUseDataWithId } from "#modules/utils/fetching";
 
 const URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/quizzes";
 const fetcherQuizzes = generateFetcher<ResultManyQuizDto>();
@@ -10,6 +11,10 @@ const fetcherQuiz = generateFetcher<ResultOneQuizDto>();
 export const useQuiz = generateUseDataWithId(URL, fetcherQuiz);
 
 const genUrlAdd = (quizId: string) => `${URL}/${quizId}/add`;
+
+export const fetchCreateQuizAndGet = async (dto: CreateQuizDto) => {
+  return await fetchCreateOneAndGet<QuizEntity, CreateQuizDto>(URL, dto);
+};
 
 export async function addQuestionAnswer(id: string, questionsAnswersIds: string[]) {
   const url = genUrlAdd(id);

@@ -7,6 +7,6 @@ export {
 } from "./QuizList/QuizList";
 
 export {
-  useQuiz,
+  fetchCreateQuizAndGet, useQuiz,
   useQuizzes,
 } from "./fetching";
