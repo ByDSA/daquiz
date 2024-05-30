@@ -1,8 +1,11 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity } from "#shared/models/questions/Question";
 import { QuizID } from "#shared/models/quizzes/Quiz";
+import { ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
 import { useEffect, useState } from "react";
+import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 import { useQuiz } from "../fetching";
+import { checkForErrors } from "#modules/utils/fetching";
 
 // eslint-disable-next-line no-empty-function
 const pointlessNext = async () => {};
@@ -34,18 +37,18 @@ export function usePickQuestion( { quizId }: Props): Ret {
     };
   }
 
-  // eslint-disable-next-line require-await
   const next = async () => {
-    const index = Math.floor(Math.random() * questionAnswers.length);
-    const questionAnswer = questionAnswers[index];
-    const { question, questionId } = questionAnswer;
+    const responseJson = await fetchPickQuestion(quizId);
+    const partialQuestionAnswer = responseJson.data?.pickedQuestions[0];
 
-    setQuestionEntity( {
-      id: questionId,
-      ...question,
-    } );
+    assertDefined(partialQuestionAnswer);
+    assertDefined(partialQuestionAnswer.question);
 
-    setQuestionAnswerId(questionAnswer.id);
+    const { question } = partialQuestionAnswer;
+
+    setQuestionEntity(question);
+
+    setQuestionAnswerId(partialQuestionAnswer.id);
   };
 
   useEffect(() => {
@@ -58,3 +61,14 @@ export function usePickQuestion( { quizId }: Props): Ret {
     next,
   };
 }
+
+const genPickQuestionUrl = (quizId: QuizID) => `${process.env.NEXT_PUBLIC_BACKEND_URL}/quizzes/${quizId}/pickQuestion`;
+const fetchPickQuestion = async (quizId: QuizID): Promise<ResultQuizPickQuestionsAnswersDto> => {
+  const url = genPickQuestionUrl(quizId);
+  const response = await fetch(url);
+  const responseJson: ResultQuizPickQuestionsAnswersDto = await response.json();
+
+  checkForErrors(response, responseJson);
+
+  return responseJson;
+};

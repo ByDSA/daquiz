@@ -4,6 +4,7 @@ import { QuizzesController } from "./controllers";
 import { Quiz, QuizSchema } from "./db";
 import { QuizzesService } from "./services";
 import { QuestionsAnswersModule } from "#/questions-answers/modules";
+import { HistoryEntriesModule } from "#/historyEntries/modules";
 import { EventsModule } from "#/events/module";
 
 export const QuizzesDBModule = MongooseModule.forFeature([{
@@ -14,6 +15,7 @@ export const QuizzesDBModule = MongooseModule.forFeature([{
 @Module( {
   imports: [
     QuestionsAnswersModule,
+    HistoryEntriesModule,
     QuizzesDBModule,
     EventsModule,
   ],

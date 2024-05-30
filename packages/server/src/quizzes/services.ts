@@ -1,10 +1,11 @@
 import { AnswerType } from "#shared/models/answers/Answer";
 import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
-import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
 import { QuestionAnswerInQuizEntity, questionAnswerEntityToQuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
 import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
-import { AddQuestionsAnswersDto, CreateQuizDto } from "#shared/models/quizzes/dtos";
+import { AddQuestionsAnswersDto, CreateQuizDto, ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
+import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import extend from "just-extend";
@@ -12,6 +13,7 @@ import { Model } from "mongoose";
 import { QuestionAnswerInQuizDocument, Quiz, questionAnswerInQuizEntityToDocument, quizDocumentToEntity } from "./db";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 import { QuestionsAnswersService } from "#/questions-answers/services";
+import { HistoryEntriesService } from "#/historyEntries/services";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
 @Injectable()
@@ -23,6 +25,7 @@ FindAllService<QuizEntity> {
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
     private readonly questionsAnswersService: QuestionsAnswersService,
     private readonly dbEventEmitter: EventDBEmitter,
+    private readonly historyEntriesService: HistoryEntriesService,
   ) {
     this.dbEventEmitter.onPatch(
       QuestionEntity,
@@ -180,5 +183,55 @@ FindAllService<QuizEntity> {
       throw new BadRequestException("Failed to remove question answer");
 
     return quizDocumentToEntity(doc);
+  }
+
+  async pickQuestionsAnswers(id: QuizID): Promise<ResultQuizPickQuestionsAnswersDto> {
+    const gotQuiz = await this.findOne(id);
+    const gotQuestionsAnswers = gotQuiz?.questionAnswers;
+
+    assertDefined(gotQuestionsAnswers);
+
+    if (gotQuestionsAnswers.length === 0)
+      throw new BadRequestException("No questions answers");
+
+    if (gotQuestionsAnswers.length > 1)
+      this.#removeLastQuestionAnswerTried(gotQuestionsAnswers);
+
+    const randomIndex = Math.floor(Math.random() * gotQuestionsAnswers.length);
+    const retQuestionsAnswers: QuestionAnswerEntity[] = [];
+
+    retQuestionsAnswers.push(gotQuestionsAnswers[randomIndex]);
+
+    const pickedPartialQuestionAnswer = retQuestionsAnswers.map((qa) => {
+      assertDefined(qa.question);
+
+      const questionEntity: QuestionEntity = {
+        id: qa.questionId,
+        ...qa.question,
+      };
+
+      return {
+        id: qa.id,
+        question: questionEntity,
+      };
+    } );
+
+    return {
+      data: {
+        pickedQuestions: pickedPartialQuestionAnswer,
+      },
+    };
+  }
+
+  async #removeLastQuestionAnswerTried(questionsAnswers: QuestionAnswerEntity[]) {
+    const lastHistoryEntry = await this.historyEntriesService.findAll().then((historyEntries) => {
+      return historyEntries.at(-1);
+    } );
+    const index = questionsAnswers.findIndex((qa) => {
+      return qa.id === lastHistoryEntry?.questionAnswerId;
+    } );
+
+    if (index !== -1)
+      questionsAnswers.splice(index, 1);
   }
 }
