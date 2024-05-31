@@ -1,5 +1,6 @@
 import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import Item from "./Item";
+import styles from "./styles.module.css";
 
 type Props = {
   items: QuizEntity[];
@@ -8,14 +9,16 @@ type Props = {
 const QuizList = ( { items, onItemClick }: Props) => {
   return (
     <>
-      {
-        items.map((item, i, array) => (
-          <Item key={item.id}
-            data={item}
-            onClick={onItemClick && (()=>onItemClick(item, i, array))}
-          />
-        ))
-      }
+      <section className={styles.main}>
+        {
+          items.map((item, i, array) => (
+            <Item key={item.id}
+              data={item}
+              onClick={onItemClick && (()=>onItemClick(item, i, array))}
+            />
+          ))
+        }
+      </section>
     </>
   );
 };
