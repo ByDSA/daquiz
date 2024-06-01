@@ -28,8 +28,9 @@ export async function fetchAddQuestionAnswer(id: string, questionsAnswersIds: st
       "Content-Type": "application/json; charset=UTF-8",
     },
   } );
+  const responseJson = await response.json();
 
-  checkForErrors(response);
+  checkForErrors(response, responseJson);
 }
 
 type RemoveOneQuestionTextAnswerAndGetProps = {
