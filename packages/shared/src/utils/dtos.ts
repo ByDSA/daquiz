@@ -22,3 +22,8 @@ export class ResultManyDto<T> extends ResultCommon {
   @ValidateNested()
   data?: T[];
 };
+
+export class RemoveManyDto<T> {
+  @IsArray()
+  ids!: T[];
+};

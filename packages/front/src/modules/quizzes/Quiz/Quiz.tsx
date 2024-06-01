@@ -1,16 +1,15 @@
+import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
 import { QuizEntity } from "#shared/models/quizzes/Quiz";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { AnswerType } from "../../../../../shared/build/models/answers/Answer";
-import { neverCase } from "../../../../../shared/build/utils/typescript";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { createOneQuestionTextAnswerAndGet } from "../QuestionAnswer/fetching";
-import { addQuestionAnswer, removeOneQuestionAnswer } from "../fetching";
+import { fetchAddQuestionAnswer, fetchRemoveManyQuestionsAnswers, fetchRemoveOneQuestionAnswer } from "../fetching";
+import AddNewQuestionAnswer from "./AddNewQuestionAnswer";
 import styles from "./styles.module.css";
 import { TextEditableSaveable } from "#modules/utils/components/table/TextEditable";
-import { patchOneQuestionAndGet } from "#/modules/questions";
-import { patchOneTextAnswerAndGet } from "#/modules/answers";
+import { patchOneQuestionAndGet } from "#modules/questions";
+import { patchOneTextAnswerAndGet } from "#modules/answers";
 
 type GenColumnsProps = {
   data: QuizEntity;
@@ -76,8 +75,8 @@ const genColumns: GenColumnsFn = (
     name: "Acciones",
     cell: (row: QuestionAnswerInQuizEntity) => {
       return <><button onClick={async ()=>{
-        await removeOneQuestionAnswer( {
-          id: data.id,
+        await fetchRemoveOneQuestionAnswer( {
+          quizId: data.id,
           questionAnswerId: row.id,
         } );
 
@@ -93,12 +92,30 @@ type Props = {
   revalidateData: ()=> Promise<any>;
 };
 const Quiz = ( { data, revalidateData }: Props) => {
+  const [selectedRows, setSelectedRows] = useState<QuestionAnswerInQuizEntity[]>([]);
+
   if (!data)
     return null;
 
   const { questionAnswers } = data;
   const questionsAnswersLength = questionAnswers?.length ?? 0;
   const questionsAnswersInfo = <section className={styles.resultInfo}>{questionsAnswersLength + " " + questionsLocale(questionsAnswersLength)}</section>;
+  const moveTo = () => async () => {
+    const questionsAnswersIds: QuestionAnswerID[] = selectedRows.map((row) => row.id);
+    const targetQuizId = prompt("Introduce el id del quiz al que quieres mover las preguntas");
+
+    if (!targetQuizId)
+      return;
+
+    await fetchAddQuestionAnswer(targetQuizId, questionsAnswersIds);
+
+    await fetchRemoveManyQuestionsAnswers( {
+      quizId: data.id,
+      ids: questionsAnswersIds,
+    } );
+
+    await revalidateData();
+  };
 
   return (
     <>
@@ -113,8 +130,9 @@ const Quiz = ( { data, revalidateData }: Props) => {
         highlightOnHover
         progressPending={!questionAnswers}
         subHeader={true}
-        subHeaderComponent={<p>dsdasds</p>}
+        subHeaderComponent={<button onClick={moveTo()}>Mover a</button>}
         selectableRows={true}
+        onSelectedRowsChange={( { selectedRows: rows } ) => setSelectedRows(rows)}
         selectableRowsHighlight={true}
       />
       <AddNewQuestionAnswer quizId={data.id} revalidateData={revalidateData}/>
@@ -127,100 +145,3 @@ export default Quiz;
 function questionsLocale(questionsLength: number) {
   return questionsLength === 1 ? "pregunta" : "preguntas";
 }
-
-type AddNewQuestionAnswerProps = {
-  quizId: string;
-  revalidateData: ()=> Promise<any>;
-};
-const AddNewQuestionAnswer = ( { quizId, revalidateData }: AddNewQuestionAnswerProps) => {
-  const [answerType, setAnswerType] = useState(AnswerType.TEXT);
-  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setAnswerType(event.target.value as AnswerType);
-  };
-
-  return (<section className={styles.addNewSection}>
-    <h2>Añadir nueva pregunta:</h2>
-    <form onSubmit={genOnSubmitHandler( {
-      quizId,
-      revalidateData,
-    } )}>
-      <input type="text" placeholder="Pregunta" name="question-text"/>
-      <fieldset>
-        <legend>Tipo de respuesta:</legend>
-        {
-          Object.values(AnswerType).map((type) => (
-            <article key={type.toString()}>
-              <input type="radio" name="answer-type" id={"answerType-input-" + type} value={type} checked={answerType === type} onChange={onChangeHandler}/>
-              <label htmlFor="text">{answerTypeLocale(type)}</label>
-            </article>
-          ))
-        }
-      </fieldset>
-      {inputsByAnswerType(answerType)}
-      <button type="submit" className={styles.button}>Añadir</button>
-    </form>
-  </section>);
-};
-const answerTypeLocale = (answerType: AnswerType) => {
-  switch (answerType) {
-    case AnswerType.TEXT:
-      return "Texto";
-    default:
-      return neverCase(answerType);
-  }
-};
-const inputsByAnswerType = (answerType: AnswerType) => {
-  switch (answerType) {
-    case AnswerType.TEXT:
-      return <input type="text" placeholder="Respuesta" name="answer-text"/>;
-    default:
-      return neverCase(answerType);
-  }
-};
-
-type GenOnSubmitHandlerProps = {
-  quizId: string;
-  revalidateData: ()=> Promise<any>;
-};
-const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps) => {
-  return async (event: ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const { currentTarget } = event;
-    const formData = new FormData(currentTarget);
-    const answerType = formData.get("answer-type") as AnswerType;
-
-    assertDefined(answerType);
-    const questionText = formData.get("question-text") as string;
-
-    if (!questionText) {
-      alert("La pregunta no puede estar vacía");
-
-      return;
-    }
-
-    const answerText = formData.get("answer-text") as string;
-
-    if (!answerText) {
-      alert("La respuesta no puede estar vacía");
-
-      return;
-    }
-
-    const createdQuestionAnswer = await createOneQuestionTextAnswerAndGet( {
-      question: questionText,
-      answer: answerText,
-    } );
-    const createdQuestionAnswerId = createdQuestionAnswer?.data?.id;
-
-    assertDefined(createdQuestionAnswerId);
-
-    await addQuestionAnswer(quizId, [createdQuestionAnswerId])
-      .catch((error) => {
-        throw error;
-      } );
-
-    await revalidateData();
-
-    currentTarget.reset();
-  };
-};

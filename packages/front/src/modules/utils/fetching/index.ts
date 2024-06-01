@@ -1,4 +1,4 @@
-import { ResultCommon, ResultOneDto } from "#shared/utils/dtos";
+import { RemoveManyDto, ResultCommon, ResultManyDto, ResultOneDto } from "#shared/utils/dtos";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 
 export * from "./swr";
@@ -51,6 +51,24 @@ export async function fetchDeleteOneAndGet<ENTITY extends UnknownEntity>(
     method: "DELETE",
   } );
   const responseJson: ResultOneDto<ENTITY> = await response.json();
+
+  checkForErrors(response, responseJson);
+
+  return responseJson;
+}
+
+export async function fetchDeleteManyAndGet<ENTITY extends UnknownEntity>(
+  entityUrl: string,
+  dto: RemoveManyDto<ENTITY["id"]>,
+): Promise<ResultManyDto<ENTITY>> {
+  const response = await fetch(entityUrl, {
+    method: "DELETE",
+    body: JSON.stringify(dto),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+  } );
+  const responseJson: ResultManyDto<ENTITY> = await response.json();
 
   checkForErrors(response, responseJson);
 

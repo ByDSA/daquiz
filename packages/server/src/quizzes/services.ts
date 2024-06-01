@@ -167,7 +167,7 @@ FindAllService<QuizEntity> {
     return quizDocumentToEntity(doc);
   }
 
-  async removeOneQuestionAnswer(
+  async removeOneQuestionAnswerAndGetOld(
     id: QuizID,
     questionAnswerId: QuestionAnswerID,
   ): Promise<QuizEntity> {
@@ -175,6 +175,26 @@ FindAllService<QuizEntity> {
       $pull: {
         questionsAnswers: {
           _id: questionAnswerId,
+        },
+      },
+    } ).exec();
+
+    if (!doc)
+      throw new BadRequestException("Failed to remove question answer");
+
+    return quizDocumentToEntity(doc);
+  }
+
+  async removeManyQuestionsAnswersAndGetOld(
+    id: QuizID,
+    questionAnswerId: QuestionAnswerID[],
+  ): Promise<QuizEntity> {
+    const doc = await this.QuizModel.findByIdAndUpdate(id, {
+      $pull: {
+        questionsAnswers: {
+          _id: {
+            $in: questionAnswerId,
+          },
         },
       },
     } ).exec();

@@ -2,7 +2,7 @@ import { IsArray, IsObject, IsString } from "class-validator";
 import { QuestionAnswerID } from "../questions-answers/QuestionAnswer";
 import { QuestionEntity } from "../questions/Question";
 import { QuizEntity, QuizID } from "./Quiz";
-import { ResultManyDto, ResultOneDto } from "#/utils/dtos";
+import { RemoveManyDto, ResultManyDto, ResultOneDto } from "#/utils/dtos";
 
 export class CreateQuizDto {
   @IsString()
@@ -33,3 +33,5 @@ class ResultQuizPickQuestionsAnswers {
 }
 export class ResultQuizPickQuestionsAnswersDto
   extends ResultOneDto<ResultQuizPickQuestionsAnswers> { }
+
+export class RemoveManyQuestionsAnswersDto extends RemoveManyDto<QuestionAnswerID> { }

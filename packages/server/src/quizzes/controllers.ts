@@ -1,7 +1,7 @@
 import { TextAnswerID } from "#shared/models/answers/text-answers/TextAnswer";
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuizID } from "#shared/models/quizzes/Quiz";
-import { AddQuestionsAnswersDto, CreateQuizDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
+import { AddQuestionsAnswersDto, CreateQuizDto, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
 import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from "@nestjs/common";
 import { QuizzesService } from "./services";
 import { ObjectIdPipe } from "#/utils/validation";
@@ -56,11 +56,19 @@ FindAllController<ResultManyQuizDto> {
   }
 
   @Delete(":id/remove/:questionAnswerId")
-  async removeQuestionsAnswers(
+  async removeOneQuestionAnswer(
     @Param("id", ObjectIdPipe) id: QuizID,
     @Param("questionAnswerId", ObjectIdPipe) questionAnswerId: QuestionAnswerID,
   ): Promise<void> {
-    await this.quizzesService.removeOneQuestionAnswer(id, questionAnswerId);
+    await this.quizzesService.removeOneQuestionAnswerAndGetOld(id, questionAnswerId);
+  }
+
+  @Delete(":id/remove")
+  async removeManyQuestionsAnswers(
+    @Param("id", ObjectIdPipe) id: QuizID,
+    @Body() dto: RemoveManyQuestionsAnswersDto,
+  ): Promise<void> {
+    await this.quizzesService.removeManyQuestionsAnswersAndGetOld(id, dto.ids);
   }
 
   @Get(":id/pickQuestion")
