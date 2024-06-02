@@ -1,7 +1,7 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
 import { QuizEntity } from "#shared/models/quizzes/Quiz";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 import { fetchAddQuestionAnswer, fetchRemoveManyQuestionsAnswers, fetchRemoveOneQuestionAnswer } from "../fetching";
@@ -93,11 +93,23 @@ type Props = {
 };
 const Quiz = ( { data, revalidateData }: Props) => {
   const [selectedRows, setSelectedRows] = useState<QuestionAnswerInQuizEntity[]>([]);
+  const questionAnswers = data?.questionAnswers;
+  const filterExistingRows = (rows: QuestionAnswerInQuizEntity[]) => {
+    return rows
+      .filter((selectedRow) => questionAnswers?.some((dataRow) => dataRow.id === selectedRow.id));
+  };
+  const fixSelectedRows = () => {
+    const filteredSelectedRows = filterExistingRows(selectedRows);
+
+    if (selectedRows.length !== filteredSelectedRows.length)
+      setSelectedRows(filteredSelectedRows);
+  };
+
+  useEffect(fixSelectedRows, [data]);
 
   if (!data)
     return null;
 
-  const { questionAnswers } = data;
   const questionsAnswersLength = questionAnswers?.length ?? 0;
   const questionsAnswersInfo = <section className={styles.resultInfo}>{questionsAnswersLength + " " + questionsLocale(questionsAnswersLength)}</section>;
   const moveTo = () => async () => {
@@ -132,8 +144,17 @@ const Quiz = ( { data, revalidateData }: Props) => {
         subHeader={true}
         subHeaderComponent={<button onClick={moveTo()}>Mover a</button>}
         selectableRows={true}
-        onSelectedRowsChange={( { selectedRows: rows } ) => setSelectedRows(rows)}
-        selectableRowsHighlight={true}
+        onSelectedRowsChange={( { selectedRows: rows } ) => {
+          const filteredRows = filterExistingRows(rows);
+
+          if (filteredRows.length !== selectedRows.length)
+            setSelectedRows(filteredRows);
+        }}
+        selectableRowSelected={(row: QuestionAnswerInQuizEntity) => {
+          return selectedRows.includes(row);
+        }}
+        selectableRowsHighlight
+        selectableRowsVisibleOnly
       />
       <AddNewQuestionAnswer quizId={data.id} revalidateData={revalidateData}/>
     </>
