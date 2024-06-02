@@ -156,8 +156,10 @@ FindAllService<QuizEntity> {
     }
 
     const doc = await this.QuizModel.findByIdAndUpdate(id, {
-      $push: {
-        questionsAnswers: questionsAnswersDocs,
+      $addToSet: {
+        questionsAnswers: {
+          $each: questionsAnswersDocs,
+        },
       },
     } ).exec();
 
