@@ -27,7 +27,7 @@ export class Service {
         assertDefined(id);
         const event: PatchEventDB<Entity> = {
           id,
-          partialValueObject: $set && partialDocumentToPartialEntity($set),
+          updateEntity: $set && partialDocumentToPartialEntity($set),
           updateResult,
         };
 

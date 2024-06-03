@@ -1,12 +1,17 @@
 export {
+  QuestionAnswerCache,
+  QuestionAnswerCacheDocument,
+  QuizCache,
+  QuizCacheDocument,
+  QuizzesCacheDBModule,
+  questionAnswerCacheEntityToDocument,
+  quizCacheDocToEntity,
+} from "./QuizCache";
+
+export {
   Quiz,
   QuizDocument,
   QuizSchema,
-  docToEntity as quizDocumentToEntity,
+  QuizzesDBModule,
+  quizDocToEntity,
 } from "./Quiz";
-
-export {
-  QuestionAnswerInQuizDocument,
-  QuestionAnswerInQuizSchema,
-  docToEntity as questionAnswerInQuizDocumentToEntity, entityToDoc as questionAnswerInQuizEntityToDocument,
-} from "./QuestionAnswerInQuiz";

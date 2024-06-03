@@ -44,9 +44,7 @@ FindAllService<QuestionAnswerEntity> {
       return null;
 
     const entity = questionAnswerDocumentToEntity(doc);
-
     // Population
-
     const populatePromises: Promise<any>[] = [];
 
     if (options?.includeRelations?.question) {

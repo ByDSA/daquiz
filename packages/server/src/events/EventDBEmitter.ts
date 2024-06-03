@@ -1,10 +1,11 @@
 import { EventEmitter } from "node:events";
 import { Injectable } from "@nestjs/common";
-import { CreateEventDB, EventDB, PatchEventDB } from "./EventDB";
+import { CreateEventDB, DeleteEventDB, EventDB, PatchEventDB } from "./EventDB";
 import { EventDBType } from "./EventDBType";
 
 type Listener<T extends {id: unknown}> = (event: EventDB<T>)=> void;
-type PatchListener<T extends {id: unknown}> = (event: PatchEventDB<T>)=> void;
+type PatchListener<T extends {id: unknown}, UE> = (event: PatchEventDB<T, UE>)=> void;
+type DeleteListener<T extends {id: unknown}> = (event: DeleteEventDB<T>)=> void;
 
 @Injectable()
 export class EventDBEmitter {
@@ -38,18 +39,32 @@ export class EventDBEmitter {
     return this;
   }
 
-  onPatch<T extends {id: unknown}>(
+  onPatch<T extends {id: unknown}, UE = Partial<Omit<T, "id">>>(
     entityClass: new ()=> T,
-    listener: PatchListener<T>,
+    listener: PatchListener<T, UE>,
   ): this {
     return this.#on(entityClass, EventDBType.PATCH, listener);
   }
 
-  emitPatch<T extends {id: unknown}>(
+  onDelete<T extends {id: unknown}>(
     entityClass: new ()=> T,
-    event: PatchEventDB<T>,
+    listener: DeleteListener<T>,
+  ): this {
+    return this.#on(entityClass, EventDBType.DELETE, listener);
+  }
+
+  emitPatch<T extends {id: unknown}, UE = Partial<Omit<T, "id">>>(
+    entityClass: new ()=> T,
+    event: PatchEventDB<T, UE>,
   ): this {
     return this.#emit(entityClass, EventDBType.PATCH, event);
+  }
+
+  emitDelete<T extends {id: unknown}>(
+    entityClass: new ()=> T,
+    event: DeleteEventDB<T>,
+  ): this {
+    return this.#emit(entityClass, EventDBType.DELETE, event);
   }
 
   emitCreate<T extends {id: unknown}>(

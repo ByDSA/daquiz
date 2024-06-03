@@ -22,3 +22,23 @@ export class QuizEntity extends QuizVO {
   @IsString()
   id!: QuizID;
 };
+
+class ArrayUpdate<T> {
+  @IsOptional()
+  @IsArray()
+  added?: T[];
+
+  @IsOptional()
+  @IsArray()
+  removed?: T[];
+};
+
+export class QuizUpdateEntity {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsArray()
+  @Type(() => ArrayUpdate<QuestionAnswerID>)
+  questionAnswersIds?: ArrayUpdate<QuestionAnswerID>;
+};

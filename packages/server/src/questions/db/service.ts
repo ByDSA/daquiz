@@ -1,5 +1,5 @@
 /* eslint-disable no-invalid-this */
-import { QuestionEntity } from "#shared/models/questions/Question";
+import { QuestionEntity, QuestionVO } from "#shared/models/questions/Question";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { Injectable } from "@nestjs/common";
 import { UpdateQuery } from "mongoose";
@@ -25,9 +25,9 @@ export class QuestionDBService {
         const id: string = filters?._id?.toString();
 
         assertDefined(id);
-        const event: PatchEventDB<QuestionEntity> = {
+        const event: PatchEventDB<QuestionEntity, Partial<QuestionVO>> = {
           id,
-          partialValueObject: $set && partialDocumentToPartialEntity($set),
+          updateEntity: $set && partialDocumentToPartialEntity($set),
           updateResult,
         };
 

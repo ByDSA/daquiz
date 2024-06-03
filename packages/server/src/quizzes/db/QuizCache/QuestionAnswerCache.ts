@@ -7,10 +7,10 @@ import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEnt
 import { TextAnswerDocument, textAnswerDocumentToEntity, textAnswerEntityToDocument } from "#/answers/text-answer/db";
 
 @Schema()
-export class QuestionAnswerInQuiz {
+export class QuestionAnswerCache {
   @Prop( {
     type: QuestionSchema,
-    required: false,
+    required: true,
   } )
   question: QuestionDocument;
 
@@ -28,17 +28,17 @@ export class QuestionAnswerInQuiz {
   answer: object;
 }
 
-export type QuestionAnswerInQuizDocument = HydratedDocument<QuestionAnswerInQuiz>;
+type Doc = HydratedDocument<QuestionAnswerCache>;
 
-export const QuestionAnswerInQuizSchema = SchemaFactory.createForClass(QuestionAnswerInQuiz);
-
-export const QuestionAnswerInQuizModel = model(QuestionAnswerInQuiz.name, QuestionAnswerInQuizSchema);
-
-export const docToEntity = (
-  doc: QuestionAnswerInQuizDocument,
+const SchemaOdm = SchemaFactory.createForClass(QuestionAnswerCache);
+const Model = model(
+  QuestionAnswerCache.name,
+  SchemaOdm,
+);
+const docToEntity = (
+  doc: Doc,
 ): QuestionAnswerInQuizEntity => {
   const entity: QuestionAnswerInQuizEntity = {
-    // eslint-disable-next-line no-underscore-dangle
     id: doc._id.toString(),
     answerType: doc.answerType,
     questionId: doc.question._id.toString(),
@@ -49,10 +49,9 @@ export const docToEntity = (
 
   return entity;
 };
-
-export const entityToDoc = (
+const entityToDoc = (
   entity: QuestionAnswerInQuizEntity,
-): QuestionAnswerInQuizDocument => {
+): Doc => {
   const questionEntity = {
     id: entity.questionId,
     ...entity.question,
@@ -61,13 +60,20 @@ export const entityToDoc = (
     id: entity.answerId,
     ...entity.answer,
   };
-  const docObj: QuestionAnswerInQuiz & {_id: Types.ObjectId} = {
+  const docObj: QuestionAnswerCache & {_id: Types.ObjectId} = {
     _id: new Types.ObjectId(entity.id),
     answerType: entity.answerType,
     question: questionEntityToDocument(questionEntity),
     answer: textAnswerEntityToDocument(answerEntity),
   };
-  const doc: QuestionAnswerInQuizDocument = new QuestionAnswerInQuizModel(docObj);
+  const doc: Doc = new Model(docObj);
 
   return doc;
+};
+
+export {
+  Doc as QuestionAnswerCacheDocument,
+  SchemaOdm as QuestionAnswerCacheSchema,
+  docToEntity as questionAnswerCacheDocToEntity,
+  entityToDoc as questionAnswerCacheEntityToDocument,
 };
