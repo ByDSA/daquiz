@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { QuestionEntity } from "#shared/models/questions/Question";
 import { model, Types } from "mongoose";
 import { QuestionDocument, QuestionSchema } from "./schema";

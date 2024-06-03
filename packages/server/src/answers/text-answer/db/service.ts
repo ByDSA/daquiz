@@ -22,7 +22,6 @@ export class Service {
 
         assertDefined($set);
 
-        // eslint-disable-next-line no-underscore-dangle
         const id: string = filters?._id?.toString();
 
         assertDefined(id);

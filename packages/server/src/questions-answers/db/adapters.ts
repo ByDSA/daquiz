@@ -6,7 +6,6 @@ export const docToEntity = (
   doc: QuestionAnswerDocument,
 ): QuestionAnswerEntity => {
   const entity: QuestionAnswerEntity = {
-    // eslint-disable-next-line no-underscore-dangle
     id: doc._id.toString(),
     questionId: doc.questionId.toString(),
     answerType: doc.answerType,

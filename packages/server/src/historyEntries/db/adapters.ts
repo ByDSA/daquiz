@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { HistoryEntryEntity as Entity } from "#shared/models/history-entries/HistoryEntry";
 import { model, Types } from "mongoose";
 import { Doc, SchemaDoc } from "./schema";

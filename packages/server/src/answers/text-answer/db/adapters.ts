@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { TextAnswerEntity as Entity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Types, model } from "mongoose";
 import { DocumentOdm, SchemaOdm } from "./schema";

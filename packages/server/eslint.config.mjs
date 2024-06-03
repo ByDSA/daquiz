@@ -10,6 +10,9 @@ const projectConfig = [
       "import/no-extraneous-dependencies": ["error", {
         packageDir,
       }],
+      "no-underscore-dangle": ["error", {
+        allow: ["_id"],
+      }],
     },
   },
 ];
