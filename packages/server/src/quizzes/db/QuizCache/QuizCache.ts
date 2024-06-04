@@ -1,7 +1,7 @@
 import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
-import { QuestionAnswerCacheDocument, QuestionAnswerCacheSchema, questionAnswerCacheDocToEntity } from "./QuestionAnswerCache";
+import { HydratedDocument, Types, model } from "mongoose";
+import { QuestionAnswerCacheDocument, QuestionAnswerCacheSchema, questionAnswerCacheDocToEntity, questionAnswerCacheEntityToDoc } from "./QuestionAnswerCache";
 
 @Schema( {
   collection: "quizzes-cache",
@@ -23,6 +23,7 @@ export class QuizCache {
 type Doc = HydratedDocument<QuizCache>;
 
 const SchemaOdm = SchemaFactory.createForClass(QuizCache);
+const ModelOdm = model(QuizCache.name, SchemaOdm);
 const docToEntity = (doc: Doc): QuizEntity => {
   return {
     id: doc._id.toString(),
@@ -31,7 +32,19 @@ const docToEntity = (doc: Doc): QuizEntity => {
     questionAnswers: doc.questionsAnswers.map(questionAnswerCacheDocToEntity),
   };
 };
+const entityToDoc = (entity: QuizEntity): Doc => {
+  const ret = new ModelOdm( {
+    _id: new Types.ObjectId(entity.id),
+    name: entity.name,
+    questionsAnswers: entity.questionAnswers?.map(questionAnswerCacheEntityToDoc),
+  } );
+
+  return ret;
+};
 
 export {
-  Doc, SchemaOdm, docToEntity,
+  Doc as QuizCacheDocument,
+  SchemaOdm as QuizCacheSchema,
+  docToEntity as quizCacheDocToEntity,
+  entityToDoc as quizCacheEntityToDoc,
 };

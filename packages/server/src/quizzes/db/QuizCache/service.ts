@@ -3,7 +3,9 @@ import { QuizEntity, QuizUpdateEntity } from "#shared/models/quizzes/Quiz";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { Injectable } from "@nestjs/common";
 import { UpdateQuery } from "mongoose";
-import { Doc, SchemaOdm as QuizSchema, docToEntity, updateQueryToUpdateEntity } from "./Quiz";
+import { QuizDocument } from "../Quiz";
+import { updateQueryToUpdateEntity } from "../Quiz/Quiz";
+import { QuizCache, QuizCacheSchema, quizCacheDocToEntity } from "./QuizCache";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
 
@@ -15,7 +17,7 @@ export class DBService {
     const thisService = this;
 
     // eslint-disable-next-line func-names
-    QuizSchema.post("findOneAndUpdate", function (_oldDoc, next) {
+    QuizCacheSchema.post("findOneAndUpdate", function (_oldDoc, next) {
       const filters = this.getFilter();
       const updateQuery = this.getUpdate();
 
@@ -26,16 +28,16 @@ export class DBService {
       assertDefined(id);
       const event: PatchEventDB<QuizEntity, QuizUpdateEntity> = {
         id,
-        updateEntity: updateQueryToUpdateEntity(updateQuery as UpdateQuery<Doc>),
+        updateEntity: updateQueryToUpdateEntity(updateQuery as UpdateQuery<QuizDocument>),
       };
 
-      thisService.dbEventEmitter.emitPatch(QuizEntity, event);
+      thisService.dbEventEmitter.emitPatch(QuizCache.name, event);
 
       next();
     } );
 
     // eslint-disable-next-line func-names
-    QuizSchema.post("deleteOne", function (obj, next) {
+    QuizCacheSchema.post("deleteOne", function (obj, next) {
       const filters = this.getFilter();
       const id = filters?._id?.toString();
 
@@ -46,20 +48,20 @@ export class DBService {
         id,
       };
 
-      thisService.dbEventEmitter.emitDelete(QuizEntity, event);
+      thisService.dbEventEmitter.emitDelete(QuizCache.name, event);
 
       next();
     } );
 
     // eslint-disable-next-line func-names
-    QuizSchema.post("save", function (newDoc, next) {
-      const { id, ...valueObject } = docToEntity(newDoc);
+    QuizCacheSchema.post("save", function (newDoc, next) {
+      const { id, ...valueObject } = quizCacheDocToEntity(newDoc);
       const event: CreateEventDB<QuizEntity> = {
         id,
         valueObject,
       };
 
-      thisService.dbEventEmitter.emitCreate(QuizEntity, event);
+      thisService.dbEventEmitter.emitCreate(QuizCache.name, event);
 
       next();
     } );

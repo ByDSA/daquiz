@@ -7,7 +7,6 @@ import { Model } from "mongoose";
 import { Quiz, quizDocToEntity } from "../db";
 import { CreateOneAndGetService } from "#/utils/services/crud";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { CreateEventDB } from "#/events/EventDB";
 
 @Injectable()
 export class QuizzesWriteService implements
@@ -16,6 +15,17 @@ CreateOneAndGetService<CreateQuizDto, QuizEntity> {
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
+    this.dbEventEmitter.onPatch(QuizEntity, (event) => {
+      console.log(QuizEntity.name, "PATCH", event);
+    } );
+
+    this.dbEventEmitter.onDelete(QuizEntity, (event) => {
+      console.log(QuizEntity.name, "DELETE", event);
+    } );
+
+    this.dbEventEmitter.onCreate(QuizEntity, (event) => {
+      console.log(QuizEntity.name, "CREATE", event);
+    } );
   }
 
   async createOneAndGet(dto: CreateQuizDto): Promise<QuizEntity> {
@@ -26,13 +36,6 @@ CreateOneAndGetService<CreateQuizDto, QuizEntity> {
       throw new Error("Failed to create quiz");
 
     const entity = quizDocToEntity(createdDoc);
-    const { id, ...valueObject } = entity;
-    const event: CreateEventDB<QuizEntity> = {
-      id: entity.id,
-      valueObject,
-    };
-
-    this.dbEventEmitter.emitCreate(QuizEntity, event);
 
     return entity;
   }

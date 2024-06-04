@@ -9,7 +9,7 @@ export class PatchEventDB<T extends {id: unknown}, UE = Partial<Omit<T, "id">>> 
 }
 
 export class CreateEventDB<T extends {id: unknown}> extends EventDB<T> {
-  valueObject: Partial<Omit<T, "id">>;
+  valueObject: Omit<T, "id">;
 }
 
 export class DeleteEventDB<T extends {id: unknown}> extends EventDB<T> {

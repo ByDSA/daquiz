@@ -3,7 +3,7 @@ import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#shared/models/ans
 import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
 import { QuestionAnswerInQuizEntity, questionAnswerEntityToQuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
-import { QuizEntity, QuizID, QuizUpdateEntity } from "#shared/models/quizzes/Quiz";
+import { QuizEntity, QuizID, QuizUpdateEntity, QuizVO } from "#shared/models/quizzes/Quiz";
 import { ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Injectable } from "@nestjs/common";
@@ -11,11 +11,12 @@ import { InjectModel } from "@nestjs/mongoose";
 import extend from "just-extend";
 import { Model } from "mongoose";
 import { QuestionAnswerCacheDocument, QuizCache, questionAnswerCacheEntityToDocument, quizCacheDocToEntity } from "../db";
+import { quizCacheEntityToDoc } from "../db/QuizCache/QuizCache";
 import { FindAllService, FindOneService } from "#/utils/services/crud";
 import { QuestionsAnswersService } from "#/questions-answers/services";
 import { HistoryEntriesService } from "#/historyEntries/services";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { PatchEventDB } from "#/events/EventDB";
+import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
 
 @Injectable()
 export class QuizzesReadService implements
@@ -27,6 +28,22 @@ FindAllService<QuizEntity> {
     private readonly historyEntriesService: HistoryEntriesService,
     private readonly questionsAnswersService: QuestionsAnswersService,
   ) {
+    this.#initializeDependencyPropagationEvents();
+
+    this.dbEventEmitter.onPatch<QuizEntity>(QuizCache.name, (event) => {
+      console.log(QuizCache.name, "PATCH", event);
+    } );
+
+    this.dbEventEmitter.onDelete<QuizEntity>(QuizCache.name, (event) => {
+      console.log(QuizCache.name, "DELETE", event);
+    } );
+
+    this.dbEventEmitter.onCreate<QuizEntity>(QuizEntity.name, (event) => {
+      console.log(QuizCache.name, "CREATE", event);
+    } );
+  }
+
+  #initializeDependencyPropagationEvents() {
     this.dbEventEmitter.onPatch(
       QuestionEntity,
       (event) => {
@@ -57,6 +74,35 @@ FindAllService<QuizEntity> {
           this.#removeQuestionsAnswers(event.id, removedIds);
       },
     );
+
+    this.dbEventEmitter.onCreate(
+      QuizEntity,
+      (event: CreateEventDB<QuizEntity>) => {
+        this.#createOne(event.id, event.valueObject);
+      },
+    );
+
+    this.dbEventEmitter.onDelete(
+      QuizEntity,
+      (event: DeleteEventDB<QuizEntity>) => {
+        this.#deleteOne(event.id);
+      },
+    );
+  }
+
+  async #createOne(id: QuizID, valueObject: QuizVO): Promise<void> {
+    const doc = quizCacheEntityToDoc( {
+      id,
+      ...valueObject,
+    } );
+
+    await this.QuizCacheModel.create(doc);
+  }
+
+  async #deleteOne(id: QuizID): Promise<void> {
+    await this.QuizCacheModel.deleteOne( {
+      _id: id,
+    } );
   }
 
   async #addQuestionsAnswers(id: QuizID, ids: QuestionAnswerID[]): Promise<void> {

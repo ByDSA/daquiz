@@ -75,5 +75,5 @@ export {
   Doc as QuestionAnswerCacheDocument,
   SchemaOdm as QuestionAnswerCacheSchema,
   docToEntity as questionAnswerCacheDocToEntity,
-  entityToDoc as questionAnswerCacheEntityToDocument,
+  entityToDoc as questionAnswerCacheEntityToDoc,
 };

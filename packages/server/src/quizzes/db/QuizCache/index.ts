@@ -1,14 +1,14 @@
 export {
   QuizCache,
-  Doc as QuizCacheDocument,
-  docToEntity as quizCacheDocToEntity,
+  QuizCacheDocument,
+  quizCacheDocToEntity,
 } from "./QuizCache";
 
 export {
   QuestionAnswerCache,
   QuestionAnswerCacheDocument,
   questionAnswerCacheDocToEntity,
-  questionAnswerCacheEntityToDocument,
+  questionAnswerCacheEntityToDoc,
 } from "./QuestionAnswerCache";
 
 export {

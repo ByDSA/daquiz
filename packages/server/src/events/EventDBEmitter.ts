@@ -6,6 +6,12 @@ import { EventDBType } from "./EventDBType";
 type Listener<T extends {id: unknown}> = (event: EventDB<T>)=> void;
 type PatchListener<T extends {id: unknown}, UE> = (event: PatchEventDB<T, UE>)=> void;
 type DeleteListener<T extends {id: unknown}> = (event: DeleteEventDB<T>)=> void;
+type CreateListener<T extends {id: unknown}> = (event: CreateEventDB<T>)=> void;
+
+type EntityClass<T> = string | (new ()=> T);
+function getName<T>(entityClass: EntityClass<T>): string {
+  return typeof entityClass === "string" ? entityClass : entityClass.name;
+}
 
 @Injectable()
 export class EventDBEmitter {
@@ -16,11 +22,12 @@ export class EventDBEmitter {
   }
 
   #on<T extends {id: unknown}>(
-    entityClass: new ()=> T,
+    entityClass: EntityClass<T>,
     eventType: EventDBType,
     listener: Listener<T>,
   ): this {
-    const nodeEventName = `${entityClass.name}:${eventType}`;
+    const entityName = getName(entityClass);
+    const nodeEventName = `${entityName}:${eventType}`;
 
     this.#nodeEventEmitter.on(nodeEventName, listener);
 
@@ -28,11 +35,11 @@ export class EventDBEmitter {
   }
 
   #emit<T extends {id: unknown}>(
-    entityClass: new ()=> T,
+    entityName: string,
     eventType: EventDBType,
     event: EventDB<T>,
   ): this {
-    const nodeEventName = `${entityClass.name}:${eventType}`;
+    const nodeEventName = `${entityName}:${eventType}`;
 
     this.#nodeEventEmitter.emit(nodeEventName, event);
 
@@ -40,37 +47,50 @@ export class EventDBEmitter {
   }
 
   onPatch<T extends {id: unknown}, UE = Partial<Omit<T, "id">>>(
-    entityClass: new ()=> T,
+    entityClass: EntityClass<T>,
     listener: PatchListener<T, UE>,
   ): this {
     return this.#on(entityClass, EventDBType.PATCH, listener);
   }
 
   onDelete<T extends {id: unknown}>(
-    entityClass: new ()=> T,
+    entityClass: EntityClass<T>,
     listener: DeleteListener<T>,
   ): this {
     return this.#on(entityClass, EventDBType.DELETE, listener);
   }
 
+  onCreate<T extends {id: unknown}>(
+    entityClass: EntityClass<T>,
+    listener: CreateListener<T>,
+  ): this {
+    return this.#on(entityClass, EventDBType.CREATE, listener);
+  }
+
   emitPatch<T extends {id: unknown}, UE = Partial<Omit<T, "id">>>(
-    entityClass: new ()=> T,
+    entityClass: EntityClass<T>,
     event: PatchEventDB<T, UE>,
   ): this {
-    return this.#emit(entityClass, EventDBType.PATCH, event);
+    const entityName = getName(entityClass);
+
+    return this.#emit(entityName, EventDBType.PATCH, event);
   }
 
   emitDelete<T extends {id: unknown}>(
-    entityClass: new ()=> T,
+    entityClass: EntityClass<T>,
     event: DeleteEventDB<T>,
   ): this {
-    return this.#emit(entityClass, EventDBType.DELETE, event);
+    const entityName = getName(entityClass);
+
+    return this.#emit(entityName, EventDBType.DELETE, event);
   }
 
   emitCreate<T extends {id: unknown}>(
-    entityClass: new ()=> T,
+    entityClass: EntityClass<T>,
     event: CreateEventDB<T>,
   ): this {
-    return this.#emit(entityClass, EventDBType.CREATE, event);
+    const entityName = getName(entityClass);
+
+    return this.#emit(entityName, EventDBType.CREATE, event);
   }
 }

@@ -4,7 +4,7 @@ export {
   QuizCache,
   QuizCacheDocument,
   QuizzesCacheDBModule,
-  questionAnswerCacheEntityToDocument,
+  questionAnswerCacheEntityToDoc as questionAnswerCacheEntityToDocument,
   quizCacheDocToEntity,
 } from "./QuizCache";
 
