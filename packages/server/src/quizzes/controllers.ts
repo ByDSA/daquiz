@@ -49,11 +49,11 @@ FindAllController<ResultManyQuizDto> {
   }
 
   @Post(":id/add")
-  async addQuestionsAnswers(
+  async addManyQuestionsAnswers(
     @Param("id", ObjectIdPipe) id: QuizID,
     @Body() dto: AddQuestionsAnswersDto,
   ): Promise<void> {
-    await this.quizzesWriteService.addQuestionsAnswers(id, {
+    await this.quizzesWriteService.addManyQuestionsAnswers(id, {
       questionsAnswersIds: dto.questionsAnswersIds,
     } );
   }

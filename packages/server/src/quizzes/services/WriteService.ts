@@ -37,7 +37,7 @@ CreateOneAndGetService<CreateQuizDto, QuizEntity> {
     return entity;
   }
 
-  async addQuestionsAnswers(id: QuizID, dto: AddQuestionsAnswersDto): Promise<void> {
+  async addManyQuestionsAnswers(id: QuizID, dto: AddQuestionsAnswersDto): Promise<void> {
     const doc = await this.QuizModel.findByIdAndUpdate(id, {
       $addToSet: {
         questionsAnswers: {
