@@ -1,67 +1,28 @@
-/* eslint-disable no-invalid-this */
-import { QuizEntity, QuizUpdateEntity } from "#shared/models/quizzes/Quiz";
-import { assertDefined } from "#shared/utils/validation/asserts";
+import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { Injectable } from "@nestjs/common";
-import { UpdateQuery } from "mongoose";
-import { Doc, SchemaOdm as QuizSchema, docToEntity, updateQueryToUpdateEntity } from "./Quiz";
+import { SchemaOdm as QuizSchema, docToEntity, updateQueryToUpdateEntity as quizUpdateQueryToUpdateEntity } from "./Quiz";
+import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
 
 @Injectable()
 export class DBService {
   constructor(
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
-    const thisService = this;
-
-    // eslint-disable-next-line func-names
-    QuizSchema.post("findOneAndUpdate", function (_oldDoc, next) {
-      const filters = this.getFilter();
-      const updateQuery = this.getUpdate();
-
-      assertDefined(updateQuery);
-
-      const id: string = filters?._id?.toString();
-
-      assertDefined(id);
-      const event: PatchEventDB<QuizEntity, QuizUpdateEntity> = {
-        id,
-        updateEntity: updateQueryToUpdateEntity(updateQuery as UpdateQuery<Doc>),
-      };
-
-      thisService.dbEventEmitter.emitPatch(QuizEntity, event);
-
-      next();
-    } );
-
-    // eslint-disable-next-line func-names
-    QuizSchema.post("deleteOne", function (obj, next) {
-      const filters = this.getFilter();
-      const id = filters?._id?.toString();
-
-      console.log(obj);
-
-      assertDefined(id);
-      const event: DeleteEventDB<QuizEntity> = {
-        id,
-      };
-
-      thisService.dbEventEmitter.emitDelete(QuizEntity, event);
-
-      next();
-    } );
-
-    // eslint-disable-next-line func-names
-    QuizSchema.post("save", function (newDoc, next) {
-      const { id, ...valueObject } = docToEntity(newDoc);
-      const event: CreateEventDB<QuizEntity> = {
-        id,
-        valueObject,
-      };
-
-      thisService.dbEventEmitter.emitCreate(QuizEntity, event);
-
-      next();
+    registerEventEmitterPlugin(QuizSchema, {
+      dbEventEmitter,
+      typeEventName: QuizEntity.name,
+      documentToEntity: docToEntity,
+      createEmission: {
+        use: true,
+      },
+      patchEmission: {
+        updateQueryToUpdateEntity: quizUpdateQueryToUpdateEntity,
+        use: true,
+      },
+      deleteEmission: {
+        use: true,
+      },
     } );
   }
 }

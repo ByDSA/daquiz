@@ -38,7 +38,7 @@ FindAllService<QuizEntity> {
       console.log(QuizCache.name, "DELETE", event);
     } );
 
-    this.dbEventEmitter.onCreate<QuizEntity>(QuizEntity.name, (event) => {
+    this.dbEventEmitter.onCreate<QuizEntity>(QuizCache.name, (event) => {
       console.log(QuizCache.name, "CREATE", event);
     } );
   }

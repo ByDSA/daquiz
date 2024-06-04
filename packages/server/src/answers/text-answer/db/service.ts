@@ -1,40 +1,26 @@
-/* eslint-disable no-invalid-this */
-import { TextAnswerEntity as Entity } from "#shared/models/answers/text-answers/TextAnswer";
-import { assertDefined } from "#shared/utils/validation/asserts";
+import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Injectable } from "@nestjs/common";
-import { UpdateQuery } from "mongoose";
-import { partialDocumentToPartialEntity } from "./adapters";
-import { DocumentOdm, SchemaOdm } from "./schema";
+import { docToEntity, partialDocumentToPartialEntity } from "./adapters";
+import { SchemaOdm as TextAnswerSchema } from "./schema";
+import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { PatchEventDB } from "#/events/EventDB";
 
 @Injectable()
 export class Service {
   constructor(private readonly dbEventEmitter: EventDBEmitter) {
-    const thisService = this;
+    registerEventEmitterPlugin(TextAnswerSchema, {
+      dbEventEmitter: dbEventEmitter,
+      typeEventName: TextAnswerEntity.name,
+      documentToEntity: docToEntity,
+      patchEmission: {
+        use: true,
+        updateQueryToUpdateEntity: (updateQuery) => {
+          const { $set } = updateQuery;
+          const ret = partialDocumentToPartialEntity($set as any);
 
-    // eslint-disable-next-line func-names
-    SchemaOdm.post("updateOne", function (updateResult, next) {
-      if (updateResult.modifiedCount > 0) {
-        const filters = this.getFilter();
-        const updateQuery = this.getUpdate();
-        const { $set } = updateQuery as UpdateQuery<DocumentOdm>;
-
-        assertDefined($set);
-
-        const id: string = filters?._id?.toString();
-
-        assertDefined(id);
-        const event: PatchEventDB<Entity> = {
-          id,
-          updateEntity: $set && partialDocumentToPartialEntity($set),
-          updateResult,
-        };
-
-        thisService.dbEventEmitter.emitPatch(Entity, event);
-      }
-
-      next();
+          return ret;
+        },
+      },
     } );
   }
 }

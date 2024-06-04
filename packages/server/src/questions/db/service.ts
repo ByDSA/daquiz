@@ -1,40 +1,26 @@
-/* eslint-disable no-invalid-this */
-import { QuestionEntity, QuestionVO } from "#shared/models/questions/Question";
-import { assertDefined } from "#shared/utils/validation/asserts";
+import { QuestionEntity } from "#shared/models/questions/Question";
 import { Injectable } from "@nestjs/common";
-import { UpdateQuery } from "mongoose";
-import { partialDocumentToPartialEntity } from "./adapters";
-import { QuestionDocument, QuestionSchema } from "./schema";
+import { documentToEntity, partialDocumentToPartialEntity } from "./adapters";
+import { QuestionSchema } from "./schema";
+import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { PatchEventDB } from "#/events/EventDB";
 
 @Injectable()
 export class QuestionDBService {
   constructor(private readonly dbEventEmitter: EventDBEmitter) {
-    const thisService = this;
+    registerEventEmitterPlugin(QuestionSchema, {
+      dbEventEmitter: dbEventEmitter,
+      typeEventName: QuestionEntity.name,
+      documentToEntity,
+      patchEmission: {
+        use: true,
+        updateQueryToUpdateEntity: (updateQuery) => {
+          const { $set } = updateQuery;
+          const ret = partialDocumentToPartialEntity($set as any);
 
-    // eslint-disable-next-line func-names
-    QuestionSchema.post("updateOne", function (updateResult, next) {
-      if (updateResult.modifiedCount > 0) {
-        const filters = this.getFilter();
-        const updateQuery = this.getUpdate();
-        const { $set } = updateQuery as UpdateQuery<QuestionDocument>;
-
-        assertDefined($set);
-
-        const id: string = filters?._id?.toString();
-
-        assertDefined(id);
-        const event: PatchEventDB<QuestionEntity, Partial<QuestionVO>> = {
-          id,
-          updateEntity: $set && partialDocumentToPartialEntity($set),
-          updateResult,
-        };
-
-        thisService.dbEventEmitter.emitPatch(QuestionEntity, event);
-      }
-
-      next();
+          return ret;
+        },
+      },
     } );
   }
 }
