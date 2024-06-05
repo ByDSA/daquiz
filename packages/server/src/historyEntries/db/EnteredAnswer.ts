@@ -1,6 +1,6 @@
-import { AnswerType } from "#shared/models/answers/Answer";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+import { AnswerType } from "#/answers/domain";
 
 @Schema()
 export class EnteredAnswer {

@@ -1,6 +1,6 @@
-import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { Inject, Injectable } from "@nestjs/common";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort, QuizzesServicePort, ResultQuizPickQuestionsAnswersDto } from "../../domain";
+import { QuestionAnswerID } from "#/questions-answers/domain";
 
 @Injectable()
 export class QuizzesService implements QuizzesServicePort {

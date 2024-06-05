@@ -1,20 +1,18 @@
-import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
-import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
-import { AddQuestionsAnswersDto, CreateQuizDto } from "#shared/models/quizzes/dtos";
 import { assertDefined } from "#shared/utils/validation/asserts";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID } from "../../../domain";
 import { Quiz, quizDocToEntity } from "../db";
 import { QuizzesRelationalRepositoryFindOptions, QuizzesRelationalRepositoryPort } from "#/quizzes/domain/ports/repositories/QuizzesRelational.repository.port";
-import { QuestionsAnswersService } from "#/questions-answers/services";
+import { QuestionAnswerID, QuestionsAnswersRepositoryPort } from "#/questions-answers/domain";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
 @Injectable()
 export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryPort {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    private readonly questionsAnswersService: QuestionsAnswersService,
+    @Inject(QuestionsAnswersRepositoryPort) private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
     this.dbEventEmitter.onPatch(QuizEntity, (event) => {

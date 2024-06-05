@@ -1,9 +1,8 @@
-import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
-import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
 import { UpdateWriteOpResult } from "mongoose";
-import { QuestionAnswerInQuizEntity, ResultQuizPickQuestionsAnswersDto } from "../../models";
+import { QuestionAnswerInQuizEntity, QuizEntity, QuizID, ResultQuizPickQuestionsAnswersDto } from "../../models";
 import { ReadServicePort } from "../services/ReadService.port";
 import { CreateManyService, CreateOneService, DeleteAllService, DeleteOneService } from "#/utils/services/crud";
+import { QuestionAnswerID } from "#/questions-answers/domain";
 
 export interface QuizzesCacheRepositoryPort extends
 ReadServicePort,

@@ -1,18 +1,17 @@
-import { QuizEntity } from "#shared/models/quizzes/Quiz";
+import { QuizEntity } from "../../models";
 import { WriteServicePort } from "../services/WriteService.port";
-import { FindQuestionsAnswersOptions } from "#/questions-answers/services";
+import { QuestionsAnswersRepositoryFindOptions } from "#/questions-answers/domain";
 import { FindAllService } from "#/utils/services/crud";
 
 export type QuizzesRelationalRepositoryFindOptions = {
   include: {
-    questionsAnswers: FindQuestionsAnswersOptions["includeRelations"];
+    questionsAnswers: QuestionsAnswersRepositoryFindOptions["includeRelations"];
   };
 };
 
 export interface QuizzesRelationalRepositoryPort extends
 WriteServicePort,
-FindAllService<QuizEntity> {
-  findAll(options?: QuizzesRelationalRepositoryFindOptions): Promise<QuizEntity[]>;
+FindAllService<QuizEntity, QuizzesRelationalRepositoryFindOptions> {
 }
 
 export const QuizzesRelationalRepositoryPort = Symbol("QuizzesRelationalRepositoryPort");

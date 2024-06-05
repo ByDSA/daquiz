@@ -1,5 +1,5 @@
-import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { Injectable } from "@nestjs/common";
+import { QuizEntity } from "../../../domain";
 import { SchemaOdm as QuizSchema, docToEntity, updateQueryToUpdateEntity as quizUpdateQueryToUpdateEntity } from "./Quiz";
 import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";
 import { EventDBEmitter } from "#/events/EventDBEmitter";

@@ -1,5 +1,5 @@
-import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Injectable } from "@nestjs/common";
+import { TextAnswerEntity } from "../domain";
 import { docToEntity, partialDocumentToPartialEntity } from "./adapters";
 import { SchemaOdm as TextAnswerSchema } from "./schema";
 import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";

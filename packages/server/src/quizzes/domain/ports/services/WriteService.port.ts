@@ -1,5 +1,5 @@
-import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID } from "../../models";
+import { QuestionAnswerID } from "#/questions-answers/domain";
 import { CreateOneAndGetService } from "#/utils/services/crud";
 
 export interface WriteServicePort extends

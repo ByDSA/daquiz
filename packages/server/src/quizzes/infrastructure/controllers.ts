@@ -1,10 +1,10 @@
-import { TextAnswerID } from "#shared/models/answers/text-answers/TextAnswer";
-import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { Body, Controller, Delete, Get, Inject, Param, Post, UseInterceptors } from "@nestjs/common";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizID, QuizzesServicePort, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "../domain";
-import { ObjectIdPipe } from "#/utils/validation";
-import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
+import { TextAnswerID } from "#/answers/text-answer/domain";
+import { QuestionAnswerID } from "#/questions-answers/domain";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
+import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
+import { ObjectIdPipe } from "#/utils/validation";
 
 @Controller()
 export class QuizzesController

@@ -4,8 +4,8 @@ import { GenerateQuizzesCacheServicePort, QuizzesServicePort } from "./domain";
 import { QuizzesCacheRepositoryPort } from "./domain/ports/repositories/QuizzesCache.repository.port";
 import { QuizzesRelationalRepositoryPort } from "./domain/ports/repositories/QuizzesRelational.repository.port";
 import { QuizzesCacheDBModule, QuizzesCacheRepository, QuizzesController, QuizzesDBModule, QuizzesRelationalRepository } from "./infrastructure";
-import { QuestionsAnswersModule } from "#/questions-answers/modules";
-import { HistoryEntriesModule } from "#/historyEntries/modules";
+import { QuestionsAnswersModule } from "#/questions-answers/submodules";
+import { HistoryEntriesModule } from "#/historyEntries";
 import { EventsModule } from "#/events/module";
 
 @Module( {

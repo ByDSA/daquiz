@@ -2,14 +2,14 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RouterModule } from "@nestjs/core";
 import { MongooseModule } from "@nestjs/mongoose";
-import { TextAnswersModule } from "./answers/text-answer/modules";
+import { TextAnswersModule } from "./answers/text-answer/TextAnswers.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import configuration from "./config/configuration";
-import { QuestionsAnswersModule } from "./questions-answers/modules";
-import { QuestionTextAnswerModule } from "./questions-answers/modules/answer-text/modules";
-import { QuestionAnswerCheckingModule } from "./questions-answers/modules/checking/modules";
-import { QuestionsModule } from "./questions/modules";
+import { QuestionsModule } from "./questions";
+import { QuestionsAnswersModule } from "./questions-answers/submodules";
+import { QuestionTextAnswerModule } from "./questions-answers/submodules/answer-text/modules";
+import { QuestionAnswerCheckingModule } from "./questions-answers/submodules/checking/modules";
 import { QuizzesModule } from "./quizzes";
 
 @Module( {

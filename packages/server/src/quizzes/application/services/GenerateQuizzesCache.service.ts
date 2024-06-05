@@ -1,13 +1,13 @@
-import { AnswerType } from "#shared/models/answers/Answer";
-import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
-import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
 import { Inject, Injectable } from "@nestjs/common";
 import extend from "just-extend";
 import cron from "node-cron";
 import { GenerateQuizzesCacheServicePort, QuizEntity, QuizUpdateEntity, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort } from "../../domain";
-import { everyMinutes } from "#/utils/time/cron/Expressions";
-import { EventDBEmitter } from "#/events/EventDBEmitter";
+import { AnswerType } from "#/answers/domain";
+import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#/answers/text-answer/domain";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
+import { EventDBEmitter } from "#/events/EventDBEmitter";
+import { QuestionEntity, QuestionID, QuestionVO } from "#/questions/domain";
+import { everyMinutes } from "#/utils/time/cron/Expressions";
 
 @Injectable()
 export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServicePort {

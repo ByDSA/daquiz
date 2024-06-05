@@ -1,5 +1,5 @@
-import { HistoryEntryEntity as Entity } from "#shared/models/history-entries/HistoryEntry";
 import { model, Types } from "mongoose";
+import { HistoryEntryEntity as Entity } from "../domain";
 import { Doc, SchemaDoc } from "./schema";
 
 export const docToEntity = (doc: Doc): Entity => {

@@ -1,10 +1,10 @@
-import { AnswerType } from "#shared/models/answers/Answer";
-import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, model } from "mongoose";
 import { QuestionAnswerInQuizEntity } from "../../../domain";
-import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEntityToDocument } from "#/questions/db";
+import { AnswerType } from "#/answers/domain";
 import { TextAnswerDocument, textAnswerDocumentToEntity, textAnswerEntityToDocument } from "#/answers/text-answer/db";
+import { TextAnswerEntity } from "#/answers/text-answer/domain";
+import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEntityToDocument } from "#/questions/db";
 
 @Schema()
 export class QuestionAnswerCache {

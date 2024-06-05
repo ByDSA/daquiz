@@ -1,7 +1,7 @@
-import { AnswerType } from "#shared/models/answers/Answer";
-import { TextAnswerEntity } from "#shared/models/answers/text-answers/TextAnswer";
 import { neverCase } from "#shared/utils/typescript";
+import { AnswerType } from "./domain";
 import { TextAnswerDocument, textAnswerDocumentToEntity, textAnswerEntityToDocument } from "./text-answer/db";
+import { TextAnswerEntity } from "./text-answer/domain";
 
 export const documentToEntity = (doc: unknown, type: AnswerType) => {
   switch (type) {

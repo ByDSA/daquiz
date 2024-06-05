@@ -1,5 +1,5 @@
-import { QuestionEntity } from "#shared/models/questions/Question";
 import { Injectable } from "@nestjs/common";
+import { QuestionEntity } from "../domain";
 import { documentToEntity, partialDocumentToPartialEntity } from "./adapters";
 import { QuestionSchema } from "./schema";
 import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";

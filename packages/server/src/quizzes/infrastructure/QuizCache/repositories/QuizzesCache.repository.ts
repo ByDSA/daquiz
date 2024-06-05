@@ -1,17 +1,14 @@
-import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
-import { QuestionEntity } from "#shared/models/questions/Question";
-import { QuestionAnswerInQuizEntity, questionAnswerEntityToQuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
-import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
-import { ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
 import { assertDefined } from "#shared/utils/validation/asserts";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { QuestionAnswerInQuizEntity, QuizEntity, QuizID, ResultQuizPickQuestionsAnswersDto, questionAnswerEntityToQuestionAnswerInQuizEntity } from "../../../domain";
 import { QuestionAnswerCacheDocument, QuizCache, questionAnswerCacheEntityToDoc, quizCacheDocToEntity } from "../db";
 import { quizCacheEntityToDoc } from "../db/QuizCache";
 import { QuizzesCacheRepositoryPort } from "#/quizzes/domain/ports/repositories/QuizzesCache.repository.port";
-import { QuestionsAnswersService } from "#/questions-answers/services";
-import { HistoryEntriesService } from "#/historyEntries/services";
+import { QuestionEntity } from "#/questions/domain";
+import { QuestionAnswerEntity, QuestionAnswerID, QuestionsAnswersRepositoryPort } from "#/questions-answers/domain";
+import { HistoryEntriesServicePort } from "#/historyEntries";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
 @Injectable()
@@ -19,8 +16,10 @@ export class QuizzesCacheRepository implements QuizzesCacheRepositoryPort {
   constructor(
     @InjectModel(QuizCache.name) private QuizCacheModel: Model<QuizCache>,
     private readonly dbEventEmitter: EventDBEmitter,
-    private readonly historyEntriesService: HistoryEntriesService,
-    private readonly questionsAnswersService: QuestionsAnswersService,
+    @Inject(HistoryEntriesServicePort)
+    private readonly historyEntriesService: HistoryEntriesServicePort,
+    @Inject(QuestionsAnswersRepositoryPort)
+    private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
   ) {
     this.dbEventEmitter.onPatch<QuizEntity>(QuizCache.name, (event) => {
       console.log(QuizCache.name, "PATCH", event);

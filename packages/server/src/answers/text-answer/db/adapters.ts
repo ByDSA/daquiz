@@ -1,5 +1,5 @@
-import { TextAnswerEntity as Entity } from "#shared/models/answers/text-answers/TextAnswer";
 import { Types, model } from "mongoose";
+import { TextAnswerEntity as Entity } from "../domain";
 import { DocumentOdm, SchemaOdm } from "./schema";
 
 export const docToEntity = (doc: DocumentOdm): Entity => {

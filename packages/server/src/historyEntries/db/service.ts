@@ -1,5 +1,5 @@
-import { HistoryEntryEntity } from "#shared/models/history-entries/HistoryEntry";
 import { Injectable } from "@nestjs/common";
+import { HistoryEntryEntity } from "../domain";
 import { docToEntity } from "./adapters";
 import { SchemaDoc } from "./schema";
 import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";

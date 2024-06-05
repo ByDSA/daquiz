@@ -1,5 +1,5 @@
-import { QuestionEntity } from "#shared/models/questions/Question";
 import { model, Types } from "mongoose";
+import { QuestionEntity } from "../domain";
 import { QuestionDocument, QuestionSchema } from "./schema";
 
 export const documentToEntity = (doc: QuestionDocument): QuestionEntity => {

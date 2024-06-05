@@ -10,12 +10,12 @@ export interface CreateOneAndGetService<REQ_DTO, ENTITY> {
   createOneAndGet: (...params: Parameters<CreateOneService<REQ_DTO>["createOne"]>)=> Promise<ENTITY>;
 }
 
-export interface FindOneService<ENTITY extends {id: unknown}> {
-  findOne: (id: ENTITY["id"])=> Promise<ENTITY | null>;
+export interface FindOneService<ENTITY extends {id: unknown}, OPTS = void> {
+  findOne: (id: ENTITY["id"], options?: OPTS)=> Promise<ENTITY | null>;
 }
 
-export interface FindAllService<ENTITY> {
-  findAll: ()=> Promise<ENTITY[]>;
+export interface FindAllService<ENTITY, OPTS = void> {
+  findAll: (options?: OPTS)=> Promise<ENTITY[]>;
 }
 
 export interface PatchOneService<DTO, ENTITY extends {id: unknown}> {
