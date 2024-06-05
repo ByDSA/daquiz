@@ -13,19 +13,9 @@ export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryP
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
     @Inject(QuestionsAnswersRepositoryPort) private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
-    private readonly dbEventEmitter: EventDBEmitter,
+    private readonly eventDBEmitter: EventDBEmitter,
   ) {
-    this.dbEventEmitter.onPatch(QuizEntity, (event) => {
-      console.log(QuizEntity.name, "PATCH", event);
-    } );
-
-    this.dbEventEmitter.onDelete(QuizEntity, (event) => {
-      console.log(QuizEntity.name, "DELETE", event);
-    } );
-
-    this.dbEventEmitter.onCreate(QuizEntity, (event) => {
-      console.log(QuizEntity.name, "CREATE", event);
-    } );
+    this.eventDBEmitter.registryLogger(QuizEntity);
   }
 
   async findAll(options?: QuizzesRelationalRepositoryFindOptions): Promise<QuizEntity[]> {
@@ -88,7 +78,7 @@ export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryP
   async addManyQuestionsAnswers(id: QuizID, dto: AddQuestionsAnswersDto): Promise<void> {
     const doc = await this.QuizModel.findByIdAndUpdate(id, {
       $addToSet: {
-        questionsAnswers: {
+        questionsAnswersIds: {
           $each: dto.questionsAnswersIds,
         },
       },
@@ -104,7 +94,7 @@ export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryP
   ): Promise<void> {
     const doc = await this.QuizModel.findByIdAndUpdate(id, {
       $pull: {
-        questionsAnswers: questionAnswerId,
+        questionsAnswersIds: questionAnswerId,
       },
     } ).exec();
 
@@ -118,7 +108,7 @@ export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryP
   ): Promise<void> {
     const doc = await this.QuizModel.findByIdAndUpdate(id, {
       $pull: {
-        questionsAnswers: {
+        questionsAnswersIds: {
           $in: questionAnswerIds,
         },
       },

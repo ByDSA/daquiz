@@ -21,17 +21,7 @@ export class QuizzesCacheRepository implements QuizzesCacheRepositoryPort {
     @Inject(QuestionsAnswersRepositoryPort)
     private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
   ) {
-    this.dbEventEmitter.onPatch<QuizEntity>(QuizCache.name, (event) => {
-      console.log(QuizCache.name, "PATCH", event);
-    } );
-
-    this.dbEventEmitter.onDelete<QuizEntity>(QuizCache.name, (event) => {
-      console.log(QuizCache.name, "DELETE", event);
-    } );
-
-    this.dbEventEmitter.onCreate<QuizEntity>(QuizCache.name, (event) => {
-      console.log(QuizCache.name, "CREATE", event);
-    } );
+    this.dbEventEmitter.registryLogger(QuizCache.name);
   }
 
   async deleteAll(): Promise<void> {

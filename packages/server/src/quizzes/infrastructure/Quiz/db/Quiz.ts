@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, UpdateQuery } from "mongoose";
 import { QuizEntity, QuizUpdateEntity } from "../../../domain";
+import { questionAnswerCacheDocToEntity } from "../../QuizCache/db";
 
 @Schema( {
   collection: "quizzes",
@@ -16,7 +17,7 @@ export class Quiz {
     type: [Types.ObjectId],
     required: true,
   } )
-  questionsAnswers: Types.ObjectId[];
+  questionsAnswersIds: Types.ObjectId[];
 }
 
 type Doc = HydratedDocument<Quiz>;
@@ -26,7 +27,7 @@ const docToEntity = (doc: Doc): QuizEntity => {
   return {
     id: doc._id.toString(),
     name: doc.name,
-    questionAnswersIds: doc.questionsAnswers.map((qa) => qa.toString()),
+    questionAnswersIds: doc.questionsAnswersIds.map((qa) => qa.toString()),
   };
 };
 const updateQueryToUpdateEntity = (
@@ -39,11 +40,29 @@ const updateQueryToUpdateEntity = (
 
   const { $addToSet, $pull } = updateQuery;
 
-  if ($addToSet?.questionsAnswers) {
+  if ($addToSet?.questionsAnswersIds) {
     updateEntity.questionAnswersIds = {};
 
+    if ($addToSet.questionsAnswersIds)
+      updateEntity.questionAnswersIds.added = $addToSet.questionsAnswersIds.$each.map(a=>a.toString());
+  }
+
+  if ($addToSet?.questionsAnswers) {
+    updateEntity.questionAnswers = {};
+
     if ($addToSet.questionsAnswers)
-      updateEntity.questionAnswersIds.added = $addToSet.questionsAnswers.$each.map(a=>a.toString());
+      updateEntity.questionAnswers.added = $addToSet.questionsAnswers.$each.map(questionAnswerCacheDocToEntity);
+  }
+
+  if ($pull?.questionsAnswersIds) {
+    updateEntity.questionAnswersIds ??= {};
+
+    updateEntity.questionAnswersIds.removed ??= [];
+
+    if (typeof $pull?.questionsAnswersIds === "string")
+      updateEntity.questionAnswersIds.removed.push($pull.questionsAnswersIds);
+    else if (Array.isArray($pull.questionsAnswersIds.$in))
+      updateEntity.questionAnswersIds.removed.push(...$pull.questionsAnswersIds.$in);
   }
 
   if ($pull?.questionsAnswers) {
@@ -51,10 +70,8 @@ const updateQueryToUpdateEntity = (
 
     updateEntity.questionAnswersIds.removed ??= [];
 
-    if (typeof $pull?.questionsAnswers === "string")
-      updateEntity.questionAnswersIds.removed.push($pull.questionsAnswers);
-    else if (Array.isArray($pull.questionsAnswers.$in))
-      updateEntity.questionAnswersIds.removed.push(...$pull.questionsAnswers.$in);
+    if (Array.isArray($pull.questionsAnswers._id.$in))
+      updateEntity.questionAnswersIds.removed.push(...$pull.questionsAnswers._id.$in.map(a=>a.toString()));
   }
 
   return updateEntity;

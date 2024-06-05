@@ -1,10 +1,17 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
+import { WinstonModule } from "nest-winston";
 import { AppModule } from "./app.module";
 import { AddStatusCodeInterceptor } from "./utils/interceptors/AddStatusCodeInterceptor";
+import { CustomLogger } from "./utils/logging/CustomLogger";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const customLoggerService = new CustomLogger();
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    logger: WinstonModule.createLogger(customLoggerService.createLoggerConfig),
+
+  } );
 
   if (process.env.NODE_ENV === "development") {
     app.enableCors( {

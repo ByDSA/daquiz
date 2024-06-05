@@ -41,4 +41,8 @@ export class QuizUpdateEntity {
   @IsArray()
   @Type(() => ArrayUpdate<QuestionAnswerID>)
   questionAnswersIds?: ArrayUpdate<QuestionAnswerID>;
+
+  @IsArray()
+  @Type(() => ArrayUpdate<QuestionAnswerID>)
+  questionAnswers?: ArrayUpdate<QuestionAnswerInQuizEntity>;
 };

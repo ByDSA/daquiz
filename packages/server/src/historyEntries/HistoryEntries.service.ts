@@ -10,11 +10,9 @@ import { EventDBEmitter } from "#/events/EventDBEmitter";
 export class HistoryEntriesService implements HistoryEntriesServicePort {
   constructor(
     @InjectModel(HistoryEntry.name) private readonly QuestionModel: Model<HistoryEntry>,
-    private readonly dbEventEmitter: EventDBEmitter,
+    private readonly eventDBEmitter: EventDBEmitter,
   ) {
-    this.dbEventEmitter.onPatch(HistoryEntryEntity, (event) => {
-      console.log("LOG", `${HistoryEntryEntity.name} Patch Event`, event);
-    } );
+    this.eventDBEmitter.registryLogger(HistoryEntryEntity);
   }
 
   async createOne(dto: CreateOneHistoryEntryDto): Promise<void> {

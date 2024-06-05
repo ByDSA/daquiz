@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { CreateEventDB, DeleteEventDB, EventDB, PatchEventDB } from "./EventDB";
 import { EventDBType } from "./EventDBType";
 
@@ -32,6 +32,23 @@ export class EventDBEmitter {
     this.#nodeEventEmitter.on(nodeEventName, listener);
 
     return this;
+  }
+
+  registryLogger<T extends {id: unknown}>(entityClass: EntityClass<T>) {
+    const entityName = getName(entityClass);
+    const logger = new Logger(entityName);
+
+    this.onPatch(entityName, (event) => {
+      logger.log("Patch Event " + JSON.stringify(event, null, 2));
+    } );
+
+    this.onDelete(entityName, (event) => {
+      logger.log("Delete Event " + JSON.stringify(event, null, 2));
+    } );
+
+    this.onCreate(entityName, (event) => {
+      logger.log("Create Event " + JSON.stringify(event, null, 2));
+    } );
   }
 
   #emit<T extends {id: unknown}>(

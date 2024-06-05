@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
 import extend from "just-extend";
 import cron from "node-cron";
 import { GenerateQuizzesCacheServicePort, QuizEntity, QuizUpdateEntity, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort } from "../../domain";
@@ -11,6 +11,8 @@ import { everyMinutes } from "#/utils/time/cron/Expressions";
 
 @Injectable()
 export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServicePort {
+  private readonly logger: LoggerService = new Logger(this.constructor.name);
+
   constructor(
     private readonly dbEventEmitter: EventDBEmitter,
     @Inject(QuizzesRelationalRepositoryPort) private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
@@ -25,7 +27,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
   }
 
   async generateCache() {
-    console.log("Quizzes cache updating");
+    this.logger.log("Quizzes cache updating");
     const quizzes = await this.quizzesRelationalService.findAll( {
       include: {
         questionsAnswers: {
@@ -37,7 +39,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
 
     await this.quizzesCacheService.deleteAll();
     await this.quizzesCacheService.createMany(quizzes);
-    console.log("Quizzes cache updated");
+    this.logger.log("Quizzes cache updated");
   }
 
   #initializeDependencyPropagationEvents() {

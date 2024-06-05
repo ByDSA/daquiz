@@ -13,9 +13,7 @@ export class QuestionsService implements QuestionsServicePort {
     @InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
-    this.dbEventEmitter.onPatch(QuestionEntity, (event) => {
-      console.log("LOG", "Question Patch Event", event);
-    } );
+    this.dbEventEmitter.registryLogger(QuestionEntity);
   }
 
   async patchOneAndGet(id: string, props: QuestionVO): Promise<QuestionEntity | null> {
