@@ -5,22 +5,13 @@ import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Quiz, quizDocToEntity } from "../../db";
-import { IWriteService } from "./IWriteService";
-import { FindAllService } from "#/utils/services/crud";
-import { FindQuestionsAnswersOptions, QuestionsAnswersService } from "#/questions-answers/services";
+import { Quiz, quizDocToEntity } from "../db";
+import { QuizzesRelationalRepositoryFindOptions, QuizzesRelationalRepositoryPort } from "#/quizzes/domain/ports/repositories/QuizzesRelational.repository.port";
+import { QuestionsAnswersService } from "#/questions-answers/services";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
-type FindOptions = {
-  include: {
-    questionsAnswers: FindQuestionsAnswersOptions["includeRelations"];
-  };
-};
-
 @Injectable()
-export class QuizzesRelationalRepository implements
-IWriteService,
-FindAllService<QuizEntity> {
+export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryPort {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
     private readonly questionsAnswersService: QuestionsAnswersService,
@@ -39,7 +30,7 @@ FindAllService<QuizEntity> {
     } );
   }
 
-  async findAll(options?: FindOptions): Promise<QuizEntity[]> {
+  async findAll(options?: QuizzesRelationalRepositoryFindOptions): Promise<QuizEntity[]> {
     const docs = await this.QuizModel.find().exec();
 
     if (!docs)

@@ -1,17 +1,12 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
-import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
-import { AddQuestionsAnswersDto, CreateQuizDto, ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
-import { Injectable } from "@nestjs/common";
-import { IReadService } from "./repositories/IReadService";
-import { IWriteService } from "./repositories/IWriteService";
-import { QuizzesCacheRepository } from "./repositories/QuizzesCacheRepository";
-import { QuizzesRelationalRepository } from "./repositories/QuizzesRelationalRepository";
+import { Inject, Injectable } from "@nestjs/common";
+import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort, QuizzesServicePort, ResultQuizPickQuestionsAnswersDto } from "../../domain";
 
 @Injectable()
-export class QuizzesService implements IReadService, IWriteService {
+export class QuizzesService implements QuizzesServicePort {
   constructor(
-    private readonly quizzesRelationalService: QuizzesRelationalRepository,
-    private readonly quizzesCacheService: QuizzesCacheRepository,
+    @Inject(QuizzesRelationalRepositoryPort) private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
+    @Inject(QuizzesCacheRepositoryPort) private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
   ) {
 
   }

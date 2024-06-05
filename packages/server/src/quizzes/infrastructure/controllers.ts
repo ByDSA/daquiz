@@ -1,9 +1,7 @@
 import { TextAnswerID } from "#shared/models/answers/text-answers/TextAnswer";
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
-import { QuizID } from "#shared/models/quizzes/Quiz";
-import { AddQuestionsAnswersDto, CreateQuizDto, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
-import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from "@nestjs/common";
-import { QuizzesService } from "./services";
+import { Body, Controller, Delete, Get, Inject, Param, Post, UseInterceptors } from "@nestjs/common";
+import { AddQuestionsAnswersDto, CreateQuizDto, QuizID, QuizzesServicePort, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "../domain";
 import { ObjectIdPipe } from "#/utils/validation";
 import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
@@ -14,7 +12,7 @@ implements CreateOneAndGetController<CreateQuizDto, ResultOneQuizDto>,
 FindOneController<TextAnswerID, ResultOneQuizDto>,
 FindAllController<ResultManyQuizDto> {
   constructor(
-    private readonly quizzesService: QuizzesService,
+    @Inject(QuizzesServicePort) private readonly quizzesService: QuizzesServicePort,
   ) {}
 
   @Post()

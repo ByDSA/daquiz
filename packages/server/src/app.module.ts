@@ -10,7 +10,7 @@ import { QuestionsAnswersModule } from "./questions-answers/modules";
 import { QuestionTextAnswerModule } from "./questions-answers/modules/answer-text/modules";
 import { QuestionAnswerCheckingModule } from "./questions-answers/modules/checking/modules";
 import { QuestionsModule } from "./questions/modules";
-import { QuizzesModule } from "./quizzes/modules";
+import { QuizzesModule } from "./quizzes";
 
 @Module( {
   imports: [

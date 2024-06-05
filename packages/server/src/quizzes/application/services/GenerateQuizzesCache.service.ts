@@ -1,26 +1,24 @@
 import { AnswerType } from "#shared/models/answers/Answer";
 import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
 import { QuestionEntity, QuestionID, QuestionVO } from "#shared/models/questions/Question";
-import { QuizEntity, QuizUpdateEntity } from "#shared/models/quizzes/Quiz";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import extend from "just-extend";
 import cron from "node-cron";
-import { QuizzesCacheRepository } from "./repositories/QuizzesCacheRepository";
-import { QuizzesRelationalRepository } from "./repositories/QuizzesRelationalRepository";
+import { GenerateQuizzesCacheServicePort, QuizEntity, QuizUpdateEntity, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort } from "../../domain";
+import { everyMinutes } from "#/utils/time/cron/Expressions";
+import { EventDBEmitter } from "#/events/EventDBEmitter";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
 
-import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { everyMinutes } from "#/utils/time/cron/Expressions";
-
 @Injectable()
-export class GenerateCacheService {
+export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServicePort {
   constructor(
     private readonly dbEventEmitter: EventDBEmitter,
-    private readonly quizzesRelationalService: QuizzesRelationalRepository,
-    private readonly quizzesCacheService: QuizzesCacheRepository,
+    @Inject(QuizzesRelationalRepositoryPort) private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
+    @Inject(QuizzesCacheRepositoryPort) private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
   ) {
     this.#initializeDependencyPropagationEvents();
     this.generateCache();
+
     cron.schedule(everyMinutes(10), () => {
       this.generateCache();
     } );

@@ -7,21 +7,15 @@ import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { QuestionAnswerCacheDocument, QuizCache, questionAnswerCacheEntityToDocument, quizCacheDocToEntity } from "../../db";
-import { quizCacheEntityToDoc } from "../../db/QuizCache/QuizCache";
-import { IReadService } from "./IReadService";
-import { CreateManyService, CreateOneService, DeleteAllService, DeleteOneService } from "#/utils/services/crud";
+import { QuestionAnswerCacheDocument, QuizCache, questionAnswerCacheEntityToDoc, quizCacheDocToEntity } from "../db";
+import { quizCacheEntityToDoc } from "../db/QuizCache";
+import { QuizzesCacheRepositoryPort } from "#/quizzes/domain/ports/repositories/QuizzesCache.repository.port";
 import { QuestionsAnswersService } from "#/questions-answers/services";
 import { HistoryEntriesService } from "#/historyEntries/services";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
 @Injectable()
-export class QuizzesCacheRepository implements
-IReadService,
-CreateOneService<QuizEntity>,
-CreateManyService<QuizEntity[]>,
-DeleteOneService<QuizID>,
-DeleteAllService {
+export class QuizzesCacheRepository implements QuizzesCacheRepositoryPort {
   constructor(
     @InjectModel(QuizCache.name) private QuizCacheModel: Model<QuizCache>,
     private readonly dbEventEmitter: EventDBEmitter,
@@ -113,7 +107,7 @@ DeleteAllService {
       const questionAnswerInQuizEntity = questionAnswerEntityToQuestionAnswerInQuizEntity(
         questionAnswerEntity,
       );
-      const doc = questionAnswerCacheEntityToDocument(questionAnswerInQuizEntity);
+      const doc = questionAnswerCacheEntityToDoc(questionAnswerInQuizEntity);
 
       questionsAnswersDocs.push(doc);
     }
@@ -134,7 +128,7 @@ DeleteAllService {
     const result = await this.QuizCacheModel.updateOne( {
       _id: id,
     }, {
-      questionsAnswers: questionsAnswers.map(qa=> questionAnswerCacheEntityToDocument(qa)),
+      questionsAnswers: questionsAnswers.map(qa=> questionAnswerCacheEntityToDoc(qa)),
     } ).exec();
 
     return result;

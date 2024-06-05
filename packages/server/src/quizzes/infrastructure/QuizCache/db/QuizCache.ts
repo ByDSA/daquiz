@@ -1,6 +1,6 @@
-import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, model } from "mongoose";
+import { QuizEntity } from "../../../domain";
 import { QuestionAnswerCacheDocument, QuestionAnswerCacheSchema, questionAnswerCacheDocToEntity, questionAnswerCacheEntityToDoc } from "./QuestionAnswerCache";
 
 @Schema( {

@@ -1,8 +1,7 @@
-import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
-import { ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
+import { QuizEntity, QuizID, ResultQuizPickQuestionsAnswersDto } from "../../models";
 import { FindAllService, FindOneService } from "#/utils/services/crud";
 
-export interface IReadService extends
+export interface ReadServicePort extends
 FindOneService<QuizEntity>,
 FindAllService<QuizEntity> {
   pickQuestionsAnswers(id: QuizID): Promise<ResultQuizPickQuestionsAnswersDto>;
