@@ -1,18 +1,29 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
 import { AddQuestionsAnswersDto, CreateQuizDto } from "#shared/models/quizzes/dtos";
+import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Quiz, quizDocToEntity } from "../db";
-import { CreateOneAndGetService } from "#/utils/services/crud";
+import { Quiz, quizDocToEntity } from "../../db";
+import { IWriteService } from "./IWriteService";
+import { FindAllService } from "#/utils/services/crud";
+import { FindQuestionsAnswersOptions, QuestionsAnswersService } from "#/questions-answers/services";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
+type FindOptions = {
+  include: {
+    questionsAnswers: FindQuestionsAnswersOptions["includeRelations"];
+  };
+};
+
 @Injectable()
-export class QuizzesWriteService implements
-CreateOneAndGetService<CreateQuizDto, QuizEntity> {
+export class QuizzesRelationalRepository implements
+IWriteService,
+FindAllService<QuizEntity> {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
+    private readonly questionsAnswersService: QuestionsAnswersService,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
     this.dbEventEmitter.onPatch(QuizEntity, (event) => {
@@ -26,6 +37,51 @@ CreateOneAndGetService<CreateQuizDto, QuizEntity> {
     this.dbEventEmitter.onCreate(QuizEntity, (event) => {
       console.log(QuizEntity.name, "CREATE", event);
     } );
+  }
+
+  async findAll(options?: FindOptions): Promise<QuizEntity[]> {
+    const docs = await this.QuizModel.find().exec();
+
+    if (!docs)
+      throw new Error("Failed to find quizzes");
+
+    const entities = docs.map(quizDocToEntity);
+    const promises: Promise<unknown>[] = [];
+
+    if (options) {
+      if (options.include.questionsAnswers) {
+        for (const entity of entities) {
+          entity.questionAnswers = [];
+
+          for (const questionAnswerId of entity.questionAnswersIds) {
+            const p = this.questionsAnswersService.findOne(questionAnswerId, {
+              includeRelations: options.include.questionsAnswers,
+            } );
+
+            p.then((questionAnswer) => {
+              if (questionAnswer) {
+                assertDefined(questionAnswer.question);
+                assertDefined(questionAnswer.answer);
+                entity.questionAnswers?.push( {
+                  id: questionAnswer.id,
+                  answerType: questionAnswer.answerType,
+                  answerId: questionAnswer.answerId,
+                  answer: questionAnswer.answer,
+                  questionId: questionAnswer.questionId,
+                  question: questionAnswer.question,
+                } );
+              }
+            } );
+
+            promises.push(p);
+          }
+        }
+      }
+
+      await Promise.all(promises);
+    }
+
+    return entities;
   }
 
   async createOneAndGet(dto: CreateQuizDto): Promise<QuizEntity> {

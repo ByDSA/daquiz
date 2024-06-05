@@ -3,7 +3,7 @@ import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswe
 import { QuizID } from "#shared/models/quizzes/Quiz";
 import { AddQuestionsAnswersDto, CreateQuizDto, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
 import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from "@nestjs/common";
-import { QuizzesReadService, QuizzesWriteService } from "./services";
+import { QuizzesService } from "./services";
 import { ObjectIdPipe } from "#/utils/validation";
 import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
@@ -14,13 +14,12 @@ implements CreateOneAndGetController<CreateQuizDto, ResultOneQuizDto>,
 FindOneController<TextAnswerID, ResultOneQuizDto>,
 FindAllController<ResultManyQuizDto> {
   constructor(
-    private readonly quizzesReadService: QuizzesReadService,
-    private readonly quizzesWriteService: QuizzesWriteService,
+    private readonly quizzesService: QuizzesService,
   ) {}
 
   @Post()
   async createOneAndGet(@Body() dto: CreateQuizDto): Promise<ResultOneQuizDto> {
-    const data = await this.quizzesWriteService.createOneAndGet( {
+    const data = await this.quizzesService.createOneAndGet( {
       name: dto.name,
     } );
 
@@ -32,7 +31,7 @@ FindAllController<ResultManyQuizDto> {
   @Get(":id")
   @UseInterceptors(new NotFoundInterceptor())
   async findOne(@Param("id", ObjectIdPipe) id: QuizID): Promise<ResultOneQuizDto> {
-    const found = await this.quizzesReadService.findOne(id);
+    const found = await this.quizzesService.findOne(id);
 
     return {
       data: found ?? undefined,
@@ -41,7 +40,7 @@ FindAllController<ResultManyQuizDto> {
 
   @Get()
   async findAll(): Promise<ResultManyQuizDto> {
-    const data = await this.quizzesReadService.findAll();
+    const data = await this.quizzesService.findAll();
 
     return {
       data,
@@ -53,7 +52,7 @@ FindAllController<ResultManyQuizDto> {
     @Param("id", ObjectIdPipe) id: QuizID,
     @Body() dto: AddQuestionsAnswersDto,
   ): Promise<void> {
-    await this.quizzesWriteService.addManyQuestionsAnswers(id, {
+    await this.quizzesService.addManyQuestionsAnswers(id, {
       questionsAnswersIds: dto.questionsAnswersIds,
     } );
   }
@@ -63,7 +62,7 @@ FindAllController<ResultManyQuizDto> {
     @Param("id", ObjectIdPipe) id: QuizID,
     @Param("questionAnswerId", ObjectIdPipe) questionAnswerId: QuestionAnswerID,
   ): Promise<void> {
-    await this.quizzesWriteService.removeOneQuestionAnswer(id, questionAnswerId);
+    await this.quizzesService.removeOneQuestionAnswer(id, questionAnswerId);
   }
 
   @Delete(":id/remove")
@@ -71,11 +70,11 @@ FindAllController<ResultManyQuizDto> {
     @Param("id", ObjectIdPipe) id: QuizID,
     @Body() dto: RemoveManyQuestionsAnswersDto,
   ): Promise<void> {
-    await this.quizzesWriteService.removeManyQuestionsAnswers(id, dto.ids);
+    await this.quizzesService.removeManyQuestionsAnswers(id, dto.ids);
   }
 
   @Get(":id/pickQuestion")
   async pickQuestion(@Param("id", ObjectIdPipe) id: QuizID): Promise<ResultQuizPickQuestionsAnswersDto> {
-    return await this.quizzesReadService.pickQuestionsAnswers(id);
+    return await this.quizzesService.pickQuestionsAnswers(id);
   }
 }

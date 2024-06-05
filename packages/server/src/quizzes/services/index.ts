@@ -1,7 +1,15 @@
 export {
-  QuizzesReadService,
-} from "./ReadService";
+  QuizzesService,
+} from "./Service";
 
 export {
-  QuizzesWriteService,
-} from "./WriteService";
+  QuizzesCacheRepository as QuizzesReadService,
+} from "./repositories/QuizzesCacheRepository";
+
+export {
+  QuizzesRelationalRepository as QuizzesRelationalService,
+} from "./repositories/QuizzesRelationalRepository";
+
+export {
+  GenerateCacheService as GenerateQuizzesCacheService,
+} from "./GenerateCacheService";

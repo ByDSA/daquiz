@@ -26,7 +26,7 @@ const docToEntity = (doc: Doc): QuizEntity => {
   return {
     id: doc._id.toString(),
     name: doc.name,
-    questionAnswersIds: doc.questionsAnswers.map((qa) => qa._id.toString()),
+    questionAnswersIds: doc.questionsAnswers.map((qa) => qa.toString()),
   };
 };
 const updateQueryToUpdateEntity = (

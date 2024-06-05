@@ -1,5 +1,6 @@
 import { QuestionAnswerEntity, QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { CreateQuestionAnswerDto } from "#shared/models/questions-answers/dtos";
+import { assertDefined } from "#shared/utils/validation/asserts";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -8,7 +9,7 @@ import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/
 import { QuestionsService } from "#/questions/services";
 import { TextAnswersService } from "#/answers/text-answer/services";
 
-type FindOneOptions = Partial<{
+export type FindQuestionsAnswersOptions = Partial<{
   includeRelations: {
     question?: boolean;
     answer?: boolean;
@@ -36,7 +37,7 @@ FindAllService<QuestionAnswerEntity> {
 
   async findOne(
     id: QuestionAnswerID,
-    options?: FindOneOptions,
+    options?: FindQuestionsAnswersOptions,
   ): Promise<QuestionAnswerEntity | null> {
     const doc = await this.QuestionAnswerModel.findById(id).exec();
 
@@ -50,8 +51,8 @@ FindAllService<QuestionAnswerEntity> {
     if (options?.includeRelations?.question) {
       const p = this.questionsService.findOne(entity.questionId)
         .then((got) => {
-          if (got)
-            entity.question = got;
+          assertDefined(got, "Question not found for id=" + entity.questionId);
+          entity.question = got;
         } );
 
       populatePromises.push(p);
@@ -60,8 +61,8 @@ FindAllService<QuestionAnswerEntity> {
     if (options?.includeRelations?.answer) {
       const p = this.textAnswersService.findOne(entity.answerId)
         .then((got) => {
-          if (got)
-            entity.answer = got;
+          assertDefined(got, "Answer not found for id=" + entity.answerId);
+          entity.answer = got;
         } );
 
       populatePromises.push(p);
@@ -72,7 +73,7 @@ FindAllService<QuestionAnswerEntity> {
     return entity;
   }
 
-  async findAll(_options?: FindOneOptions): Promise<QuestionAnswerEntity[]> {
+  async findAll(_options?: FindQuestionsAnswersOptions): Promise<QuestionAnswerEntity[]> {
     const docs: QuestionAnswerDocument[] = await this.QuestionAnswerModel.find().exec();
 
     return docs.map(questionAnswerDocumentToEntity);

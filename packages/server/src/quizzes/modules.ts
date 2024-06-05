@@ -1,7 +1,9 @@
 import { Module } from "@nestjs/common";
 import { QuizzesController } from "./controllers";
 import { QuizzesCacheDBModule, QuizzesDBModule } from "./db";
-import { QuizzesReadService, QuizzesWriteService } from "./services";
+import { GenerateQuizzesCacheService, QuizzesService } from "./services";
+import { QuizzesCacheRepository } from "./services/repositories/QuizzesCacheRepository";
+import { QuizzesRelationalRepository } from "./services/repositories/QuizzesRelationalRepository";
 import { QuestionsAnswersModule } from "#/questions-answers/modules";
 import { HistoryEntriesModule } from "#/historyEntries/modules";
 import { EventsModule } from "#/events/module";
@@ -15,7 +17,12 @@ import { EventsModule } from "#/events/module";
     EventsModule,
   ],
   controllers: [QuizzesController],
-  providers: [QuizzesReadService, QuizzesWriteService],
+  providers: [
+    QuizzesService,
+    QuizzesCacheRepository,
+    QuizzesRelationalRepository,
+    GenerateQuizzesCacheService,
+  ],
   exports: [],
 } )
 export class QuizzesModule {}
