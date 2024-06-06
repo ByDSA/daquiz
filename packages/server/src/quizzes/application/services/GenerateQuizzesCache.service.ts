@@ -1,27 +1,29 @@
 import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
 import extend from "just-extend";
-import cron from "node-cron";
 import { GenerateQuizzesCacheServicePort, QuizEntity, QuizUpdateEntity, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort } from "../../domain";
 import { AnswerType } from "#/answers/domain";
 import { TextAnswerEntity, TextAnswerVO } from "#/answers/text-answer/domain";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
 import { OnCreateEvent, OnDeleteEvent, OnPatchEvent } from "#/events/EventDBEmitter";
 import { QuestionEntity, QuestionVO } from "#/questions/domain";
-import { everyMinutes } from "#/utils/time/cron/Expressions";
 
 @Injectable()
 export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServicePort {
   private readonly logger: LoggerService = new Logger(this.constructor.name);
 
   constructor(
-    @Inject(QuizzesRelationalRepositoryPort) private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
-    @Inject(QuizzesCacheRepositoryPort) private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
+    @Inject(QuizzesRelationalRepositoryPort)
+    private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
+    @Inject(QuizzesCacheRepositoryPort)
+    private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
   ) {
     this.generateCache();
+  }
 
-    cron.schedule(everyMinutes(10), () => {
-      this.generateCache();
-    } );
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  handleCron() {
+    this.generateCache();
   }
 
   async generateCache() {
@@ -115,7 +117,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
   }
 
   @OnCreateEvent(QuizEntity)
-  async handleOnCreateQuiz(event: CreateEventDB<QuizEntity>) {
+  handleOnCreateQuiz(event: CreateEventDB<QuizEntity>) {
     return this.quizzesCacheService.createOne( {
       id: event.id,
       ...event.valueObject,
@@ -123,7 +125,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
   }
 
   @OnDeleteEvent(QuizEntity)
-  async handleOnDeleteQuiz(event: DeleteEventDB<QuizEntity>) {
+  handleOnDeleteQuiz(event: DeleteEventDB<QuizEntity>) {
     return this.quizzesCacheService.deleteOne(event.id);
   }
 }

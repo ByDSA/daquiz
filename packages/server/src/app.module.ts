@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RouterModule } from "@nestjs/core";
 import { MongooseModule } from "@nestjs/mongoose";
+import { ScheduleModule } from "@nestjs/schedule";
 import { TextAnswersModule } from "./answers/text-answer/TextAnswers.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -17,6 +18,7 @@ import { QuizzesModule } from "./quizzes";
     ConfigModule.forRoot( {
       load: [configuration],
     } ),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync( {
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
