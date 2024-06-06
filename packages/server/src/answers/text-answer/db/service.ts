@@ -21,6 +21,9 @@ export class Service {
           return ret;
         },
       },
+      createEmission: {
+        use: true,
+      },
     } );
   }
 }

@@ -21,6 +21,9 @@ export class QuestionDBService {
           return ret;
         },
       },
+      createEmission: {
+        use: true,
+      },
     } );
   }
 }
