@@ -1,7 +1,7 @@
 import { MongooseModule } from "@nestjs/mongoose";
 import { SchemaOdm, SchemaOdmClass } from "./schema";
 import { Service } from "./service";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 
 export const Module = MongooseModule.forFeature([{
   name: SchemaOdmClass.name,
@@ -9,6 +9,6 @@ export const Module = MongooseModule.forFeature([{
 }]);
 
 Module.imports ??= [];
-Module.imports.push(EventsModule);
+Module.imports.push(CustomEventEmitterModule);
 Module.providers ??= [];
 Module.providers.push(Service);

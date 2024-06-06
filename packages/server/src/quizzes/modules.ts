@@ -6,7 +6,7 @@ import { QuizzesRelationalRepositoryPort } from "./domain/ports/repositories/Qui
 import { QuizzesCacheDBModule, QuizzesCacheRepository, QuizzesController, QuizzesDBModule, QuizzesRelationalRepository } from "./infrastructure";
 import { QuestionsAnswersModule } from "#/questions-answers/submodules";
 import { HistoryEntriesModule } from "#/historyEntries";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 
 @Module( {
   imports: [
@@ -14,7 +14,7 @@ import { EventsModule } from "#/events/module";
     HistoryEntriesModule,
     QuizzesCacheDBModule,
     QuizzesDBModule,
-    EventsModule,
+    CustomEventEmitterModule,
   ],
   controllers: [QuizzesController],
   providers: [

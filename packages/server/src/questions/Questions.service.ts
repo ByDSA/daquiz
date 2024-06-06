@@ -13,7 +13,7 @@ export class QuestionsService implements QuestionsServicePort {
     @InjectModel(Question.name) private readonly QuestionModel: Model<Question>,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
-    this.dbEventEmitter.registryLogger(QuestionEntity);
+    this.dbEventEmitter.registerEventDBLoggerFor(QuestionEntity);
   }
 
   async patchOneAndGet(id: string, props: QuestionVO): Promise<QuestionEntity | null> {

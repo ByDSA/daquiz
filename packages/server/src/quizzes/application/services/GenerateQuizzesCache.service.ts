@@ -3,10 +3,10 @@ import extend from "just-extend";
 import cron from "node-cron";
 import { GenerateQuizzesCacheServicePort, QuizEntity, QuizUpdateEntity, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort } from "../../domain";
 import { AnswerType } from "#/answers/domain";
-import { TextAnswerEntity, TextAnswerID, TextAnswerVO } from "#/answers/text-answer/domain";
+import { TextAnswerEntity, TextAnswerVO } from "#/answers/text-answer/domain";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
-import { EventDBEmitter } from "#/events/EventDBEmitter";
-import { QuestionEntity, QuestionID, QuestionVO } from "#/questions/domain";
+import { OnCreateEvent, OnDeleteEvent, OnPatchEvent } from "#/events/EventDBEmitter";
+import { QuestionEntity, QuestionVO } from "#/questions/domain";
 import { everyMinutes } from "#/utils/time/cron/Expressions";
 
 @Injectable()
@@ -14,11 +14,9 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
   private readonly logger: LoggerService = new Logger(this.constructor.name);
 
   constructor(
-    private readonly dbEventEmitter: EventDBEmitter,
     @Inject(QuizzesRelationalRepositoryPort) private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
     @Inject(QuizzesCacheRepositoryPort) private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
   ) {
-    this.#initializeDependencyPropagationEvents();
     this.generateCache();
 
     cron.schedule(everyMinutes(10), () => {
@@ -42,57 +40,12 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
     this.logger.log("Quizzes cache updated");
   }
 
-  #initializeDependencyPropagationEvents() {
-    this.dbEventEmitter.onPatch(
-      QuestionEntity,
-      (event) => {
-        if (event.updateEntity)
-          this.#patchQuestionReference(event.id, event.updateEntity);
-      },
-    );
+  @OnPatchEvent(QuestionEntity)
+  async handleOnPatchQuestion(event: PatchEventDB<QuestionEntity, QuestionVO>) {
+    if (!event.updateEntity)
+      return;
 
-    this.dbEventEmitter.onPatch(
-      TextAnswerEntity,
-      (event) => {
-        if (event.updateEntity)
-          this.#patchTextAnswerReference(event.id, event.updateEntity);
-      },
-    );
-
-    this.dbEventEmitter.onPatch(
-      QuizEntity,
-      (event: PatchEventDB<QuizEntity, QuizUpdateEntity>) => {
-        const addedQuestionsAnswersIds = event.updateEntity.questionAnswersIds?.added;
-
-        if (addedQuestionsAnswersIds)
-          this.quizzesCacheService.addQuestionsAnswers(event.id, addedQuestionsAnswersIds);
-
-        const removedIds = event.updateEntity.questionAnswersIds?.removed;
-
-        if (removedIds)
-          this.quizzesCacheService.removeQuestionsAnswers(event.id, removedIds);
-      },
-    );
-
-    this.dbEventEmitter.onCreate(
-      QuizEntity,
-      (event: CreateEventDB<QuizEntity>) => {
-        this.quizzesCacheService.createOne( {
-          id: event.id,
-          ...event.valueObject,
-        } );
-      },
-    );
-
-    this.dbEventEmitter.onDelete(
-      QuizEntity,
-      (event: DeleteEventDB<QuizEntity>) => {
-        this.quizzesCacheService.deleteOne(event.id);
-      },
-    );
-  }
-
-  async #patchQuestionReference(id: QuestionID, partialVO: Partial<QuestionVO>) {
+    const { id, updateEntity } = event;
     const quizzes = await this.quizzesCacheService.findAll();
 
     for (const quiz of quizzes) {
@@ -104,7 +57,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
           questionAnswer.question = extend(
             {},
             questionAnswer.question,
-            partialVO,
+            updateEntity,
           ) as QuestionVO;
           questionAnswer.questionId = id;
           haveToUpdateQuiz = true;
@@ -116,7 +69,12 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
     }
   }
 
-  async #patchTextAnswerReference(id: TextAnswerID, valueObject: Partial<TextAnswerVO>) {
+  @OnPatchEvent(TextAnswerEntity)
+  async handleOnPatchTextAnswer(event: PatchEventDB<TextAnswerEntity>) {
+    if (!event.updateEntity)
+      return;
+
+    const { id, updateEntity } = event;
     const quizzes = await this.quizzesCacheService.findAll();
 
     for (const quiz of quizzes) {
@@ -131,7 +89,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
             true,
             {},
             questionAnswer.answer,
-            valueObject,
+            updateEntity,
           ) as TextAnswerVO;
           questionAnswer.answerId = id;
           haveToUpdateQuiz = true;
@@ -141,5 +99,31 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
       if (haveToUpdateQuiz)
         await this.quizzesCacheService.updateOneQuestionsAnswers(quiz.id, quiz.questionAnswers);
     }
+  }
+
+  @OnPatchEvent(QuizEntity)
+  async handleOnPatchQuiz(event: PatchEventDB<QuizEntity, QuizUpdateEntity>) {
+    const addedQuestionsAnswersIds = event.updateEntity.questionAnswersIds?.added;
+
+    if (addedQuestionsAnswersIds)
+      await this.quizzesCacheService.addQuestionsAnswers(event.id, addedQuestionsAnswersIds);
+
+    const removedIds = event.updateEntity.questionAnswersIds?.removed;
+
+    if (removedIds)
+      await this.quizzesCacheService.removeQuestionsAnswers(event.id, removedIds);
+  }
+
+  @OnCreateEvent(QuizEntity)
+  async handleOnCreateQuiz(event: CreateEventDB<QuizEntity>) {
+    return this.quizzesCacheService.createOne( {
+      id: event.id,
+      ...event.valueObject,
+    } );
+  }
+
+  @OnDeleteEvent(QuizEntity)
+  async handleOnDeleteQuiz(event: DeleteEventDB<QuizEntity>) {
+    return this.quizzesCacheService.deleteOne(event.id);
   }
 }

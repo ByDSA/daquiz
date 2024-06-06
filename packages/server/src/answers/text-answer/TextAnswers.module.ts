@@ -3,12 +3,10 @@ import { TextAnswersController } from "./TextAnswers.controller";
 import { TextAnswersService } from "./TextAnswers.service";
 import { TextAnswersServicePort } from "./TextAnswers.service.port";
 import { TextAnswersDBModule } from "./db";
-import { EventsModule } from "#/events/module";
 
 @Module( {
   imports: [
     TextAnswersDBModule,
-    EventsModule,
   ],
   controllers: [TextAnswersController],
   providers: [{

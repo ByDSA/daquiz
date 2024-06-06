@@ -3,7 +3,7 @@ import { QuestionsAnswersRepositoryPort } from "../domain";
 import { QuestionsAnswersDBModule } from "../infrastructure/db/db.module";
 import { QuestionsAnswersRepository } from "../infrastructure/repositories/QuestionsAnswers.repository";
 import { QuestionsModule } from "#/questions";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 import { TextAnswersModule } from "#/answers/text-answer";
 
 @Module( {
@@ -11,7 +11,7 @@ import { TextAnswersModule } from "#/answers/text-answer";
     QuestionsAnswersDBModule,
     QuestionsModule,
     TextAnswersModule,
-    EventsModule,
+    CustomEventEmitterModule,
   ],
   controllers: [],
   providers: [

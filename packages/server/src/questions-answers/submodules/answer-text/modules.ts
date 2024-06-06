@@ -3,12 +3,12 @@ import { QuestionsAnswersServiceModule } from "../service.module";
 import { QuestionTextAnswerService } from "./QuestionTextAnswer.service";
 import { QuestionTextAnswerServicePort } from "./QuestionTextAnswer.service.port";
 import { QuestionTextAnswerController } from "./controllers";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 
 @Module( {
   imports: [
     QuestionsAnswersServiceModule,
-    EventsModule,
+    CustomEventEmitterModule,
   ],
   controllers: [QuestionTextAnswerController],
   providers: [

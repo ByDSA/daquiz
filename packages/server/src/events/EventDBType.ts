@@ -1,5 +1,5 @@
 export enum EventDBType {
-  CREATE = "CREATE",
-  DELETE = "DELETE",
-  PATCH = "PATCH",
+  CREATED = "CREATED",
+  DELETED = "DELETED",
+  PATCHED = "PATCHED",
 }

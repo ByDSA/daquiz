@@ -12,7 +12,7 @@ export class TextAnswersService implements TextAnswersServicePort {
     @InjectModel(TextAnswer.name) private TextAnswerModel: Model<TextAnswer>,
     private readonly dbEventEmitter: EventDBEmitter,
   ) {
-    this.dbEventEmitter.registryLogger(TextAnswerEntity);
+    this.dbEventEmitter.registerEventDBLoggerFor(TextAnswerEntity);
   }
 
   async patchOneAndGet(id: string, dto: PatchOneTextAnswerDto): Promise<TextAnswerEntity | null> {

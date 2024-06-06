@@ -12,10 +12,11 @@ import { EventDBEmitter } from "#/events/EventDBEmitter";
 export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryPort {
   constructor(
     @InjectModel(Quiz.name) private QuizModel: Model<Quiz>,
-    @Inject(QuestionsAnswersRepositoryPort) private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
+    @Inject(QuestionsAnswersRepositoryPort)
+    private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
     private readonly eventDBEmitter: EventDBEmitter,
   ) {
-    this.eventDBEmitter.registryLogger(QuizEntity);
+    this.eventDBEmitter.registerEventDBLoggerFor(QuizEntity);
   }
 
   async findAll(options?: QuizzesRelationalRepositoryFindOptions): Promise<QuizEntity[]> {

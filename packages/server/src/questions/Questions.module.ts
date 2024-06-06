@@ -3,12 +3,12 @@ import { QuestionsController } from "./Questions.controller";
 import { QuestionsService } from "./Questions.service";
 import { QuestionsServicePort } from "./Questions.service.port";
 import { QuestionsDBModule } from "./db";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 
 @Module( {
   imports: [
     QuestionsDBModule,
-    EventsModule,
+    CustomEventEmitterModule,
   ],
   controllers: [QuestionsController],
   providers: [{

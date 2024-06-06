@@ -21,7 +21,7 @@ export class QuizzesCacheRepository implements QuizzesCacheRepositoryPort {
     @Inject(QuestionsAnswersRepositoryPort)
     private readonly questionsAnswersService: QuestionsAnswersRepositoryPort,
   ) {
-    this.dbEventEmitter.registryLogger(QuizCache.name);
+    this.dbEventEmitter.registerEventDBLoggerFor(QuizCache.name);
   }
 
   async deleteAll(): Promise<void> {

@@ -12,7 +12,7 @@ export class HistoryEntriesService implements HistoryEntriesServicePort {
     @InjectModel(HistoryEntry.name) private readonly QuestionModel: Model<HistoryEntry>,
     private readonly eventDBEmitter: EventDBEmitter,
   ) {
-    this.eventDBEmitter.registryLogger(HistoryEntryEntity);
+    this.eventDBEmitter.registerEventDBLoggerFor(HistoryEntryEntity);
   }
 
   async createOne(dto: CreateOneHistoryEntryDto): Promise<void> {

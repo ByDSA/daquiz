@@ -1,7 +1,7 @@
 import { MongooseModule } from "@nestjs/mongoose";
 import { Quiz, SchemaOdm } from "./Quiz";
 import { DBService } from "./service";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 
 export const DBModule = MongooseModule.forFeature([{
   name: Quiz.name,
@@ -9,6 +9,6 @@ export const DBModule = MongooseModule.forFeature([{
 }]);
 
 DBModule.imports ??= [];
-DBModule.imports.push(EventsModule);
+DBModule.imports.push(CustomEventEmitterModule);
 DBModule.providers ??= [];
 DBModule.providers.push(DBService);

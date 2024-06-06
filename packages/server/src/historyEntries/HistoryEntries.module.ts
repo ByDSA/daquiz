@@ -3,12 +3,12 @@ import { HistoryEntriesController } from "./HistoryEntries.controller";
 import { HistoryEntriesService } from "./HistoryEntries.service";
 import { HistoryEntriesServicePort } from "./HistoryEntries.service.port";
 import { HistoryEntriesDBModule } from "./db";
-import { EventsModule } from "#/events/module";
+import { CustomEventEmitterModule } from "#/events/module";
 
 @Module( {
   imports: [
     HistoryEntriesDBModule,
-    EventsModule,
+    CustomEventEmitterModule,
   ],
   controllers: [HistoryEntriesController],
   providers: [{
