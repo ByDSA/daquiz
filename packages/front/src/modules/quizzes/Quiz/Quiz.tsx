@@ -9,6 +9,7 @@ import AddNewQuestionAnswer from "./AddNewQuestionAnswer/AddNewQuestionAnswer";
 import { genExpandedRow } from "./row/ExpandedRow";
 import styles from "./styles.module.css";
 import { TextEditableSaveable } from "#ui/TextEditable";
+import { SendToButton } from "#ui/SendToButton";
 import { DeleteButton } from "#ui/DeleteButton";
 import { patchOneQuestionAndGet } from "#modules/questions";
 import { patchOneTextAnswerAndGet } from "#modules/answers";
@@ -155,7 +156,7 @@ const Quiz = ( { data, revalidateData }: Props) => {
         highlightOnHover
         progressPending={!questionAnswers}
         subHeader={true}
-        subHeaderComponent={<button onClick={moveTo()}>Mover a</button>}
+        subHeaderComponent={<SendToButton onClick={moveTo()} />}
         selectableRows={true}
         onSelectedRowsChange={( { selectedRows: rows } ) => {
           const filteredRows = filterExistingRows(rows);
