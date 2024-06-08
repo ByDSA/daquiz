@@ -23,8 +23,6 @@ class Multimedia {
 };
 
 class Choice extends Multimedia {
-  @IsString()
-  value!: string;
 };
 
 class Group extends Multimedia {

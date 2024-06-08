@@ -1,9 +1,11 @@
+import { ChoiceDto } from "#shared/models/questions/dtos";
 import { ChangeEvent, useState } from "react";
-import { AnswerType } from "../../../../../shared/build/models/answers/Answer";
-import { neverCase } from "../../../../../shared/build/utils/typescript";
-import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { fetchCreateOneQuestionTextAnswerAndGet } from "../QuestionAnswer/fetching";
-import { fetchAddQuestionAnswer } from "../fetching";
+import { AnswerType } from "../../../../../../shared/build/models/answers/Answer";
+import { neverCase } from "../../../../../../shared/build/utils/typescript";
+import { assertDefined } from "../../../../../../shared/build/utils/validation/asserts";
+import { fetchCreateOneQuestionTextAnswerAndGet } from "../../QuestionAnswer/fetching";
+import { fetchAddQuestionAnswer } from "../../fetching";
+import NewQuestion, { FORM_QUESTION_CHOICE_PREFIX_NAME, FORM_QUESTION_TEXT_NAME } from "./NewQuestion";
 import styles from "./styles.module.css";
 
 type AddNewQuestionAnswerProps = {
@@ -22,7 +24,7 @@ const AddNewQuestionAnswer = ( { quizId, revalidateData }: AddNewQuestionAnswerP
       quizId,
       revalidateData,
     } )}>
-      <input type="text" placeholder="Pregunta" name="question-text"/>
+      <NewQuestion />
       <fieldset>
         <legend>Tipo de respuesta:</legend>
         {
@@ -70,7 +72,7 @@ const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps
     const answerType = formData.get("answer-type") as AnswerType;
 
     assertDefined(answerType);
-    const questionText = formData.get("question-text") as string;
+    const questionText = formData.get(FORM_QUESTION_TEXT_NAME) as string;
 
     if (!questionText) {
       alert("La pregunta no puede estar vacía");
@@ -86,9 +88,15 @@ const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps
       return;
     }
 
+    const choices = getChoices(formData, answerText);
     const createdQuestionAnswer = await fetchCreateOneQuestionTextAnswerAndGet( {
-      question: questionText,
-      answer: answerText,
+      question: {
+        text: questionText,
+        choices: choices ?? undefined,
+      },
+      answer: {
+        text: answerText,
+      },
     } );
     const createdQuestionAnswerId = createdQuestionAnswer?.data?.id;
 
@@ -104,3 +112,29 @@ const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps
     currentTarget.reset();
   };
 };
+
+function getChoices(formData: FormData, answerText: string): ChoiceDto[] | null {
+  const choices: string[] = [];
+  let i = 1;
+
+  while (true) {
+    let currentChoice = formData.get(FORM_QUESTION_CHOICE_PREFIX_NAME + i);
+
+    if (currentChoice === null || typeof currentChoice !== "string")
+      break;
+
+    if (currentChoice !== "")
+      choices.push(currentChoice);
+
+    i++;
+  }
+
+  if (choices.length === 0)
+    return null;
+
+  choices.push(answerText);
+
+  return choices.map((text) => ( {
+    text,
+  } ));
+}

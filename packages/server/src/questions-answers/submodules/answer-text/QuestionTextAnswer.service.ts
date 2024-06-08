@@ -18,10 +18,11 @@ export class QuestionTextAnswerService implements QuestionTextAnswerServicePort 
     dto: CreateQuestionTextAnswerDto,
   ): Promise<QuestionTextAnswerEntity> {
     const questionPromise = this.questionService.createOneAndGet( {
-      text: dto.question,
+      text: dto.question.text,
+      choices: dto.question.choices,
     } );
     const answerPromise = this.textAnswerService.createOneAndGet( {
-      text: dto.answer,
+      text: dto.answer.text,
     } );
 
     await Promise.all([questionPromise, answerPromise]);

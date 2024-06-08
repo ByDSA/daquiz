@@ -42,14 +42,16 @@ export class QuizzesRelationalRepository implements QuizzesRelationalRepositoryP
               if (questionAnswer) {
                 assertDefined(questionAnswer.question);
                 assertDefined(questionAnswer.answer);
-                entity.questionAnswers?.push( {
+                const questionAnswerEntity = {
                   id: questionAnswer.id,
                   answerType: questionAnswer.answerType,
                   answerId: questionAnswer.answerId,
                   answer: questionAnswer.answer,
                   questionId: questionAnswer.questionId,
                   question: questionAnswer.question,
-                } );
+                };
+
+                entity.questionAnswers?.push(questionAnswerEntity);
               }
             } );
 

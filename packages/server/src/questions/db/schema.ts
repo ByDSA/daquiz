@@ -1,15 +1,16 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+import { Choice, Multimedia } from "./multimedia.schema";
 
 @Schema( {
   collection: "questions",
 } )
-export class Question {
+export class Question extends Multimedia {
   @Prop( {
-    type: String,
+    type: Array<Choice>,
     required: false,
   } )
-  text?: string;
+  choices?: Choice[];
 }
 
 export type QuestionDocument = HydratedDocument<Question>;

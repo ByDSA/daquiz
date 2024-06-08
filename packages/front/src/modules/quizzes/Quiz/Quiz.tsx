@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
 import { fetchAddQuestionAnswer, fetchRemoveManyQuestionsAnswers, fetchRemoveOneQuestionAnswer } from "../fetching";
-import AddNewQuestionAnswer from "./AddNewQuestionAnswer";
+import AddNewQuestionAnswer from "./AddNewQuestionAnswer/AddNewQuestionAnswer";
+import { genExpandedRow } from "./row/ExpandedRow";
 import styles from "./styles.module.css";
-import { TextEditableSaveable } from "#modules/utils/components/table/TextEditable";
+import { TextEditableSaveable } from "#ui/TextEditable";
+import { DeleteButton } from "#ui/DeleteButton";
 import { patchOneQuestionAndGet } from "#modules/questions";
 import { patchOneTextAnswerAndGet } from "#modules/answers";
 
@@ -74,14 +76,14 @@ const genColumns: GenColumnsFn = (
   {
     name: "Acciones",
     cell: (row: QuestionAnswerInQuizEntity) => {
-      return <><button onClick={async ()=>{
+      return <><DeleteButton onClick={async ()=>{
         await fetchRemoveOneQuestionAnswer( {
           quizId: data.id,
           questionAnswerId: row.id,
         } );
 
         await revalidateData();
-      }}>Eliminar</button>
+      }} />
       </>;
     },
   },
@@ -155,6 +157,10 @@ const Quiz = ( { data, revalidateData }: Props) => {
         }}
         selectableRowsHighlight
         selectableRowsVisibleOnly
+        expandableRows
+        expandableRowsComponent={genExpandedRow( {
+          revalidateData,
+        } )}
       />
       <AddNewQuestionAnswer quizId={data.id} revalidateData={revalidateData}/>
     </>

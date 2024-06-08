@@ -14,9 +14,9 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
 
   constructor(
     @Inject(QuizzesRelationalRepositoryPort)
-    private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
+    private readonly quizzesRelationalRepo: QuizzesRelationalRepositoryPort,
     @Inject(QuizzesCacheRepositoryPort)
-    private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
+    private readonly quizzesCacheRepo: QuizzesCacheRepositoryPort,
   ) {
     this.generateCache();
   }
@@ -28,7 +28,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
 
   async generateCache() {
     this.logger.log("Quizzes cache updating");
-    const quizzes = await this.quizzesRelationalService.findAll( {
+    const quizzes = await this.quizzesRelationalRepo.findAll( {
       include: {
         questionsAnswers: {
           question: true,
@@ -37,8 +37,8 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
       },
     } );
 
-    await this.quizzesCacheService.deleteAll();
-    await this.quizzesCacheService.createMany(quizzes);
+    await this.quizzesCacheRepo.deleteAll();
+    await this.quizzesCacheRepo.createMany(quizzes);
     this.logger.log("Quizzes cache updated");
   }
 
@@ -48,7 +48,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
       return;
 
     const { id, updateEntity } = event;
-    const quizzes = await this.quizzesCacheService.findAll();
+    const quizzes = await this.quizzesCacheRepo.findAll();
 
     for (const quiz of quizzes) {
       quiz.questionAnswers ??= [];
@@ -67,7 +67,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
       }
 
       if (haveToUpdateQuiz)
-        await this.quizzesCacheService.updateOneQuestionsAnswers(quiz.id, quiz.questionAnswers);
+        await this.quizzesCacheRepo.updateOneQuestionsAnswers(quiz.id, quiz.questionAnswers);
     }
   }
 
@@ -77,7 +77,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
       return;
 
     const { id, updateEntity } = event;
-    const quizzes = await this.quizzesCacheService.findAll();
+    const quizzes = await this.quizzesCacheRepo.findAll();
 
     for (const quiz of quizzes) {
       quiz.questionAnswers ??= [];
@@ -99,7 +99,7 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
       }
 
       if (haveToUpdateQuiz)
-        await this.quizzesCacheService.updateOneQuestionsAnswers(quiz.id, quiz.questionAnswers);
+        await this.quizzesCacheRepo.updateOneQuestionsAnswers(quiz.id, quiz.questionAnswers);
     }
   }
 
@@ -108,17 +108,17 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
     const addedQuestionsAnswersIds = event.updateEntity.questionAnswersIds?.added;
 
     if (addedQuestionsAnswersIds)
-      await this.quizzesCacheService.addQuestionsAnswers(event.id, addedQuestionsAnswersIds);
+      await this.quizzesCacheRepo.addQuestionsAnswers(event.id, addedQuestionsAnswersIds);
 
     const removedIds = event.updateEntity.questionAnswersIds?.removed;
 
     if (removedIds)
-      await this.quizzesCacheService.removeQuestionsAnswers(event.id, removedIds);
+      await this.quizzesCacheRepo.removeQuestionsAnswers(event.id, removedIds);
   }
 
   @OnCreateEvent(QuizEntity)
   handleOnCreateQuiz(event: CreateEventDB<QuizEntity>) {
-    return this.quizzesCacheService.createOne( {
+    return this.quizzesCacheRepo.createOne( {
       id: event.id,
       ...event.valueObject,
     } );
@@ -126,6 +126,6 @@ export class GenerateQuizzesCacheService implements GenerateQuizzesCacheServiceP
 
   @OnDeleteEvent(QuizEntity)
   handleOnDeleteQuiz(event: DeleteEventDB<QuizEntity>) {
-    return this.quizzesCacheService.deleteOne(event.id);
+    return this.quizzesCacheRepo.deleteOne(event.id);
   }
 }

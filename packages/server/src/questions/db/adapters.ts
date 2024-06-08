@@ -1,12 +1,33 @@
 import { model, Types } from "mongoose";
 import { QuestionEntity } from "../domain";
+import { multimediaDocToEntity, multimediaEntityToDoc } from "./multimedia.adapter";
+import { Choice } from "./multimedia.schema";
 import { QuestionDocument, QuestionSchema } from "./schema";
+import { ArrayElement } from "#/utils/typescript";
+
+type ChoiceInQuestion = ArrayElement<NonNullable<QuestionEntity["choices"]>>;
+
+const choiceDocToEntity = (doc: Choice): ChoiceInQuestion => {
+  const multimediaPart = multimediaDocToEntity(doc);
+  const entity: ChoiceInQuestion = {
+    ...multimediaPart,
+  };
+
+  return entity;
+};
 
 export const documentToEntity = (doc: QuestionDocument): QuestionEntity => {
-  return {
+  const requiredPart: QuestionEntity = {
     id: doc._id.toString(),
-    text: doc.text,
   };
+  const multimediaPart = multimediaDocToEntity(doc);
+  const entity: QuestionEntity = {
+    ...requiredPart,
+    ...multimediaPart,
+    choices: doc.choices?.map(choiceDocToEntity),
+  };
+
+  return entity;
 };
 
 export const partialDocumentToPartialEntity = (
@@ -20,6 +41,9 @@ export const partialDocumentToPartialEntity = (
   if (doc.text)
     partial.text = doc.text;
 
+  if (doc.choices)
+    partial.choices = doc.choices.map(choiceDocToEntity);
+
   return partial;
 };
 
@@ -28,8 +52,20 @@ export const modelName = "Question";
 const QuestionModel = model(modelName, QuestionSchema);
 
 export const entityToDocument = (entity: QuestionEntity): QuestionDocument => {
-  return new QuestionModel( {
+  const requiredPart = {
     _id: new Types.ObjectId(entity.id),
-    text: entity.text,
-  } );
+  };
+  const optionalPart: Omit<QuestionEntity, "id"> = {};
+
+  if (entity.choices)
+    optionalPart.choices = entity.choices.map(multimediaEntityToDoc);
+
+  const multimediaPart = multimediaEntityToDoc(entity);
+  const doc = {
+    ...requiredPart,
+    ...optionalPart,
+    ...multimediaPart,
+  };
+
+  return new QuestionModel(doc);
 };

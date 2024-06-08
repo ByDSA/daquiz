@@ -1,0 +1,10 @@
+.choices {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.5em;
+}
+
+.choice {
+  display: flex;
+  flex-flow: row nowrap;
+}

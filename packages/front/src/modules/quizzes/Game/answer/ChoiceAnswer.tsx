@@ -1,20 +1,21 @@
 import { TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
+import { QuestionEntity } from "#shared/models/questions/Question";
 import { useState } from "react";
-import { CheckAnswerResult, fetchCheckAnswer } from "./fetching";
+import { CheckAnswerResult, fetchCheckAnswer } from "../fetching";
+import { IAnswer, Props } from "./IAnswer";
 import styles from "./styles.module.css";
 
-const TEXT_ANSWER_INPUT_NAME = "text-answer";
+const CHOICE_ANSWER_GROUP_NAME = "choice-answer";
 
-type Props = {
-  questionAnswerId: QuestionAnswerID;
-  nextQuestion: ()=> Promise<void>;
-};
-export const Answer = ( { questionAnswerId, nextQuestion }: Props) => {
+export const ChoiceAnswer: IAnswer = ( { question, questionAnswerId, nextQuestion }: Props) => {
   const [result, setResult] = useState<CheckAnswerResult | null>(null);
 
+  if (!question.choices)
+    return null;
+
   return (
-    <section>
+    <section className={styles.answer}>
       <p>Respuesta:</p>
       <form onSubmit={genOnSubmit( {
         questionAnswerId,
@@ -30,7 +31,7 @@ export const Answer = ( { questionAnswerId, nextQuestion }: Props) => {
           setResult(r);
         },
       } )}>
-        <input name={TEXT_ANSWER_INPUT_NAME} type="text" autoComplete="off"/>
+        <article className={styles.choices}>{renderChoices(question.choices)}</article>
         <button type="submit">Enviar</button>
         {result && <p className={result.isCorrect ? styles.answerOk : styles.answerWrong}>{result.isCorrect ? "Correcto" : "Incorrecto"}</p>}
       </form>
@@ -38,7 +39,7 @@ export const Answer = ( { questionAnswerId, nextQuestion }: Props) => {
   );
 };
 
-export default Answer;
+export default ChoiceAnswer;
 
 type OnCheckResultProps = {
   result: CheckAnswerResult;
@@ -54,7 +55,7 @@ const genOnSubmit = ( { questionAnswerId, onCheckResult }: GenOnSubmitProps) => 
     event.preventDefault();
     const currentForm = event.currentTarget;
     const formData = new FormData(currentForm);
-    const answerStr = formData.get(TEXT_ANSWER_INPUT_NAME)?.toString();
+    const answerStr = formData.get(CHOICE_ANSWER_GROUP_NAME)?.toString();
 
     if (!answerStr)
       return;
@@ -73,3 +74,16 @@ const genOnSubmit = ( { questionAnswerId, onCheckResult }: GenOnSubmitProps) => 
     } );
   };
 };
+
+type ChoicesInQuestionEntity = NonNullable<QuestionEntity["choices"]>;
+
+function renderChoices(choices: ChoicesInQuestionEntity) {
+  return choices.map(renderChoice);
+}
+
+function renderChoice(choice: ChoicesInQuestionEntity[0], index: number) {
+  return <section key={index} className={styles.choice}>
+    <input type="radio" name={CHOICE_ANSWER_GROUP_NAME} value={choice.text} />
+    <label>{choice.text}</label>
+  </section>;
+}

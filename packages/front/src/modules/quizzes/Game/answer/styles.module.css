@@ -1,0 +1,19 @@
+.answerOk {
+  color: green;
+}
+
+.answerWrong {
+  color: red;
+}
+
+.choices {
+  .choice {
+    & > label {
+      margin-left: 1em;
+    }
+  }
+}
+
+.answer {
+  margin-top: 2em;
+}

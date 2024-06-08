@@ -7,7 +7,7 @@ const Question = ( { data }: Props) => {
   return (
     <section>
       <p>Pregunta:</p>
-      <p>{data.text}</p>
+      {data.text && <p>{data.text}</p>}
     </section>
   );
 };

@@ -1,8 +1,10 @@
 import { ChangeEventHandler, FocusEventHandler, useState } from "react";
-import { classNames } from "../../styling";
+import { classNames } from "../../../../styling";
+import { ConfirmButton } from "../../../buttons/ConfirmButton";
+import { UndoButton } from "../../../buttons/UndoButton";
 import styles from "./TextEditable.module.css";
 
-type Props = {
+type TextEditableStatelessProps = {
   value: string | undefined;
   isEdited: boolean;
   isEditing: boolean;
@@ -12,7 +14,7 @@ type Props = {
   placeholder?: string;
   className?: string;
 };
-const TextEditable = ( { value, isEditing, isEdited, onChange, onBlur, onClick }: Props) => {
+const TextEditableStateless = ( { value, isEditing, isEdited, onChange, onBlur, onClick }: TextEditableStatelessProps) => {
   const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newValue = event.target.value;
 
@@ -42,7 +44,7 @@ const TextEditable = ( { value, isEditing, isEdited, onChange, onBlur, onClick }
   </span>;
 };
 
-export default TextEditable;
+export default TextEditableStateless;
 
 type UseTextEditableProps = {
   initialValue?: string;
@@ -69,20 +71,20 @@ export function useTextEditable(
   };
 }
 
-type MakeTextEditableProps = {
+type TextEditableProps = {
   initialValue?: string;
   onChange?: (value: string)=> void;
   onSave?: (value: string | undefined)=> Promise<void>;
 };
-export function TextEditableSaveable(
-  { initialValue, onChange, onSave }: MakeTextEditableProps,
+export function TextEditable(
+  { initialValue, onChange, onSave }: TextEditableProps,
 ): JSX.Element {
   const { isEdited, isEditing, setIsEditing, setValue, value } = useTextEditable( {
     initialValue,
   } );
   const component = (
     <>
-      <TextEditable
+      <TextEditableStateless
         value={value}
         isEditing={isEditing}
         isEdited={isEdited}
@@ -98,18 +100,18 @@ export function TextEditableSaveable(
           onChange?.(newValue);
         }}
       />
-      {isEdited
+      {isEdited && onSave
       && <>
-        <button onClick={()=> {
+        <ConfirmButton onClick={()=> {
           onSave?.(value);
 
           return;
-        }}>Confirmar</button>
-        <button onClick={()=> {
+        }} />
+        <UndoButton onClick={()=> {
           setValue(initialValue);
 
           return;
-        }}>Reset</button>
+        }} />
       </>}
     </>);
 

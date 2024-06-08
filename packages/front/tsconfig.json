@@ -12,7 +12,8 @@
     "paths": {
       "#/*": ["./src/*"],
       "#app/*": ["./src/app/*"],
-      "#modules/*": ["./src/modules/*"]
+      "#modules/*": ["./src/modules/*"],
+      "#ui/*": ["./src/modules/utils/components/*"]
     },
     "plugins": [
       {
