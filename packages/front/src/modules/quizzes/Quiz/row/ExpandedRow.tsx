@@ -23,8 +23,15 @@ const ExpandedRow = ( { data, revalidateData }: Props) => {
     if (!value)
       return;
 
+    const choicesDto = [
+      ...value,
+      {
+        text: data.answer.text,
+      },
+    ];
+
     await patchOneQuestionAndGet(data.questionId, {
-      choices: value,
+      choices: choicesDto,
     } );
 
     await revalidateData();

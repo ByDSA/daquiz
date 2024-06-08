@@ -64,6 +64,17 @@ const genColumns: GenColumnsFn = (
           text: value,
         } );
 
+        if (row.question.choices) {
+          await patchOneQuestionAndGet(row.questionId, {
+            choices: [
+              ...row.question.choices.filter((choice) => choice.text !== row.answer.text),
+              {
+                text: value,
+              },
+            ],
+          } );
+        }
+
         await revalidateData();
       };
 
