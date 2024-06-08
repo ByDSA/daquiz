@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import styles from "./NewQuestion.module.css";
-import { DeleteButton } from "#ui/DeleteButton";
+import { UseChoicesRet } from "./UseChoices";
 import { AddButton } from "#ui/AddButton";
+import { DeleteButton } from "#ui/DeleteButton";
 
 export const FORM_QUESTION_TEXT_NAME = "question-text";
 
 export const FORM_QUESTION_CHOICE_PREFIX_NAME = "choice-";
 
-const NewQuestion = () => {
-  const { choices, addChoice, removeChoice, updateChoice } = useChoices();
-
+type Props = {
+  choices: UseChoicesRet;
+};
+const NewQuestion = ( { choices: { choices, addChoice, removeChoice, updateChoice } }: Props) => {
   return (
     <section>
       <input type="text" placeholder="Pregunta" name={FORM_QUESTION_TEXT_NAME}/>
@@ -33,35 +33,3 @@ const NewQuestion = () => {
 };
 
 export default NewQuestion;
-
-type Choice = {
-  id: string;
-  text: string;
-};
-function useChoices() {
-  const [choices, setChoices] = useState<Choice[]>([]);
-  const addChoice = () => setChoices([...choices, {
-    id: uuidv4(),
-    text: "",
-  }]);
-
-  return {
-    choices,
-    addChoice,
-    removeChoice: (index: number) => {
-      const newChoices = [...choices];
-
-      newChoices.splice(index, 1);
-      setChoices(newChoices);
-    },
-    updateChoice: (index: number, text: string) => {
-      const newChoices = [...choices];
-
-      newChoices[index] = {
-        ...newChoices[index],
-        text,
-      };
-      setChoices(newChoices);
-    },
-  };
-}

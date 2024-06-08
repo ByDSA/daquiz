@@ -6,6 +6,7 @@ import { assertDefined } from "../../../../../../shared/build/utils/validation/a
 import { fetchCreateOneQuestionTextAnswerAndGet } from "../../QuestionAnswer/fetching";
 import { fetchAddQuestionAnswer } from "../../fetching";
 import NewQuestion, { FORM_QUESTION_CHOICE_PREFIX_NAME, FORM_QUESTION_TEXT_NAME } from "./NewQuestion";
+import { useChoices } from "./UseChoices";
 import styles from "./styles.module.css";
 
 type AddNewQuestionAnswerProps = {
@@ -17,14 +18,29 @@ const AddNewQuestionAnswer = ( { quizId, revalidateData }: AddNewQuestionAnswerP
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setAnswerType(event.target.value as AnswerType);
   };
+  const { choices, addChoice, removeChoice, updateChoice, clearAllChoices } = useChoices();
+  const clearForm: ClearFormFn = ( { formRef } ) => {
+    formRef.reset();
+    clearAllChoices();
+  };
 
   return (<section className={styles.addNewSection}>
     <h2>Añadir nueva pregunta:</h2>
     <form onSubmit={genOnSubmitHandler( {
       quizId,
       revalidateData,
+      clearForm,
     } )}>
-      <NewQuestion />
+      {NewQuestion( {
+        choices: {
+          choices,
+          addChoice,
+          removeChoice,
+          updateChoice,
+          clearAllChoices,
+        },
+
+      } )}
       <fieldset>
         <legend>Tipo de respuesta:</legend>
         {
@@ -60,11 +76,16 @@ const inputsByAnswerType = (answerType: AnswerType) => {
   }
 };
 
+type ClearFormProps = {
+  formRef: HTMLFormElement;
+};
+type ClearFormFn = (props: ClearFormProps)=> void;
 type GenOnSubmitHandlerProps = {
   quizId: string;
   revalidateData: ()=> Promise<any>;
+  clearForm: ClearFormFn;
 };
-const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps) => {
+const genOnSubmitHandler = ( { quizId, revalidateData, clearForm }: GenOnSubmitHandlerProps) => {
   return async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { currentTarget } = event;
@@ -109,7 +130,9 @@ const genOnSubmitHandler = ( { quizId, revalidateData }: GenOnSubmitHandlerProps
 
     await revalidateData();
 
-    currentTarget.reset();
+    clearForm( {
+      formRef: currentTarget,
+    } );
   };
 };
 
