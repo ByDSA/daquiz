@@ -3,9 +3,8 @@
 import { CreateQuizDto } from "#shared/models/quizzes/dtos";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { assertDefined } from "../../../shared/build/utils/validation/asserts";
 import styles from "./page.module.css";
-import { QuizList, fetchCreateQuizAndGet, useQuizzes } from "#modules/quizzes";
+import { QuizList, useCreateQuizAndGet, useQuizzes } from "#modules/quizzes";
 
 export default function Home() {
   const { data: quizzes, error } = useQuizzes();
@@ -25,7 +24,12 @@ export default function Home() {
 
 const CreateQuiz = () => {
   const router = useRouter();
-  const genClickHandler = () => async () => {
+  const [createQuiz, result] = useCreateQuizAndGet();
+
+  if (result)
+    router.push("/edit/quizzes/" + result.id);
+
+  const handleClick = () => {
     const name = prompt("Enter quiz name");
 
     if (!name)
@@ -34,15 +38,11 @@ const CreateQuiz = () => {
     const dto: CreateQuizDto = {
       name,
     };
-    const response = await fetchCreateQuizAndGet(dto);
-    const quiz = response.data;
 
-    assertDefined(quiz);
-
-    router.push("/edit/quizzes/" + quiz.id);
+    createQuiz(dto);
   };
 
   return (
-    <a onClick={genClickHandler()}>Create quiz</a>
+    <a onClick={handleClick}>Create quiz</a>
   );
 };

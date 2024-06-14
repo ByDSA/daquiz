@@ -1,10 +1,10 @@
 import { ChoiceDto } from "#shared/models/questions/dtos";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { AnswerType } from "../../../../../../shared/build/models/answers/Answer";
 import { neverCase } from "../../../../../../shared/build/utils/typescript";
 import { assertDefined } from "../../../../../../shared/build/utils/validation/asserts";
-import { fetchCreateOneQuestionTextAnswerAndGet } from "../../QuestionAnswer/fetching";
-import { fetchAddQuestionAnswer } from "../../fetching";
+import { useCreateOneQuestionTextAnswerAndGet } from "../../QuestionAnswer/fetching.service";
+import { useAddQuestionAnswer } from "../../services";
 import NewQuestion, { FORM_QUESTION_CHOICE_PREFIX_NAME, FORM_QUESTION_TEXT_NAME } from "./NewQuestion";
 import { useChoices } from "./UseChoices";
 import styles from "./styles.module.css";
@@ -15,21 +15,51 @@ type AddNewQuestionAnswerProps = {
 };
 const AddNewQuestionAnswer = ( { quizId, revalidateData }: AddNewQuestionAnswerProps) => {
   const [answerType, setAnswerType] = useState(AnswerType.TEXT);
+  const formRef = useRef<HTMLFormElement>(null);
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setAnswerType(event.target.value as AnswerType);
   };
   const { choices, addChoice, removeChoice, updateChoice, clearAllChoices } = useChoices();
-  const clearForm: ClearFormFn = ( { formRef } ) => {
-    formRef.reset();
+  const clearForm = () => {
+    if (!formRef.current)
+      return;
+
+    formRef.current.reset();
     clearAllChoices();
   };
+  const [addQuestionAnswer] = useAddQuestionAnswer();
+  const [
+    createOneQuestionTextAnswerAndGet,
+    createdQuestionAnswer,
+  ] = useCreateOneQuestionTextAnswerAndGet();
+
+  useEffect(() => {
+    if (!createdQuestionAnswer)
+      return;
+
+    (async () => {
+      const createdQuestionAnswerId = createdQuestionAnswer.data?.id;
+
+      assertDefined(createdQuestionAnswerId);
+
+      await addQuestionAnswer( {
+        quizId,
+        questionsAnswersIds: [createdQuestionAnswerId],
+      } )
+        .catch((error) => {
+          throw error;
+        } );
+
+      await revalidateData();
+
+      clearForm();
+    } )();
+  }, [createdQuestionAnswer]);
 
   return (<section className={styles.addNewSection}>
     <h2>Añadir nueva pregunta:</h2>
-    <form onSubmit={genOnSubmitHandler( {
-      quizId,
-      revalidateData,
-      clearForm,
+    <form ref={formRef} onSubmit={genOnSubmitHandler( {
+      createOneQuestionTextAnswerAndGet,
     } )}>
       {NewQuestion( {
         choices: {
@@ -76,16 +106,10 @@ const inputsByAnswerType = (answerType: AnswerType) => {
   }
 };
 
-type ClearFormProps = {
-  formRef: HTMLFormElement;
-};
-type ClearFormFn = (props: ClearFormProps)=> void;
 type GenOnSubmitHandlerProps = {
-  quizId: string;
-  revalidateData: ()=> Promise<any>;
-  clearForm: ClearFormFn;
+  createOneQuestionTextAnswerAndGet: ReturnType<typeof useCreateOneQuestionTextAnswerAndGet>[0];
 };
-const genOnSubmitHandler = ( { quizId, revalidateData, clearForm }: GenOnSubmitHandlerProps) => {
+const genOnSubmitHandler = ( { createOneQuestionTextAnswerAndGet }: GenOnSubmitHandlerProps) => {
   return async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { currentTarget } = event;
@@ -110,7 +134,8 @@ const genOnSubmitHandler = ( { quizId, revalidateData, clearForm }: GenOnSubmitH
     }
 
     const choices = getChoices(formData, answerText);
-    const createdQuestionAnswer = await fetchCreateOneQuestionTextAnswerAndGet( {
+
+    await createOneQuestionTextAnswerAndGet( {
       question: {
         text: questionText,
         choices: choices ?? undefined,
@@ -118,20 +143,6 @@ const genOnSubmitHandler = ( { quizId, revalidateData, clearForm }: GenOnSubmitH
       answer: {
         text: answerText,
       },
-    } );
-    const createdQuestionAnswerId = createdQuestionAnswer?.data?.id;
-
-    assertDefined(createdQuestionAnswerId);
-
-    await fetchAddQuestionAnswer(quizId, [createdQuestionAnswerId])
-      .catch((error) => {
-        throw error;
-      } );
-
-    await revalidateData();
-
-    clearForm( {
-      formRef: currentTarget,
     } );
   };
 };

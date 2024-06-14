@@ -5,10 +5,8 @@ import monorepoConfig from "../eslint.config.mjs";
 const nextConfig = [
   {
     files: ["**/*.ts", "**/*.tsx"],
-    plugins: {
-    },
-    rules: {
-    },
+    plugins: {},
+    rules: {},
   },
 ];
 const packageDir = path.join(import.meta.url, "..").slice("file:".length);
@@ -19,9 +17,7 @@ const projectConfig = [
       ...nextConfig[0].rules,
       "react/prop-types": "off",
       "import/no-default-export": "off",
-      "import/no-internal-modules": ["error", {
-        allow: ["next/**", "*shared/**", "\\\#modules/*", "\\\#modules/utils/**"],
-      }],
+      "import/no-internal-modules": "off",
       "import/no-extraneous-dependencies": ["error", {
         packageDir,
       }],

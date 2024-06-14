@@ -1,12 +1,16 @@
 export {
   default as Quiz,
-} from "./Quiz/Quiz";
+} from "./Quiz";
 
 export {
   default as QuizList,
-} from "./QuizList/QuizList";
+} from "./QuizList";
 
 export {
-  fetchCreateQuizAndGet, useQuiz,
+  useAddQuestionAnswer,
+  useCreateQuizAndGet,
+  useQuiz,
   useQuizzes,
-} from "./fetching";
+  useRemoveManyQuestionAnswer,
+  useRemoveOneQuestionAnswer,
+} from "./services";

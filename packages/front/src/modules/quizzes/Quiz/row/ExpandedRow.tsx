@@ -2,21 +2,22 @@ import { QuestionEntity } from "#shared/models/questions/Question";
 import { QuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
 import Choices from "./Choices";
 import styles from "./ExpandedRow.module.css";
-import { patchOneQuestionAndGet } from "#/modules/questions";
+import { usePatchOneQuestionAndGet } from "#/modules/questions";
 
-type GenExpandedRow = (props: GenExpandedRowProps)=> (props: any)=> JSX.Element;
+type Props = {
+  data: QuestionAnswerInQuizEntity;
+  revalidateData: ()=> Promise<void>;
+};
 type GenExpandedRowProps = Omit<Props, "data">;
+type GenExpandedRow = (props: GenExpandedRowProps)=> (props: any)=> JSX.Element;
 export const genExpandedRow: GenExpandedRow = ( { revalidateData } ) => {
   return ( { data } ) => {
     return <ExpandedRow data={data} revalidateData={revalidateData}/>;
   };
 };
 
-type Props = {
-  data: QuestionAnswerInQuizEntity;
-  revalidateData: ()=> Promise<void>;
-};
 const ExpandedRow = ( { data, revalidateData }: Props) => {
+  const [patchOneQuestionAndGet] = usePatchOneQuestionAndGet();
   const { choices: choicesInQuestion } = data.question;
   let choicesToShow = choicesInQuestion?.filter((choice) => choice.text !== data.answer.text);
   const onSave = async (value?: QuestionEntity["choices"]) => {
@@ -30,8 +31,11 @@ const ExpandedRow = ( { data, revalidateData }: Props) => {
       },
     ];
 
-    await patchOneQuestionAndGet(data.questionId, {
-      choices: choicesDto,
+    await patchOneQuestionAndGet( {
+      id: data.questionId,
+      dto: {
+        choices: choicesDto,
+      },
     } );
 
     await revalidateData();

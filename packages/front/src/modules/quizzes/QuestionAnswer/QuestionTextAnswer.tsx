@@ -1,9 +1,9 @@
 import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionTextAnswerEntity } from "#shared/models/questions-answers/text-answers/QuestionTextAnswer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import { patchOneQuestionAndGet } from "#modules/questions";
-import { patchOneTextAnswerAndGet } from "#modules/answers";
+import { usePatchOneQuestionAndGet } from "#modules/questions";
+import { usePatchOneTextAnswerAndGet } from "#modules/answers";
 import { classNames } from "#/modules/utils/styling";
 
 type OnRemoveProps = {
@@ -19,18 +19,29 @@ const QuestionTextAnswer = ( { data, onRemove }: Props) => {
   const [questionText, setQuestionText] = useState(data.question?.text);
   const [answerType] = useState(data.answer?.type);
   const [answerText, setAnswerText] = useState(data.answer?.text);
+  const [patchOneTextAnswerAndGet, resultPatchAnswer] = usePatchOneTextAnswerAndGet();
+  const [patchOneQuestionAndGet, resultPatchQuestion] = usePatchOneQuestionAndGet();
+
+  useEffect(() => {
+    if (resultPatchAnswer?.data)
+      setAnswerText(resultPatchAnswer?.data.text);
+  }, [resultPatchAnswer]);
+  useEffect(() => {
+    if (resultPatchQuestion?.data)
+      setQuestionText(resultPatchQuestion?.data.text);
+  }, [resultPatchQuestion]);
   const questionOnClickHandler = async () => {
     const question = prompt("Enter your question:", questionText);
 
     if (!question)
       return;
 
-    const got = await patchOneQuestionAndGet(data.questionId, {
-      text: question,
+    await patchOneQuestionAndGet( {
+      id: data.questionId,
+      dto: {
+        text: question,
+      },
     } );
-
-    if (got.data)
-      setQuestionText(got.data.text);
   };
   const answerOnClickHandler = async () => {
     const answer = prompt("Enter your answer:", answerText);
@@ -38,12 +49,14 @@ const QuestionTextAnswer = ( { data, onRemove }: Props) => {
     if (!answer)
       return;
 
-    const got = await patchOneTextAnswerAndGet(data.answerId, {
-      text: answer,
-    } );
-
-    if (got.data)
-      setAnswerText(got.data.text);
+    await patchOneTextAnswerAndGet(
+      {
+        id: data.answerId,
+        dto: {
+          text: answer,
+        },
+      },
+    );
   };
   const getCurrentData = () => ( {
     id: data.id,

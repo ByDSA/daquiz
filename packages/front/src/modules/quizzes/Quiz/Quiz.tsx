@@ -4,23 +4,30 @@ import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { fetchAddQuestionAnswer, fetchRemoveManyQuestionsAnswers, fetchRemoveOneQuestionAnswer } from "../fetching";
+import { useAddQuestionAnswer, useRemoveManyQuestionAnswer, useRemoveOneQuestionAnswer } from "../services";
 import AddNewQuestionAnswer from "./AddNewQuestionAnswer/AddNewQuestionAnswer";
 import { genExpandedRow } from "./row/ExpandedRow";
 import styles from "./styles.module.css";
 import { TextEditableSaveable } from "#ui/TextEditable";
 import { SendToButton } from "#ui/SendToButton";
 import { DeleteButton } from "#ui/DeleteButton";
-import { patchOneQuestionAndGet } from "#modules/questions";
-import { patchOneTextAnswerAndGet } from "#modules/answers";
+import { usePatchOneTextAnswerAndGet } from "#modules/answers";
+import { usePatchOneQuestionAndGet } from "#/modules/questions";
 
 type GenColumnsProps = {
   data: QuizEntity;
   revalidateData: ()=> Promise<any>;
+  removeOneQuestionAnswer: ReturnType<typeof useRemoveOneQuestionAnswer>[0];
+  patchOneTextAnswerAndGet: ReturnType<typeof usePatchOneTextAnswerAndGet>[0];
+  patchOneQuestionAndGet: ReturnType<typeof usePatchOneQuestionAndGet>[0];
 };
 type GenColumnsFn = (props: GenColumnsProps)=> TableColumn<QuestionAnswerInQuizEntity>[];
 const genColumns: GenColumnsFn = (
-  { data, revalidateData }: GenColumnsProps,
+  { data,
+    revalidateData,
+    removeOneQuestionAnswer,
+    patchOneTextAnswerAndGet,
+    patchOneQuestionAndGet }: GenColumnsProps,
 ) =>([
   {
     name: "Pregunta",
@@ -39,8 +46,11 @@ const genColumns: GenColumnsFn = (
         if (!value)
           return;
 
-        await patchOneQuestionAndGet(row.questionId, {
-          text: value,
+        await patchOneQuestionAndGet( {
+          id: row.questionId,
+          dto: {
+            text: value,
+          },
         } );
 
         await revalidateData();
@@ -61,19 +71,29 @@ const genColumns: GenColumnsFn = (
         if (!value)
           return;
 
-        await patchOneTextAnswerAndGet(row.answerId, {
-          text: value,
-        } );
+        await patchOneTextAnswerAndGet(
+          {
+            id: row.answerId,
+            dto: {
+              text: value,
+            },
+          },
+        );
 
         if (row.question.choices) {
-          await patchOneQuestionAndGet(row.questionId, {
-            choices: [
-              ...row.question.choices.filter((choice) => choice.text !== row.answer.text),
-              {
-                text: value,
+          await patchOneQuestionAndGet(
+            {
+              id: row.questionId,
+              dto: {
+                choices: [
+                  ...row.question.choices.filter((choice) => choice.text !== row.answer.text),
+                  {
+                    text: value,
+                  },
+                ],
               },
-            ],
-          } );
+            },
+          );
         }
 
         await revalidateData();
@@ -89,7 +109,7 @@ const genColumns: GenColumnsFn = (
     name: "Acciones",
     cell: (row: QuestionAnswerInQuizEntity) => {
       return <><DeleteButton onClick={async ()=>{
-        await fetchRemoveOneQuestionAnswer( {
+        await removeOneQuestionAnswer( {
           quizId: data.id,
           questionAnswerId: row.id,
         } );
@@ -120,6 +140,11 @@ const Quiz = ( { data, revalidateData }: Props) => {
   };
 
   useEffect(fixSelectedRows, [data]);
+  const [addQuestionAnswer] = useAddQuestionAnswer();
+  const [removeOneQuestionAnswer] = useRemoveOneQuestionAnswer();
+  const [removeManyQuestionAnswer] = useRemoveManyQuestionAnswer();
+  const [patchOneTextAnswerAndGet] = usePatchOneTextAnswerAndGet();
+  const [patchOneQuestionAndGet] = usePatchOneQuestionAndGet();
 
   if (!data)
     return null;
@@ -133,9 +158,12 @@ const Quiz = ( { data, revalidateData }: Props) => {
     if (!targetQuizId)
       return;
 
-    await fetchAddQuestionAnswer(targetQuizId, questionsAnswersIds);
+    await addQuestionAnswer( {
+      quizId: targetQuizId,
+      questionsAnswersIds,
+    } );
 
-    await fetchRemoveManyQuestionsAnswers( {
+    await removeManyQuestionAnswer( {
       quizId: data.id,
       ids: questionsAnswersIds,
     } );
@@ -150,6 +178,9 @@ const Quiz = ( { data, revalidateData }: Props) => {
         columns={genColumns( {
           data,
           revalidateData,
+          removeOneQuestionAnswer,
+          patchOneTextAnswerAndGet,
+          patchOneQuestionAndGet,
         } )}
         data={questionAnswers ?? []}
         pagination

@@ -1,3 +1,3 @@
 export {
-  patchOneTextAnswerAndGet,
-} from "./fetching";
+  usePatchOneTextAnswerAndGet,
+} from "./fetching.service";

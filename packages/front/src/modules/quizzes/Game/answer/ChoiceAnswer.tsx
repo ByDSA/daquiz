@@ -1,15 +1,28 @@
 import { TextAnswerVO } from "#shared/models/answers/text-answers/TextAnswer";
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity } from "#shared/models/questions/Question";
-import { useState } from "react";
-import { CheckAnswerResult, fetchCheckAnswer } from "../fetching";
+import { useEffect, useRef, useState } from "react";
+import { useCheckAnswerMutation } from "../check-answer.service";
 import { IAnswer, Props } from "./IAnswer";
 import styles from "./styles.module.css";
 
 const CHOICE_ANSWER_GROUP_NAME = "choice-answer";
 
 export const ChoiceAnswer: IAnswer = ( { question, questionAnswerId, nextQuestion }: Props) => {
-  const [result, setResult] = useState<CheckAnswerResult | null>(null);
+  const [checkAnswer, checkResult] = useCheckAnswerMutation();
+  const [result, setResult] = useState<typeof checkResult>(undefined);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (checkResult?.isCorrect) {
+      formRef.current?.reset();
+      nextQuestion();
+      setResult(undefined);
+
+      return;
+    } else
+      setResult(checkResult);
+  }, [checkResult]);
 
   if (!question.choices)
     return null;
@@ -17,19 +30,9 @@ export const ChoiceAnswer: IAnswer = ( { question, questionAnswerId, nextQuestio
   return (
     <section className={styles.answer}>
       <p>Respuesta:</p>
-      <form onSubmit={genOnSubmit( {
+      <form ref={formRef} onSubmit={genOnSubmit( {
         questionAnswerId,
-        onCheckResult: ( { result: r, form } ) => {
-          if (r.isCorrect) {
-            setResult(null);
-            form.reset();
-            nextQuestion();
-
-            return;
-          }
-
-          setResult(r);
-        },
+        checkAnswer,
       } )}>
         <article className={styles.choices}>{renderChoices(question.choices)}</article>
         <button type="submit">Enviar</button>
@@ -41,16 +44,11 @@ export const ChoiceAnswer: IAnswer = ( { question, questionAnswerId, nextQuestio
 
 export default ChoiceAnswer;
 
-type OnCheckResultProps = {
-  result: CheckAnswerResult;
-  form: HTMLFormElement;
-};
-
 type GenOnSubmitProps = {
   questionAnswerId: QuestionAnswerID;
-  onCheckResult?: (props: OnCheckResultProps)=> void;
+  checkAnswer: ReturnType<typeof useCheckAnswerMutation>[0];
 };
-const genOnSubmit = ( { questionAnswerId, onCheckResult }: GenOnSubmitProps) => {
+const genOnSubmit = ( { questionAnswerId, checkAnswer }: GenOnSubmitProps) => {
   return async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const currentForm = event.currentTarget;
@@ -63,14 +61,10 @@ const genOnSubmit = ( { questionAnswerId, onCheckResult }: GenOnSubmitProps) => 
     const answer: TextAnswerVO = {
       text: answerStr,
     };
-    const checkResult = await fetchCheckAnswer( {
+
+    await checkAnswer( {
       answer,
       questionAnswerId,
-    } );
-
-    onCheckResult?.( {
-      result: checkResult,
-      form: currentForm,
     } );
   };
 };

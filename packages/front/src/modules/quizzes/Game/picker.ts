@@ -1,11 +1,10 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuestionEntity } from "#shared/models/questions/Question";
 import { QuizID } from "#shared/models/quizzes/Quiz";
-import { ResultQuizPickQuestionsAnswersDto } from "#shared/models/quizzes/dtos";
 import { useEffect, useState } from "react";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { useQuiz } from "../fetching";
-import { checkForErrors } from "#modules/utils/fetching";
+import { useQuiz } from "../services";
+import { usePickQuestionQuery } from "./pick-question.service";
 
 // eslint-disable-next-line no-empty-function
 const pointlessNext = async () => {};
@@ -22,6 +21,23 @@ export function usePickQuestion( { quizId }: Props): Ret {
   const { data, error, isLoading } = useQuiz(quizId);
   const [questionEntity, setQuestionEntity] = useState<QuestionEntity | null>(null);
   const [questionAnserId, setQuestionAnswerId] = useState<QuestionAnswerID | null>(null);
+  const [pickQuestion, resultPickQuestion] = usePickQuestionQuery();
+
+  useEffect(() => {
+    if (!resultPickQuestion)
+      return;
+
+    const partialQuestionAnswer = resultPickQuestion.data?.pickedQuestions[0];
+
+    assertDefined(partialQuestionAnswer);
+    assertDefined(partialQuestionAnswer.question);
+
+    const { question } = partialQuestionAnswer;
+
+    setQuestionEntity(question);
+
+    setQuestionAnswerId(partialQuestionAnswer.id);
+  }, [resultPickQuestion]);
 
   if (error || !data || isLoading) {
     return {
@@ -38,17 +54,7 @@ export function usePickQuestion( { quizId }: Props): Ret {
   }
 
   const next = async () => {
-    const responseJson = await fetchPickQuestion(quizId);
-    const partialQuestionAnswer = responseJson.data?.pickedQuestions[0];
-
-    assertDefined(partialQuestionAnswer);
-    assertDefined(partialQuestionAnswer.question);
-
-    const { question } = partialQuestionAnswer;
-
-    setQuestionEntity(question);
-
-    setQuestionAnswerId(partialQuestionAnswer.id);
+    await pickQuestion(quizId);
   };
 
   useEffect(() => {
@@ -61,14 +67,3 @@ export function usePickQuestion( { quizId }: Props): Ret {
     next,
   };
 }
-
-const genPickQuestionUrl = (quizId: QuizID) => `${process.env.NEXT_PUBLIC_BACKEND_URL}/quizzes/${quizId}/pickQuestion`;
-const fetchPickQuestion = async (quizId: QuizID): Promise<ResultQuizPickQuestionsAnswersDto> => {
-  const url = genPickQuestionUrl(quizId);
-  const response = await fetch(url);
-  const responseJson: ResultQuizPickQuestionsAnswersDto = await response.json();
-
-  checkForErrors(response, responseJson);
-
-  return responseJson;
-};

@@ -3,5 +3,5 @@ export {
 } from "./Question";
 
 export {
-  patchOneQuestionAndGet,
-} from "./fetching";
+  usePatchOneQuestionAndGet,
+} from "./fetching.service";
