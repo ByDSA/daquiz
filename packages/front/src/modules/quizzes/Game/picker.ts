@@ -3,11 +3,7 @@ import { QuestionEntity } from "#shared/models/questions/Question";
 import { QuizID } from "#shared/models/quizzes/Quiz";
 import { useEffect, useState } from "react";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { useQuiz } from "../services";
-import { usePickQuestionQuery } from "./pick-question.service";
-
-// eslint-disable-next-line no-empty-function
-const pointlessNext = async () => {};
+import { useFetchPickQuestion } from "./pick-question.service";
 
 type Props = {
   quizId: QuizID;
@@ -18,10 +14,9 @@ type Ret = {
   next: ()=> Promise<void>;
 };
 export function usePickQuestion( { quizId }: Props): Ret {
-  const { data, error, isLoading } = useQuiz(quizId);
   const [questionEntity, setQuestionEntity] = useState<QuestionEntity | null>(null);
   const [questionAnserId, setQuestionAnswerId] = useState<QuestionAnswerID | null>(null);
-  const [pickQuestion, resultPickQuestion] = usePickQuestionQuery();
+  const [pickQuestion, resultPickQuestion] = useFetchPickQuestion();
 
   useEffect(() => {
     if (!resultPickQuestion)
@@ -38,20 +33,6 @@ export function usePickQuestion( { quizId }: Props): Ret {
 
     setQuestionAnswerId(partialQuestionAnswer.id);
   }, [resultPickQuestion]);
-
-  if (error || !data || isLoading) {
-    return {
-      next: pointlessNext,
-    };
-  }
-
-  const { questionAnswers } = data;
-
-  if (!questionAnswers || questionAnswers.length === 0) {
-    return {
-      next: pointlessNext,
-    };
-  }
 
   const next = async () => {
     await pickQuestion(quizId);

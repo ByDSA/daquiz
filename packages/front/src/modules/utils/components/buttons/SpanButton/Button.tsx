@@ -1,5 +1,5 @@
 import styles from "./Button.module.css";
-import { Themeable, classNames } from "#/modules/utils/styling";
+import { Themeable, classNames } from "#utils/styling";
 
 export type PublicProps = Themeable & {
   onClick: ()=> void;

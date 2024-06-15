@@ -1,6 +1,6 @@
 import { SpanButtonProps } from "../SpanButton";
 import styles from "./Button.module.css";
-import { classNames } from "#/modules/utils/styling";
+import { classNames } from "#utils/styling";
 
 export type PublicProps = SpanButtonProps;
 type Props = PublicProps & {

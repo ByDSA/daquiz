@@ -18,6 +18,21 @@ const projectConfig = [
       "react/prop-types": "off",
       "import/no-default-export": "off",
       "import/no-internal-modules": "off",
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["\\#modules/utils**", "*/modules/utils**"],
+              message: "Use #utils instead of another access",
+            },
+            {
+              group: ["\\#/modules/**"],
+              message: "Use \"#modules\" instead of \"#/modules\"",
+            },
+          ],
+        },
+      ],
       "import/no-extraneous-dependencies": ["error", {
         packageDir,
       }],

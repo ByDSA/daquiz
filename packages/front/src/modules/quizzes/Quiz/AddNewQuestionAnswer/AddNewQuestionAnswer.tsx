@@ -4,7 +4,7 @@ import { AnswerType } from "../../../../../../shared/build/models/answers/Answer
 import { neverCase } from "../../../../../../shared/build/utils/typescript";
 import { assertDefined } from "../../../../../../shared/build/utils/validation/asserts";
 import { useCreateOneQuestionTextAnswerAndGet } from "../../QuestionAnswer/fetching.service";
-import { useAddQuestionAnswer } from "../../services";
+import { useAddQuestionAnswer } from "../../question-answer-in-quiz.service";
 import NewQuestion, { FORM_QUESTION_CHOICE_PREFIX_NAME, FORM_QUESTION_TEXT_NAME } from "./NewQuestion";
 import { useChoices } from "./UseChoices";
 import styles from "./styles.module.css";

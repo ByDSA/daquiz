@@ -13,7 +13,8 @@
       "#/*": ["./src/*"],
       "#app/*": ["./src/app/*"],
       "#modules/*": ["./src/modules/*"],
-      "#ui/*": ["./src/modules/utils/components/*"]
+      "#ui/*": ["./src/modules/utils/components/*"],
+      "#utils/*": ["./src/modules/utils/*"]
     },
     "plugins": [
       {

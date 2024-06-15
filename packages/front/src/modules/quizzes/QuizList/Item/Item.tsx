@@ -1,6 +1,6 @@
 import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import styles from "./styles.module.css";
-import { classNames } from "#/modules/utils/styling";
+import { classNames } from "#utils/styling";
 
 type Props = {
   data: QuizEntity;

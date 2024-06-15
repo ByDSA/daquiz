@@ -7,3 +7,12 @@ export function checkForErrors(response: Response, responseJson?: ResultCommon) 
     } );
   }
 }
+
+// eslint-disable-next-line require-await
+export async function validateOkResponse(response: Response) {
+  if (!response.ok) {
+    throw new Error("Response is not ok", {
+      cause: response,
+    } );
+  }
+}

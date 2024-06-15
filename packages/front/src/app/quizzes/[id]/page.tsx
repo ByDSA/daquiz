@@ -11,7 +11,8 @@ type Params = {
 };
 
 export default function Home( { params }: Params) {
-  const { data: quiz, error, revalidate } = useQuiz(params.id);
+  const { data, error } = useQuiz(params);
+  const quiz = data?.data;
 
   return (
     <main className={styles.main}>

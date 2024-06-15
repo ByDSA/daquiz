@@ -14,7 +14,12 @@ type TextEditableStatelessProps = {
   placeholder?: string;
   className?: string;
 };
-const TextEditableStateless = ( { value, isEditing, isEdited, onChange, onBlur, onClick }: TextEditableStatelessProps) => {
+const TextEditableStateless = ( { value,
+  isEditing,
+  isEdited,
+  onChange,
+  onBlur,
+  onClick }: TextEditableStatelessProps) => {
   const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newValue = event.target.value;
 

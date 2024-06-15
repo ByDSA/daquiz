@@ -4,15 +4,15 @@ import { QuizEntity } from "#shared/models/quizzes/Quiz";
 import { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { useAddQuestionAnswer, useRemoveManyQuestionAnswer, useRemoveOneQuestionAnswer } from "../services";
+import { useAddQuestionAnswer, useRemoveManyQuestionAnswer, useRemoveOneQuestionAnswer } from "../question-answer-in-quiz.service";
 import AddNewQuestionAnswer from "./AddNewQuestionAnswer/AddNewQuestionAnswer";
 import { genExpandedRow } from "./row/ExpandedRow";
 import styles from "./styles.module.css";
 import { TextEditableSaveable } from "#ui/TextEditable";
 import { SendToButton } from "#ui/SendToButton";
 import { DeleteButton } from "#ui/DeleteButton";
+import { usePatchOneQuestionAndGet } from "#modules/questions";
 import { usePatchOneTextAnswerAndGet } from "#modules/answers";
-import { usePatchOneQuestionAndGet } from "#/modules/questions";
 
 type GenColumnsProps = {
   data: QuizEntity;

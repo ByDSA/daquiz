@@ -4,6 +4,7 @@
     "@emotion/react": "11.11.4",
     "@emotion/styled": "11.11.5",
     "@mui/icons-material": "5.15.19",
+    "class-validator": "0.14.1",
     "just-clone": "^6.2.0",
     "just-compare": "^2.3.0",
     "next": "14.2.3",
@@ -27,7 +28,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint": "next lint",
+    "lint": "eslint src/**/*.ts{,x}",
     "start": "next start"
   },
   "version": "0.1.0"

@@ -9,7 +9,8 @@ type Params = {
   };
 };
 export default function Page( { params }: Params) {
-  const { data: quiz, error, revalidate } = useQuiz(params.id);
+  const { data, error, revalidate } = useQuiz(params);
+  const quiz = data?.data;
   // eslint-disable-next-line require-await
   const revalidateDelayed = async () => {
     // Se usa delay para que dé tiempo a actualizar en tabla de lectura

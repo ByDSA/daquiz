@@ -7,10 +7,13 @@ export {
 } from "./QuizList";
 
 export {
-  useAddQuestionAnswer,
   useCreateQuizAndGet,
   useQuiz,
   useQuizzes,
+} from "./quizz.service";
+
+export {
+  useAddQuestionAnswer,
   useRemoveManyQuestionAnswer,
   useRemoveOneQuestionAnswer,
-} from "./services";
+} from "./question-answer-in-quiz.service";

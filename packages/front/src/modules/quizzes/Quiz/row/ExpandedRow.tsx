@@ -2,7 +2,7 @@ import { QuestionEntity } from "#shared/models/questions/Question";
 import { QuestionAnswerInQuizEntity } from "#shared/models/quizzes/QuestionAnswerInQuiz";
 import Choices from "./Choices";
 import styles from "./ExpandedRow.module.css";
-import { usePatchOneQuestionAndGet } from "#/modules/questions";
+import { usePatchOneQuestionAndGet } from "#modules/questions";
 
 type Props = {
   data: QuestionAnswerInQuizEntity;

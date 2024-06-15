@@ -5,7 +5,8 @@ import styles from "./page.module.css";
 import { QuizList, useQuizzes } from "#modules/quizzes";
 
 export default function Home() {
-  const { data: quizzes, error } = useQuizzes();
+  const { data, error } = useQuizzes();
+  const quizzes = data?.data;
   const router = useRouter();
 
   return (

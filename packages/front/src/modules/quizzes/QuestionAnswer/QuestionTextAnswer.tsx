@@ -2,9 +2,9 @@ import { QuestionAnswerEntity } from "#shared/models/questions-answers/QuestionA
 import { QuestionTextAnswerEntity } from "#shared/models/questions-answers/text-answers/QuestionTextAnswer";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
+import { classNames } from "#utils/styling";
 import { usePatchOneQuestionAndGet } from "#modules/questions";
 import { usePatchOneTextAnswerAndGet } from "#modules/answers";
-import { classNames } from "#/modules/utils/styling";
 
 type OnRemoveProps = {
   inputData: QuestionTextAnswerEntity;

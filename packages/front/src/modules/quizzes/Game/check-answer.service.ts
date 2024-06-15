@@ -2,7 +2,7 @@ import { UnknownAnswerVO } from "#shared/models/answers/unknown-answers/UnknownA
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import urlJoin from "../../../../../shared/build/utils/urls/urlJoin";
 import { assertDefined } from "../../../../../shared/build/utils/validation/asserts";
-import { UseMutation, checkForErrors, createApi } from "#modules/utils/fetching";
+import { UseMutation, checkForErrors, createApi } from "#utils/fetching";
 
 type Props = {
   questionAnswerId: QuestionAnswerID;

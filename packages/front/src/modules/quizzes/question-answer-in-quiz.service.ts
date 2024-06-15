@@ -1,7 +1,7 @@
 import { QuestionAnswerID } from "#shared/models/questions-answers/QuestionAnswer";
 import { QuizEntity, QuizID } from "#shared/models/quizzes/Quiz";
-import { CreateQuizDto, ResultManyQuizDto, ResultOneQuizDto } from "#shared/models/quizzes/dtos";
-import { UseMutation, UseQuery, createApi, responseNoDataHandler, responseWithDataHandler } from "#modules/utils/fetching";
+import { CreateQuizDto } from "#shared/models/quizzes/dtos";
+import { UseMutation, UseQuery, createApi, createFetchPipeGetAll, responseNoDataHandler } from "#utils/fetching";
 
 type AddQuestionAnswerQuery = {
   quizId: QuizID;
@@ -13,20 +13,6 @@ const URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/quizzes";
 const api = createApi( {
   baseUrl: URL,
   endpoints: (builder) => ( {
-    getAllQuizzes: builder.query<ResultManyQuizDto, void>( {
-      responseHandler: responseWithDataHandler,
-    } ),
-    getQuiz: builder.query<ResultOneQuizDto, QuizID>( {
-      query: (id) => `/${id}`,
-      responseHandler: responseWithDataHandler,
-    } ),
-    createOneQuizAndGet: builder.mutation<ResultOneQuizDto, CreateQuizDto>( {
-      query: (dto) => ( {
-        method: "POST",
-        body: dto,
-      } ),
-      responseHandler: responseWithDataHandler,
-    } ),
     addQuestionAnswer: builder.mutation<
     void,
     AddQuestionAnswerQuery,
@@ -69,7 +55,9 @@ const api = createApi( {
   } ),
 } );
 
-export const useQuizzes = (api as any).useGetAllQuizzesQuery as UseQuery<QuizEntity[], void>;
+export const { useQuery: useQuizzes } = createFetchPipeGetAll<QuizEntity>( {
+  url: URL,
+} );
 
 export const useQuiz = (api as any).useGetQuizQuery as UseQuery<QuizEntity, QuizID>;
 

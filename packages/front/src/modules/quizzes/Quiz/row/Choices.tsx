@@ -1,13 +1,14 @@
+/* eslint-disable no-use-before-define */
 import { QuestionEntity } from "#shared/models/questions/Question";
 import compare from "just-compare";
 import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styles from "./Choices.module.css";
-import { ConfirmButton } from "#/modules/utils/components/buttons/ConfirmButton";
 import { AddButton } from "#ui/AddButton";
 import { DeleteButton } from "#ui/DeleteButton";
 import { TextEditableSaveable } from "#ui/TextEditable";
 import { UndoButton } from "#ui/UndoButton";
+import { ConfirmButton } from "#utils/components/buttons/ConfirmButton";
 
 type Props = {
   initChoices: QuestionEntity["choices"];
@@ -22,6 +23,7 @@ const Choices = ( { initChoices, onSave }: Props) => {
       text: "New choice",
     } );
   };
+  // eslint-disable-next-line require-await
   const handleSave = async () => {
     onSave(choices?.map(choiceRepresentationToModel));
   };
@@ -62,7 +64,10 @@ type UseChoicesRet = {
   isChanged: boolean;
 };
 function useChoices( { initValue }: UseChoicesProps): UseChoicesRet {
-  const initValueRepresentation = useMemo(() => initValue?.map(choiceToRepresentation), [initValue]);
+  const initValueRepresentation = useMemo(
+    () => initValue?.map(choiceToRepresentation),
+    [initValue],
+  );
   const [choices, setChoices] = useState(initValueRepresentation);
   const [isChanged, setIsChanged] = useState(false);
 
