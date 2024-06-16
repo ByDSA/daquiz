@@ -13,6 +13,7 @@
       "#/*": ["./src/*"],
       "#app/*": ["./src/app/*"],
       "#modules/*": ["./src/modules/*"],
+      "#shared/*": ["./node_modules/#shared/*"],
       "#ui/*": ["./src/modules/utils/components/*"],
       "#utils/*": ["./src/modules/utils/*"]
     },

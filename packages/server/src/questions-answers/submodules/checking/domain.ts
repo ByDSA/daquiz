@@ -1,3 +1,5 @@
-export * from "#shared/models/questions-answers/checking/AnswerCheckResult";
+export * from "#shared/modules/questions-answers/models";
 
-export * from "#shared/models/questions-answers/checking/dtos";
+export * from "#shared/modules/questions-answers/services/checking";
+
+export * from "#shared/modules/questions-answers/services/crud";

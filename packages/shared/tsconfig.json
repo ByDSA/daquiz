@@ -15,8 +15,10 @@
     "outDir": "build",
     "paths": {
       "#/*": ["src/*"],
+      "#modules/*": ["src/modules/*"],
       "#tests": ["tests"],
-      "#tests/*": ["tests/*"]
+      "#tests/*": ["tests/*"],
+      "#utils/*": ["src/utils/*"]
     },
     "sourceMap": true,
     "strict": true,

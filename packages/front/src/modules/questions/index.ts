@@ -1,7 +1,5 @@
-export {
-  default as Question,
-} from "./Question";
+export * from "./ui";
 
-export {
-  usePatchOneQuestionAndGet,
-} from "./fetching.service";
+export * from "./services";
+
+export * from "./models";

@@ -1,3 +1,3 @@
-export * from "#shared/models/questions-answers/QuestionAnswer";
+export * from "#shared/modules/questions-answers/models";
 
-export * from "#shared/models/questions-answers/dtos";
+export * from "#shared/modules/questions-answers/services/crud";

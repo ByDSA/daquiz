@@ -1,12 +1,12 @@
 "use client";
 
-import { CreateQuizDto } from "#shared/models/quizzes/dtos";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { QuizList, useCreateQuizAndGet, useQuizzes } from "#modules/quizzes";
 
 export default function Home() {
+  console.log(useQuizzes);
   const { data, error, isLoading } = useQuizzes();
   const quizzes = data?.data;
   const router = useRouter();
@@ -37,11 +37,9 @@ const CreateQuiz = () => {
     if (!name)
       return;
 
-    const dto: CreateQuizDto = {
+    createQuiz( {
       name,
-    };
-
-    createQuiz(dto);
+    } );
   };
 
   return (

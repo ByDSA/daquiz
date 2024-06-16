@@ -1,3 +1,3 @@
-export {
-  usePatchOneTextAnswerAndGet,
-} from "./fetching.service";
+export * from "./services";
+
+export * from "./models";

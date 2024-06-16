@@ -1,19 +1,5 @@
-export {
-  default as Quiz,
-} from "./Quiz";
+export * from "./ui";
 
-export {
-  default as QuizList,
-} from "./QuizList";
+export * from "./models";
 
-export {
-  useCreateQuizAndGet,
-  useQuiz,
-  useQuizzes,
-} from "./quizz.service";
-
-export {
-  useAddQuestionAnswer,
-  useRemoveManyQuestionAnswer,
-  useRemoveOneQuestionAnswer,
-} from "./question-answer-in-quiz.service";
+export * from "./services";

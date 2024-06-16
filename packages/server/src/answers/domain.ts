@@ -1,5 +1,7 @@
-export * from "#shared/models/answers/Answer";
+export * from "#shared/modules/answers/models/Answer.model";
 
-export * from "#shared/models/answers/validation";
+export * from "#shared/modules/answers/models/AnswerType.enum";
 
-export * from "#shared/models/answers/unknown-answers/UnknownAnswer";
+export * from "#shared/modules/answers/models/UnknownAnswer.model";
+
+export * from "#shared/modules/answers/models/validation";

@@ -1,4 +1,5 @@
-import { CreateQuestionAnswerDto, QuestionAnswerEntity } from "../models";
+import { CreateQuestionAnswerDto } from "../";
+import { QuestionAnswerEntity } from "../models";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 
 export type QuestionsAnswersRepositoryFindOptions = Partial<{

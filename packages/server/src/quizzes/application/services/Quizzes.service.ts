@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { Inject, Injectable } from "@nestjs/common";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort, QuizzesServicePort, ResultQuizPickQuestionsAnswersDto } from "../../domain";
 import { QuestionAnswerID } from "#/questions-answers/domain";
@@ -5,8 +6,10 @@ import { QuestionAnswerID } from "#/questions-answers/domain";
 @Injectable()
 export class QuizzesService implements QuizzesServicePort {
   constructor(
-    @Inject(QuizzesRelationalRepositoryPort) private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
-    @Inject(QuizzesCacheRepositoryPort) private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
+    @Inject(QuizzesRelationalRepositoryPort)
+    private readonly quizzesRelationalService: QuizzesRelationalRepositoryPort,
+    @Inject(QuizzesCacheRepositoryPort)
+    private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
   ) {
 
   }

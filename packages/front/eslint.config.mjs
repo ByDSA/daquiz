@@ -8,6 +8,12 @@ const nextConfig = [
     plugins: {},
     rules: {},
   },
+  {
+    files: ["next.config.mjs"],
+    rules: {
+      "import/no-default-export": "off",
+    },
+  },
 ];
 const packageDir = path.join(import.meta.url, "..").slice("file:".length);
 const projectConfig = [
@@ -17,7 +23,14 @@ const projectConfig = [
       ...nextConfig[0].rules,
       "react/prop-types": "off",
       "import/no-default-export": "off",
-      "import/no-internal-modules": "off",
+      "import/no-internal-modules": ["error", {
+        allow: [
+          "./**",
+          "**/modules/**",
+          "**/node_modules/**",
+        ],
+      },
+      ],
       "no-restricted-imports": [
         "error",
         {
@@ -30,6 +43,10 @@ const projectConfig = [
               group: ["\\#/modules/**"],
               message: "Use \"#modules\" instead of \"#/modules\"",
             },
+            {
+              group: ["\\#shared/models/**"],
+              message: "Cannot import from \"#shared\"",
+            },
           ],
         },
       ],
@@ -38,10 +55,18 @@ const projectConfig = [
       }],
     },
   },
+  {
+    files: ["**/modules/utils/**/*.ts{,x}", "**/*{model,dto}.ts{,x}"],
+    rules: {
+      "import/no-internal-modules": "off",
+      "no-restricted-imports": "off",
+    },
+  },
 ];
 const ret = [
   ...monorepoConfig,
   ...projectConfig,
+  ...nextConfig,
 ];
 
 export default ret;
