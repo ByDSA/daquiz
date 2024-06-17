@@ -1,3 +1,3 @@
 export {
   default as Question,
-} from "./Question";
+} from "./Question/Question";

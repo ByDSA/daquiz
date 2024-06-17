@@ -15,7 +15,7 @@ type Ret = {
 };
 export function usePickQuestion( { quizId }: Props): Ret {
   const [questionEntity, setQuestionEntity] = useState<QuestionEntity | null>(null);
-  const [questionAnserId, setQuestionAnswerId] = useState<QuestionAnswerID | null>(null);
+  const [questionAnswerId, setQuestionAnswerId] = useState<QuestionAnswerID | null>(null);
   const [pickQuestion, resultPickQuestion] = useFetchPickQuestion();
 
   useEffect(() => {
@@ -29,6 +29,9 @@ export function usePickQuestion( { quizId }: Props): Ret {
 
     const { question } = partialQuestionAnswer;
 
+    if (question.choices)
+      shuffleChoices(question.choices);
+
     setQuestionEntity(question);
 
     setQuestionAnswerId(partialQuestionAnswer.id);
@@ -39,12 +42,19 @@ export function usePickQuestion( { quizId }: Props): Ret {
   };
 
   useEffect(() => {
+    if (resultPickQuestion)
+      return;
+
     next();
   }, []);
 
   return {
     questionEntity: questionEntity ?? undefined,
-    questionAnswerId: questionAnserId ?? undefined,
+    questionAnswerId: questionAnswerId ?? undefined,
     next,
   };
+}
+
+function shuffleChoices(choices: any[]) {
+  return choices.sort(() => Math.random() - 0.5);
 }
