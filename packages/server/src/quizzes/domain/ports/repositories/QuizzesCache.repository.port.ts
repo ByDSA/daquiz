@@ -1,5 +1,5 @@
 import { UpdateWriteOpResult } from "mongoose";
-import { QuestionAnswerInQuizEntity, QuizEntity, QuizID, ResultQuizPickQuestionsAnswersDto } from "../../models";
+import { QuestionAnswerInQuizEntity, QuizEntity, QuizID } from "../../models";
 import { ReadServicePort } from "../services/ReadService.port";
 import { CreateManyService, CreateOneService, DeleteAllService, DeleteOneService } from "#/utils/services/crud";
 import { QuestionAnswerID } from "#/questions-answers/domain";
@@ -10,7 +10,6 @@ CreateOneService<QuizEntity>,
 CreateManyService<QuizEntity[]>,
 DeleteOneService<QuizID>,
 DeleteAllService {
-  pickQuestionsAnswers(id: QuizID): Promise<ResultQuizPickQuestionsAnswersDto>;
   updateOneQuestionsAnswers(
     id: QuizID, questionsAnswers: QuestionAnswerInQuizEntity[]
   ): Promise<UpdateWriteOpResult>;

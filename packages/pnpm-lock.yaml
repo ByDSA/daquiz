@@ -181,6 +181,9 @@ importers:
       nest-winston:
         specifier: 1.10.0
         version: 1.10.0(@nestjs/common@10.3.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.13.0)
+      rand-picker:
+        specifier: 2.1.0
+        version: 2.1.0
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -3897,6 +3900,9 @@ packages:
     resolution: {integrity: sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==}
     engines: {node: '>=8'}
 
+  rand-picker@2.1.0:
+    resolution: {integrity: sha512-rnEFXjHmruMgvHU3BJcGeWPaCPBi3b9PHOFBJZXwaomGCEtZpsUO85toHngGPqV4sbfMv9Q4YKYJX4ctge7BFw==}
+
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -4077,6 +4083,9 @@ packages:
   schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
     engines: {node: '>= 10.13.0'}
+
+  seed-random@2.2.0:
+    resolution: {integrity: sha512-34EQV6AAHQGhoc0tn/96a9Fsi6v2xdqe/dMUwljGRaFOzR3EgRmECvD0O8vi8X+/uQ50LGHfkNu/Eue5TPKZkQ==}
 
   semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
@@ -9172,6 +9181,10 @@ snapshots:
 
   quick-lru@4.0.1: {}
 
+  rand-picker@2.1.0:
+    dependencies:
+      seed-random: 2.2.0
+
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -9371,6 +9384,8 @@ snapshots:
       '@types/json-schema': 7.0.15
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
+
+  seed-random@2.2.0: {}
 
   semver@5.7.2: {}
 

@@ -8,6 +8,7 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": false,
     "incremental": true,
+    "lib": ["ES2023"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": false,

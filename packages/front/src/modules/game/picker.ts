@@ -24,7 +24,7 @@ export function usePickQuestion( { quizId }: Props): Ret {
 
     const partialQuestionAnswer = resultPickQuestion.data?.pickedQuestions[0];
 
-    assertDefined(partialQuestionAnswer);
+    assertDefined(partialQuestionAnswer, "No question answer picked");
     assertDefined(partialQuestionAnswer.question);
 
     const { question } = partialQuestionAnswer;

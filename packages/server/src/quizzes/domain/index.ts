@@ -9,3 +9,5 @@ export * from "./ports/services/QuizzesService.port";
 export * from "./ports/services/ReadService.port";
 
 export * from "./ports/services/WriteService.port";
+
+export * from "./ports/services/QuestionAnswerPicker.port";

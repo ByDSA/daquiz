@@ -1,13 +1,11 @@
-import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { QuestionAnswerInQuizEntity, QuizEntity, QuizID, ResultQuizPickQuestionsAnswersDto, questionAnswerEntityToQuestionAnswerInQuizEntity } from "../../../domain";
+import { QuestionAnswerInQuizEntity, QuizEntity, QuizID, questionAnswerEntityToQuestionAnswerInQuizEntity } from "../../../domain";
 import { QuestionAnswerCacheDocument, QuizCache, questionAnswerCacheEntityToDoc, quizCacheDocToEntity } from "../db";
 import { quizCacheEntityToDoc } from "../db/QuizCache";
 import { QuizzesCacheRepositoryPort } from "#/quizzes/domain/ports/repositories/QuizzesCache.repository.port";
-import { QuestionEntity } from "#/questions/domain";
-import { QuestionAnswerEntity, QuestionAnswerID, QuestionsAnswersRepositoryPort } from "#/questions-answers/domain";
+import { QuestionAnswerID, QuestionsAnswersRepositoryPort } from "#/questions-answers/domain";
 import { HistoryEntriesServicePort } from "#/historyEntries";
 import { EventDBEmitter } from "#/events/EventDBEmitter";
 
@@ -121,55 +119,5 @@ export class QuizzesCacheRepository implements QuizzesCacheRepositoryPort {
     } ).exec();
 
     return result;
-  }
-
-  async pickQuestionsAnswers(id: QuizID): Promise<ResultQuizPickQuestionsAnswersDto> {
-    const gotQuiz = await this.findOne(id);
-    const gotQuestionsAnswers = gotQuiz?.questionAnswers;
-
-    assertDefined(gotQuestionsAnswers);
-
-    if (gotQuestionsAnswers.length === 0)
-      throw new BadRequestException("No questions answers");
-
-    if (gotQuestionsAnswers.length > 1)
-      this.#removeLastQuestionAnswerTried(gotQuestionsAnswers);
-
-    const randomIndex = Math.floor(Math.random() * gotQuestionsAnswers.length);
-    const retQuestionsAnswers: QuestionAnswerEntity[] = [];
-
-    retQuestionsAnswers.push(gotQuestionsAnswers[randomIndex]);
-
-    const pickedPartialQuestionAnswer = retQuestionsAnswers.map((qa) => {
-      assertDefined(qa.question);
-
-      const questionEntity: QuestionEntity = {
-        id: qa.questionId,
-        ...qa.question,
-      };
-
-      return {
-        id: qa.id,
-        question: questionEntity,
-      };
-    } );
-
-    return {
-      data: {
-        pickedQuestions: pickedPartialQuestionAnswer,
-      },
-    };
-  }
-
-  async #removeLastQuestionAnswerTried(questionsAnswers: QuestionAnswerEntity[]) {
-    const lastHistoryEntry = await this.historyEntriesService.findAll().then((historyEntries) => {
-      return historyEntries.at(-1);
-    } );
-    const index = questionsAnswers.findIndex((qa) => {
-      return qa.id === lastHistoryEntry?.questionAnswerId;
-    } );
-
-    if (index !== -1)
-      questionsAnswers.splice(index, 1);
   }
 }

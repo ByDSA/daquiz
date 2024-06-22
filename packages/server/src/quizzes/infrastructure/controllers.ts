@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, UseInterceptors } from "@nestjs/common";
-import { AddQuestionsAnswersDto, CreateQuizDto, QuizID, QuizzesServicePort, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "../domain";
+import { AddQuestionsAnswersDto, CreateQuizDto, QuestionAnswerPickerService, QuizID, QuizzesServicePort, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "../domain";
 import { TextAnswerID } from "#/answers/text-answer/domain";
 import { QuestionAnswerID } from "#/questions-answers/domain";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
@@ -12,7 +12,10 @@ implements CreateOneAndGetController<CreateQuizDto, ResultOneQuizDto>,
 FindOneController<TextAnswerID, ResultOneQuizDto>,
 FindAllController<ResultManyQuizDto> {
   constructor(
-    @Inject(QuizzesServicePort) private readonly quizzesService: QuizzesServicePort,
+    @Inject(QuizzesServicePort)
+    private readonly quizzesService: QuizzesServicePort,
+    @Inject(QuestionAnswerPickerService)
+    private readonly pickerService: QuestionAnswerPickerService,
   ) {}
 
   @Post()
@@ -73,6 +76,6 @@ FindAllController<ResultManyQuizDto> {
 
   @Get(":id/pickQuestion")
   async pickQuestion(@Param("id", ObjectIdPipe) id: QuizID): Promise<ResultQuizPickQuestionsAnswersDto> {
-    return await this.quizzesService.pickQuestionsAnswers(id);
+    return await this.pickerService.pickOneQuestionAnswer(id);
   }
 }

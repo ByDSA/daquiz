@@ -1,6 +1,6 @@
 /* eslint-disable require-await */
 import { Inject, Injectable } from "@nestjs/common";
-import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort, QuizzesServicePort, ResultQuizPickQuestionsAnswersDto } from "../../domain";
+import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID, QuizzesCacheRepositoryPort, QuizzesRelationalRepositoryPort, QuizzesServicePort } from "../../domain";
 import { QuestionAnswerID } from "#/questions-answers/domain";
 
 @Injectable()
@@ -11,11 +11,6 @@ export class QuizzesService implements QuizzesServicePort {
     @Inject(QuizzesCacheRepositoryPort)
     private readonly quizzesCacheService: QuizzesCacheRepositoryPort,
   ) {
-
-  }
-
-  pickQuestionsAnswers(id: string): Promise<ResultQuizPickQuestionsAnswersDto> {
-    return this.quizzesCacheService.pickQuestionsAnswers(id);
   }
 
   createOneAndGet(dto: CreateQuizDto): Promise<QuizEntity> {

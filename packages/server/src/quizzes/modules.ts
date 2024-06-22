@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { GenerateQuizzesCacheService, QuizzesService } from "./application";
-import { GenerateQuizzesCacheServicePort, QuizzesServicePort } from "./domain";
+import { QuestionAnswerPickerServiceImp } from "./application/services/QuiestionAnswerPicker.service";
+import { GenerateQuizzesCacheServicePort, QuestionAnswerPickerService, QuizzesServicePort } from "./domain";
 import { QuizzesCacheRepositoryPort } from "./domain/ports/repositories/QuizzesCache.repository.port";
 import { QuizzesRelationalRepositoryPort } from "./domain/ports/repositories/QuizzesRelational.repository.port";
 import { QuizzesCacheDBModule, QuizzesCacheRepository, QuizzesController, QuizzesDBModule, QuizzesRelationalRepository } from "./infrastructure";
@@ -33,6 +34,10 @@ import { CustomEventEmitterModule } from "#/events/module";
     {
       provide: GenerateQuizzesCacheServicePort,
       useClass: GenerateQuizzesCacheService,
+    },
+    {
+      provide: QuestionAnswerPickerService,
+      useClass: QuestionAnswerPickerServiceImp,
     },
   ],
   exports: [],
