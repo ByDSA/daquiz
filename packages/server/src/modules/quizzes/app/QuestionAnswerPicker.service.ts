@@ -23,6 +23,13 @@ export class QuestionAnswerPickerServiceImp implements QuestionAnswerPickerServi
     const gotQuiz = await this.quizRepo.findOne(quizId);
     const gotQuestionsAnswers = gotQuiz?.questionAnswers;
 
+    for (const sq of gotQuiz?.subquizzes ?? []) {
+      const gotSubQuizQuestionsAnswers = sq.quiz?.questionAnswers;
+
+      if (gotSubQuizQuestionsAnswers)
+        gotQuestionsAnswers?.push(...gotSubQuizQuestionsAnswers);
+    }
+
     assertDefined(gotQuestionsAnswers);
 
     if (gotQuestionsAnswers.length === 0)

@@ -37,6 +37,7 @@ export class GenerateQuizzesCacheServiceImp implements GenerateQuizzesCacheServi
           question: true,
           answer: true,
         },
+        subquizzes: true,
       },
     } );
 

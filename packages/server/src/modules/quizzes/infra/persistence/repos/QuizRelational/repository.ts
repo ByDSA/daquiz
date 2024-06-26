@@ -19,6 +19,29 @@ export class RepoImp implements Repo {
     this.eventDBEmitter.registerEventDBLoggerFor(QuizEntity);
   }
 
+  async findOne(id: string, options?: RepoFindOptions): Promise<QuizEntity | null> {
+    const doc = await this.QuizModel.findById(id).exec();
+
+    if (!doc)
+      return null;
+
+    const entity = docToEntity(doc);
+
+    if (options) {
+      const promises: Promise<unknown>[] = [];
+
+      if (options.include?.questionsAnswers)
+        promises.push(this.#populateQuestionsAnswers(entity, options));
+
+      if (options.include?.subquizzes)
+        promises.push(this.#populateSubquizzes(entity));
+
+      await Promise.all(promises);
+    }
+
+    return entity;
+  }
+
   async findAll(options?: RepoFindOptions): Promise<QuizEntity[]> {
     const docs = await this.QuizModel.find().exec();
 
@@ -26,44 +49,82 @@ export class RepoImp implements Repo {
       throw new Error("Failed to find quizzes");
 
     const entities = docs.map(docToEntity);
-    const promises: Promise<unknown>[] = [];
 
     if (options) {
-      if (options.include.questionsAnswers) {
-        for (const entity of entities) {
-          entity.questionAnswers = [];
+      const promises: Promise<unknown>[] = [];
 
-          for (const questionAnswerId of entity.questionAnswersIds) {
-            const p = this.questionAnswerRepo.findOne(questionAnswerId, {
-              includeRelations: options.include.questionsAnswers,
-            } );
+      if (options.include?.questionsAnswers) {
+        for (const entity of entities)
+          promises.push(this.#populateQuestionsAnswers(entity, options));
+      }
 
-            p.then((questionAnswer) => {
-              if (questionAnswer) {
-                assertDefined(questionAnswer.question);
-                assertDefined(questionAnswer.answer);
-                const questionAnswerEntity = {
-                  id: questionAnswer.id,
-                  answerType: questionAnswer.answerType,
-                  answerId: questionAnswer.answerId,
-                  answer: questionAnswer.answer,
-                  questionId: questionAnswer.questionId,
-                  question: questionAnswer.question,
-                };
-
-                entity.questionAnswers?.push(questionAnswerEntity);
-              }
-            } );
-
-            promises.push(p);
-          }
-        }
+      if (options.include?.subquizzes) {
+        for (const entity of entities)
+          promises.push(this.#populateSubquizzes(entity));
       }
 
       await Promise.all(promises);
     }
 
     return entities;
+  }
+
+  #populateSubquizzes(entity: QuizEntity): Promise<unknown> {
+    const promises: Promise<unknown>[] = [];
+    const { subquizzes } = entity;
+
+    if (subquizzes) {
+      for (const subquiz of subquizzes) {
+        const p = this.findOne(subquiz.id, {
+          include: {
+            questionsAnswers: {
+              answer: true,
+              question: true,
+            },
+          },
+        } );
+
+        p.then((subquizEntity) => {
+          if (subquizEntity)
+            subquiz.quiz = subquizEntity;
+        } );
+
+        promises.push(p);
+      }
+    }
+
+    return Promise.all(promises);
+  }
+
+  #populateQuestionsAnswers(entity: QuizEntity, options: RepoFindOptions): Promise<unknown> {
+    const promises: Promise<void>[] = [];
+
+    entity.questionAnswers = [];
+
+    for (const questionAnswerId of entity.questionAnswersIds) {
+      const p = this.questionAnswerRepo.findOne(questionAnswerId, {
+        includeRelations: options.include?.questionsAnswers,
+      } ).then((questionAnswer) => {
+        if (questionAnswer) {
+          assertDefined(questionAnswer.question);
+          assertDefined(questionAnswer.answer);
+          const questionAnswerEntity = {
+            id: questionAnswer.id,
+            answerType: questionAnswer.answerType,
+            answerId: questionAnswer.answerId,
+            answer: questionAnswer.answer,
+            questionId: questionAnswer.questionId,
+            question: questionAnswer.question,
+          };
+
+          entity.questionAnswers?.push(questionAnswerEntity);
+        }
+      } );
+
+      promises.push(p);
+    }
+
+    return Promise.all(promises);
   }
 
   async createOneAndGet(dto: CreateQuizDto): Promise<QuizEntity> {

@@ -18,6 +18,12 @@ export class Quiz {
     required: true,
   } )
   questionsAnswersIds: Types.ObjectId[];
+
+  @Prop( {
+    type: [Types.ObjectId],
+    required: false,
+  } )
+  subquizzes?: Types.ObjectId[];
 }
 
 type Doc = HydratedDocument<Quiz>;
@@ -28,6 +34,11 @@ const docToEntity = (doc: Doc): QuizEntity => {
     id: doc._id.toString(),
     name: doc.name,
     questionAnswersIds: doc.questionsAnswersIds.map((qa) => qa.toString()),
+    subquizzes: doc.subquizzes?.map((sq) => {
+      return {
+        id: sq.toString(),
+      };
+    } ),
   };
 };
 const updateQueryToUpdateEntity = (
