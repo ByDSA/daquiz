@@ -1,3 +1,0 @@
-export {
-  QuizzesModule,
-} from "./modules";

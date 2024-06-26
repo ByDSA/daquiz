@@ -3,15 +3,15 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RouterModule } from "@nestjs/core";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ScheduleModule } from "@nestjs/schedule";
-import { TextAnswersModule } from "./answers/text-answer/TextAnswers.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import configuration from "./config/configuration";
-import { QuestionsModule } from "./questions";
-import { QuestionsAnswersModule } from "./questions-answers/submodules";
-import { QuestionTextAnswerModule } from "./questions-answers/submodules/answer-text/modules";
-import { QuestionAnswerCheckingModule } from "./questions-answers/submodules/checking/modules";
-import { QuizzesModule } from "./quizzes";
+import { TextAnswersModule } from "./modules/answers/submodules/text-answer/module";
+import { QuestionsModule } from "./modules/questions";
+import { QuestionTextAnswerModule } from "./modules/questions-answers/app/answer-text/module";
+import { QuestionAnswerCheckingModule } from "./modules/questions-answers/app/checking";
+import { QuestionsAnswersModule } from "./modules/questions-answers/module";
+import { QuizzesModule } from "./modules/quizzes";
 
 @Module( {
   imports: [

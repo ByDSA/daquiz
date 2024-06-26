@@ -2,8 +2,8 @@
 /* eslint-disable no-invalid-this */
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { FilterQuery, UpdateQuery } from "mongoose";
-import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#/events/EventDB";
-import { EventDBEmitter } from "#/events/EventDBEmitter";
+import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#modules/events/EventDB";
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 type CreateEventAdapterFn<DOC, ENTITY extends {id: unknown}>
 = (args: {
