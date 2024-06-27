@@ -17,8 +17,8 @@ function loadEnvsFile(p: string): void {
   } );
 }
 
-loadEnvsFile(".env.dev");
-loadEnvsFile("test/.env");
+// loadEnvsFile(".env.dev");
+// loadEnvsFile("test/.env");
 
 if (!isDebugging()) {
   globalThis.console.log = jest.fn(); // Mockear console.log

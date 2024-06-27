@@ -1,5 +1,5 @@
 import { TextAnswerVO } from "#shared/modules/answers/models";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePickQuestion } from "../picker";
 import { useCheckAnswerMutation } from "../services";
 import TextAnswer from "./InputTextAnswer";
@@ -34,6 +34,7 @@ const Game = ( { quizId }: Props) => {
     },
 
   } );
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!checkedResult)
@@ -45,6 +46,10 @@ const Game = ( { quizId }: Props) => {
   const { questionEntity, questionAnswerId, next } = usePickQuestion( {
     quizId,
   } );
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [questionEntity]);
 
   if (!questionEntity || !questionAnswerId)
     return null;
@@ -61,7 +66,15 @@ const Game = ( { quizId }: Props) => {
 
   return (<section>
     <Question data={questionEntity} choicesStatus={choicesStatus} disabled={!!result}/>
-    {!questionEntity.choices && <TextAnswer setAnswer={setCurrentAnswer} onPressEnter={check} disabled={!!result} answer={currentAnswer}/>}
+    {
+      !questionEntity.choices
+      && <TextAnswer
+        setAnswer={setCurrentAnswer}
+        onPressEnter={check}
+        disabled={!!result}
+        inputRef={inputRef}
+        answer={currentAnswer}/>
+    }
     {result && <p className={result.isCorrect ? styles.answerOk : styles.answerWrong}>{result.isCorrect ? "Correcto" : "Incorrecto"}</p>}
     {!!result && <input type="button" autoFocus={true} value="Next" onClick={() => {
       setCurrentAnswer(null);
@@ -69,8 +82,23 @@ const Game = ( { quizId }: Props) => {
       choicesStatus?.reset();
       next();
     }}/> }
+    {result
+    && !result.isCorrect
+    && result.correctAnswers
+    && getCorrectAnswersView(result.correctAnswers)}
   </section>
   );
 };
+
+function getCorrectAnswersView(correctAnswers: string[]) {
+  const ps = correctAnswers.map((correctAnswer, index) => {
+    return <p key={index}>{correctAnswer}</p>;
+  } );
+
+  return <>
+    <p>Correct answer{correctAnswers.length > 1 ? "s" : ""}:</p>
+    {ps}
+  </>;
+}
 
 export default Game;

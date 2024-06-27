@@ -36,9 +36,6 @@
   },
   "license": "UNLICENSED",
   "name": "daquiz",
-  "nohoist": [
-    "server"
-  ],
   "private": true,
   "scripts": {
     "clean:modules": "rm -rf node_modules && cd server && npm clean:modules",
@@ -54,5 +51,7 @@
     "version:release": "standard-version"
   },
   "version": "0.0.1",
-  "workspaces": []
+  "workspaces": [
+    "server"
+    ]
 }

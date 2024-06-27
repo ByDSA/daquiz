@@ -11,6 +11,7 @@ export type AnswerCheckerProps<ANSWER> = QuestionPartProps & {
   requestAnswer: ANSWER;
   correctAnswer?: ANSWER;
   questionAnswerId?: QuestionAnswerID;
+  askForCorrectAnswer?: boolean;
 };
 
 export type AnswerChecker<ANSWER> = (

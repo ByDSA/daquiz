@@ -15,7 +15,10 @@ export class ServiceImp implements Service {
     private readonly historyEntryRepo: HistoryEntryRepo,
   ) {}
 
-  async checkAnswer( { requestAnswer, questionAnswerId, includeQuestion }: CheckAnswerProps) {
+  async checkAnswer( { requestAnswer,
+    questionAnswerId,
+    includeQuestion,
+    askForCorrectAnswer }: CheckAnswerProps) {
     const questionAnswer = await this.questionAnswerRepo.findOne(questionAnswerId, {
       includeRelations: {
         question: includeQuestion,
@@ -34,6 +37,7 @@ export class ServiceImp implements Service {
       questionAnswerId,
       questionId: questionAnswer.questionId,
       requestAnswer: validRequestAnswer,
+      askForCorrectAnswer: askForCorrectAnswer,
       correctAnswer,
     };
 

@@ -18,6 +18,7 @@ export class QuestionAnswerCheckingController {
     return this.service.checkAnswer( {
       requestAnswer: dto.answer,
       questionAnswerId: id,
+      askForCorrectAnswer: dto.askForCorrectAnswer,
     } );
   }
 }

@@ -6,9 +6,10 @@ export type Props = {
   answer: TextAnswerVO | null;
   onPressEnter?: ()=> void;
   disabled?: boolean;
+  inputRef?: React.RefObject<HTMLInputElement>;
 };
 
-export const TextAnswer = ( { answer, setAnswer, onPressEnter, disabled }: Props) => {
+export const TextAnswer = ( { answer, setAnswer, onPressEnter, disabled, inputRef }: Props) => {
   let handleOnKeyDown: EventHandler<any> | undefined;
 
   if (onPressEnter) {
@@ -23,7 +24,7 @@ export const TextAnswer = ( { answer, setAnswer, onPressEnter, disabled }: Props
   return (
     <section>
       <p>Respuesta:</p>
-      <input type="text" autoComplete="off" onKeyDown={handleOnKeyDown} onChange={(event) =>{
+      <input type="text" ref={inputRef} autoFocus={true} autoComplete="off" onKeyDown={handleOnKeyDown} onChange={(event) =>{
         setAnswer( {
           text: event.target.value,
         } );
