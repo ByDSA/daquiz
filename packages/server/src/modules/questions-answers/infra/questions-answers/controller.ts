@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Inject, Param, Post, Query, UseInterceptors } from "@nestjs/common";
-import { CreateQuestionAnswerDto, QuestionAnswerID, ResultManyQuestionDto, ResultOneQuestionDto } from "../domain";
+import { QuestionAnswerID } from "../../domain";
+import { CreateQuestionAnswerDto, ResultManyQuestionDto, ResultOneQuestionDto } from "./domain";
 import { QuestionAnswerRepo as Repo } from "./persistence";
-import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
-import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
 import { BooleanPipe, ObjectIdPipe } from "src/utils/validation";
+import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
+import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 
 @Controller()
-export class QuestionsAnswersController implements
+export class QuestionAnswerController implements
   CreateOneAndGetController<CreateQuestionAnswerDto, ResultOneQuestionDto>,
   FindOneController<QuestionAnswerID, ResultOneQuestionDto>,
   FindAllController<ResultManyQuestionDto> {

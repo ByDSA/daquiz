@@ -1,4 +1,5 @@
-import { CreateQuestionAnswerDto, QuestionAnswerEntity } from "../../../domain";
+import { QuestionAnswerEntity } from "../../../domain";
+import { CreateQuestionAnswerDto } from "../domain";
 import { CreateOneAndGetService, FindAllService, FindOneService } from "#/utils/services/crud";
 
 export type RepoFindOptions = Partial<{

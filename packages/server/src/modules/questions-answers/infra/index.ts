@@ -1,3 +1,8 @@
-export * from "./persistence";
+export {
+  QuestionTextAnswerModule,
+  AnswerTextRepo as QuestionTextAnswerRepo,
+} from "./answer-text";
 
-export * from "./controller";
+export {
+  QuestionAnswerDBModule, QuestionAnswerModule, QuestionAnswerRepo, QuestionAnswerRepoFindOptions,
+} from "./questions-answers";

@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DBModule } from "../../infra/persistence/repos/module";
-import { QuestionTextAnswerController } from "./controller";
+import { QuestionAnswerDBModule } from "../questions-answers";
 import { RepoImp } from "./repository";
 import { Repo } from "./repository.port";
 import { CustomEventEmitterModule } from "#modules/events/module";
@@ -12,9 +11,9 @@ import { TextAnswerDBModule } from "#/modules/answers/submodules/text-answer";
     CustomEventEmitterModule,
     QuestionDBModule,
     TextAnswerDBModule,
-    DBModule,
+    QuestionAnswerDBModule,
   ],
-  controllers: [QuestionTextAnswerController],
+  controllers: [],
   providers: [
     {
       provide: Repo,

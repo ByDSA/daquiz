@@ -8,9 +8,9 @@ import { AppService } from "./app.service";
 import configuration from "./config/configuration";
 import { TextAnswersModule } from "./modules/answers/submodules/text-answer/module";
 import { QuestionsModule } from "./modules/questions";
-import { QuestionTextAnswerModule } from "./modules/questions-answers/app/answer-text/module";
+import { QuestionsAnswersModule } from "./modules/questions-answers";
 import { QuestionAnswerCheckingModule } from "./modules/questions-answers/app/checking";
-import { QuestionsAnswersModule } from "./modules/questions-answers/module";
+import { QuestionTextAnswerModule } from "./modules/questions-answers/infra/answer-text";
 import { QuizzesModule } from "./modules/quizzes";
 
 @Module( {

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { QuestionAnswerRepo } from "../../infra/persistence/repos";
+import { QuestionAnswerRepo } from "../questions-answers";
 import { CreateQuestionTextAnswerDto, QuestionTextAnswerEntity } from "./domain";
 import { Repo } from "./repository.port";
 import { QuestionRepo } from "#modules/questions";

@@ -3,7 +3,7 @@ import { QuizCache, QuizCacheSchema } from "./QuizCache.schema";
 import { DBService } from "./events.service";
 import { RepoImp } from "./repository";
 import { Repo } from "./repository.port";
-import { QuestionAnswerDBModule } from "#modules/questions-answers/infra";
+import { QuestionAnswerDBModule } from "#modules/questions-answers/infra/questions-answers/persistence";
 import { CustomEventEmitterModule } from "#modules/events/module";
 
 export const DBModule = MongooseModule.forFeature([{
