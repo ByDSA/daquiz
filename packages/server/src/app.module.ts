@@ -7,9 +7,11 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import configuration from "./config/configuration";
 import { TextAnswersModule } from "./modules/answers/submodules/text-answer/module";
+import { HistoryEntriesModule } from "./modules/history-entries/module";
 import { QuestionsModule } from "./modules/questions";
 import { QuestionsAnswersModule } from "./modules/questions-answers";
 import { QuestionAnswerCheckingModule } from "./modules/questions-answers/app/checking";
+import { QuestionAnswerModule } from "./modules/questions-answers/infra";
 import { QuestionTextAnswerModule } from "./modules/questions-answers/infra/answer-text";
 import { QuizzesModule } from "./modules/quizzes";
 
@@ -49,14 +51,18 @@ import { QuizzesModule } from "./modules/quizzes";
       {
         path: "questions-answers",
         module: QuestionsAnswersModule,
-        children: [{
-          path: "text-answer",
-          module: QuestionTextAnswerModule,
-        },
-        {
-          path: "checking",
-          module: QuestionAnswerCheckingModule,
-        }],
+        children: [
+          {
+            path: "/",
+            module: QuestionAnswerModule,
+          }, {
+            path: "text-answer",
+            module: QuestionTextAnswerModule,
+          },
+          {
+            path: "checking",
+            module: QuestionAnswerCheckingModule,
+          }],
       },
     ]),
     QuizzesModule,
@@ -64,6 +70,13 @@ import { QuizzesModule } from "./modules/quizzes";
       {
         path: "quizzes",
         module: QuizzesModule,
+      },
+    ]),
+    HistoryEntriesModule,
+    RouterModule.register([
+      {
+        path: "history-entries",
+        module: HistoryEntriesModule,
       },
     ]),
   ],
