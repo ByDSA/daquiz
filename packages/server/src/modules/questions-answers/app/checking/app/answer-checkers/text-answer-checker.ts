@@ -23,7 +23,7 @@ export const textAnswerChecker: AnswerChecker<TextAnswerVO> = (
     ret.isCorrect = new RegExp(pattern, flags).test(requestAnswer.text);
 
     if (includeCorrectAnswers)
-      ret.correctAnswers = getAnswersFromRegex(correctAnswer.text);
+      ret.correctAnswers = getAnswersFromRegex(pattern);
   } else {
     ret.isCorrect = correctAnswer.text === requestAnswer.text;
 
