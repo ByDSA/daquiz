@@ -4,7 +4,7 @@ import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID } from "../..
 import { QuizCacheRepo } from "./QuizCache";
 import { QuizRelationalRepo } from "./QuizRelational";
 import { Repo } from "./repository.port";
-import { QuestionAnswerID } from "#modules/questions-answers/domain";
+import { QuestionAnswerID } from "#modules/question-answers/domain";
 
 @Injectable()
 export class RepoImp implements Repo {

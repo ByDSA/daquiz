@@ -1,3 +1,3 @@
 export * from "./crud/crud.service";
 
-export * from "./questions-answers-fetching/fetching.service";
+export * from "./question-answers-fetching/fetching.service";

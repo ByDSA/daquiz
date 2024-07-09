@@ -1,12 +1,12 @@
-import { TextAnswerVO } from "#shared/modules/answers/models";
+import { AnswerType, TextAnswerVO } from "#shared/modules/answers/models";
 import { useEffect, useRef, useState } from "react";
 import { usePickQuestion } from "../picker";
 import { useCheckAnswerMutation } from "../services";
 import TextAnswer from "./InputTextAnswer";
 import styles from "./styles.module.css";
 import { QuizID } from "#modules/quizzes";
-import { Question } from "#modules/questions";
-import { useChoices } from "#/modules/questions/ui/Question/use-choices.hook";
+import { useChoices } from "#modules/questions/ui/Question/use-choices.hook";
+import { PartType, Question } from "#modules/questions";
 
 type Props = {
   quizId: QuizID;
@@ -16,8 +16,9 @@ const Game = ( { quizId }: Props) => {
   const [result, setResult] = useState<NonNullable<typeof checkedResult> | null>(null);
   const choicesStatus = useChoices( {
     onSelected: (choice) => {
-      if (choice.text) {
-        const answer = {
+      if (choice.type === PartType.Text) {
+        const answer: TextAnswerVO = {
+          type: AnswerType.Text,
           text: choice.text,
         };
 
@@ -63,11 +64,19 @@ const Game = ( { quizId }: Props) => {
       answer: currentAnswer,
     } );
   };
+  let hasChoices = false;
+
+  for (const part of questionEntity.parts) {
+    if (part.type === PartType.Choices) {
+      hasChoices = true;
+      break;
+    }
+  }
 
   return (<section>
     <Question data={questionEntity} choicesStatus={choicesStatus} disabled={!!result}/>
     {
-      !questionEntity.choices
+      !hasChoices
       && <TextAnswer
         setAnswer={setCurrentAnswer}
         onPressEnter={check}

@@ -1,11 +1,10 @@
 import { QuizEntity } from "../../../../domain/models";
 import { WriteService } from "../Write.service.port";
 import { FindAllService, FindOneService } from "#/utils/services/crud";
-import { QuestionAnswerRepoFindOptions } from "#modules/questions-answers";
 
 export type RepoFindOptions = {
   include?: {
-    questionsAnswers?: QuestionAnswerRepoFindOptions["includeRelations"];
+    questionsAnswers?: boolean;
     subquizzes?: boolean;
   };
 };

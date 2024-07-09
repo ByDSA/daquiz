@@ -2,10 +2,11 @@ import { assertDefined } from "#shared/utils/validation/asserts";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { CreateOneQuestionDto, QuestionEntity, QuestionID, QuestionVO } from "../../../domain";
+import { CreateOneQuestionDto, PatchOneQuestionDto, QuestionEntity } from "../../../domain";
 import { Repo } from "./repository.port";
 import { docToEntity } from "./schemas/adapters";
 import { Question } from "./schemas/schema";
+import { QuestionAnswerID } from "#modules/question-answers";
 import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
@@ -17,10 +18,14 @@ export class RepoImp implements Repo {
     this.dbEventEmitter.registerEventDBLoggerFor(QuestionEntity);
   }
 
-  async patchOneAndGet(id: string, props: QuestionVO): Promise<QuestionEntity | null> {
+  async patchOneAndGet(
+    id: QuestionAnswerID,
+    dto: PatchOneQuestionDto,
+  ): Promise<QuestionEntity | null> {
+    const doc = dto;
     const updateResult = await this.QuestionModel.updateOne( {
       _id: id,
-    }, props).exec();
+    }, doc).exec();
 
     if (updateResult.matchedCount !== 1)
       throw new NotFoundException("Failed to find question to update");
@@ -43,7 +48,7 @@ export class RepoImp implements Repo {
     return docToEntity(created);
   }
 
-  async findOne(id: QuestionID): Promise<QuestionEntity | null> {
+  async findOne(id: QuestionAnswerID): Promise<QuestionEntity | null> {
     const doc = await this.QuestionModel.findById(id).exec();
 
     if (!doc)

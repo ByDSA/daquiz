@@ -1,16 +1,23 @@
-export abstract class EventDB<T extends {id: unknown}> {
-  id: T["id"];
+export abstract class EventDB<ID> {
+  id: ID;
 }
 
-export class PatchEventDB<T extends {id: unknown}, UE = Partial<Omit<T, "id">>> extends EventDB<T> {
-  updateEntity: UE;
+export abstract class EventDBWithDoc<ID, DOC> extends EventDB<ID> {
+  doc: DOC;
+}
+
+export abstract class EventDBWithOptionalDoc<ID, DOC> extends EventDB<ID> {
+  doc?: DOC;
+}
+
+export class PatchEventDB<ID, DOC> extends EventDBWithOptionalDoc<ID, DOC> {
+  updateDoc: Partial<DOC>;
 
   updateResult?: {matchedCount: number; modifiedCount: number};
 }
 
-export class CreateEventDB<T extends {id: unknown}> extends EventDB<T> {
-  valueObject: Omit<T, "id">;
+export class CreateEventDB<ID, DOC> extends EventDBWithDoc<ID, DOC> {
 }
 
-export class DeleteEventDB<T extends {id: unknown}> extends EventDB<T> {
+export class DeleteEventDB<ID, DOC> extends EventDBWithOptionalDoc<ID, DOC> {
 }

@@ -1,8 +1,8 @@
 import { Type } from "class-transformer";
 import { IsDate, IsObject, IsString } from "class-validator";
 import { EnteredAnswer } from "./EnteredAnswer.model";
-import { AnswerCheckResult } from "#modules/questions-answers/services/checking";
-import { QuestionAnswerID } from "#modules/questions-answers/models";
+import { AnswerCheckResult } from "#modules/question-answers/services/checking";
+import { QuestionAnswerID } from "#modules/question-answers/models";
 
 export class HistoryEntryVO {
   @IsDate()

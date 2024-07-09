@@ -60,6 +60,6 @@ export class RepoImp implements Repo {
     if (!docs)
       throw new Error("Failed to find text answers");
 
-    return docs.map(docToEntity);
+    return Promise.all(docs.map(docToEntity));
   }
 }
