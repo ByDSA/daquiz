@@ -1,9 +1,8 @@
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
+import { EventEmitterPluginOptions, eventEmitterPlugin } from "#utils/db/mongoose/EventEmitterPlugin";
 import { Injectable } from "@nestjs/common";
 import { QuizEntity } from "../../../../domain";
-import { updateQueryToUpdateEntity } from "../QuizRelational/schemas";
 import { QuizCache, QuizCacheDocument, QuizCacheSchema, quizCacheDocToEntity } from "./QuizCache.schema";
-import { EventEmitterPluginOptions, eventEmitterPlugin } from "#utils/db/mongoose/EventEmitterPlugin";
-import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
 export class DBService {
@@ -19,7 +18,6 @@ export class DBService {
       },
       patchEmission: {
         use: true,
-        updateQueryToUpdateEntity,
       },
       deleteEmission: {
         use: true,

@@ -1,9 +1,9 @@
 /* eslint-disable func-names */
 /* eslint-disable no-invalid-this */
-import { assertDefined } from "#shared/utils/validation/asserts";
-import { FilterQuery, UpdateQuery } from "mongoose";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#modules/events/EventDB";
 import { EventDBEmitter } from "#modules/events/EventDBEmitter";
+import { assertDefined } from "#shared/utils/validation/asserts";
+import { FilterQuery, UpdateQuery } from "mongoose";
 
 type CreateEventAdapterFn<ID, DOC>
 = (args: {
@@ -12,7 +12,6 @@ type CreateEventAdapterFn<ID, DOC>
 type PatchEventAdapterFn<ID, DOC>
 = (args: {
   doc?: DOC;
-  updateQueryToUpdateEntity?: (updateQuery: UpdateQuery<DOC>)=> DOC;
   filters?: FilterQuery<DOC>;
   updateQuery: UpdateQuery<DOC>;
   updateResult?: PatchEventDB<ID, DOC>["updateResult"];
@@ -152,11 +151,8 @@ const defaultDeleteEventAdapter = <ID, DOC>(
 const defaultPatchEventAdapter = <ID, DOC>(
   { updateQuery,
     filters,
-    updateResult,
-    updateQueryToUpdateEntity }: Parameters<PatchEventAdapterFn<ID, DOC>>[0],
+    updateResult}: Parameters<PatchEventAdapterFn<ID, DOC>>[0],
 ): PatchEventDB<ID, DOC> => {
-  if (!updateQueryToUpdateEntity)
-    throw new Error("updateQueryToUpdateEntity is required");
 
   const id: ID = filters?._id?.toString();
 
@@ -164,7 +160,7 @@ const defaultPatchEventAdapter = <ID, DOC>(
   const event: PatchEventDB<ID, DOC> = {
     id,
     updateResult,
-    updateDoc: updateQueryToUpdateEntity(updateQuery),
+    updateQuery,
   };
 
   return event;

@@ -1,5 +1,8 @@
 export * from "./module";
 
+export * from "./domain";
+
 export {
-  QuestionDBModule, QuestionRepo,
+  QuestionDBModule, QuestionRepo
 } from "./infra";
+

@@ -1,3 +1,5 @@
+import { UpdateQuery } from "mongoose";
+
 export abstract class EventDB<ID> {
   id: ID;
 }
@@ -10,8 +12,8 @@ export abstract class EventDBWithOptionalDoc<ID, DOC> extends EventDB<ID> {
   doc?: DOC;
 }
 
-export class PatchEventDB<ID, DOC> extends EventDBWithOptionalDoc<ID, DOC> {
-  updateDoc: Partial<DOC>;
+export class PatchEventDB<ID, DOC, UQ extends UpdateQuery<DOC> = UpdateQuery<DOC>> extends EventDBWithOptionalDoc<ID, DOC> {
+  updateQuery: UQ;
 
   updateResult?: {matchedCount: number; modifiedCount: number};
 }

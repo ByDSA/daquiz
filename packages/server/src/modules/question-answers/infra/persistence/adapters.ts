@@ -1,8 +1,8 @@
+import { TextAnswerRepo } from "#/modules/answers/submodules/text-answer";
+import { QuestionRepo } from "#/modules/questions/infra";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { QuestionAnswerEntity } from "../../domain";
 import { QuestionAnswerDocument } from "./schema";
-import { QuestionRepo } from "#/modules/questions/infra";
-import { TextAnswerRepo } from "#/modules/answers/submodules/text-answer";
 
 type DocToEntityDeps = {
   questionRepo: QuestionRepo;
@@ -13,12 +13,12 @@ export const docToEntity = async (
   deps: DocToEntityDeps,
 ): Promise<QuestionAnswerEntity> => {
   const id = doc._id.toString();
-  const question = await deps.questionRepo.findOne(doc.questionId.toString());
+  const question = await deps.questionRepo.findOneByInnerId(doc.questionId.toString());
 
   assertDefined(question, "Question not found for id=" + question);
-  const answer = await deps.answerRepo.findOne(doc.answerId.toString());
+  const answer = await deps.answerRepo.findOneByInnerId(doc.answerId.toString());
 
-  assertDefined(answer, "Question not found for id=" + answer);
+  assertDefined(answer, "Answer not found for id=" + answer);
   const entity: QuestionAnswerEntity = {
     id,
     question,

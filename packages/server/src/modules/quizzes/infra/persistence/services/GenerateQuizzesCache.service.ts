@@ -1,16 +1,21 @@
-import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
-import { Cron, CronExpression } from "@nestjs/schedule";
-import { QuizEntity, QuizID, QuizUpdateEntity } from "../../../domain";
-import { QuizCacheRepo } from "../repos/QuizCache";
-import { quizDocToEntity, QuizDocument, QuizRelationalRepo } from "../repos/QuizRelational";
-import { GenerateQuizzesCacheService } from "./GenerateQuizzesCache.service.port";
+import { TextAnswerRepo } from "#/modules/answers/submodules/text-answer";
 import { TextAnswerEntity, TextAnswerVO } from "#/modules/answers/submodules/text-answer/domain";
 import { TextAnswer } from "#/modules/answers/submodules/text-answer/infra/persistence/repos/schemas/schema";
+import { QuestionRepo } from "#/modules/questions";
 import { Question } from "#/modules/questions/infra/persistence/repos/schemas";
+import { getRemovedIdsFromPulledAttribute } from "#/utils/db/mongoose/updateQueryFn";
 import { AnswerType } from "#modules/answers/domain";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#modules/events/EventDB";
 import { OnCreateEvent, OnDeleteEvent, OnPatchEvent } from "#modules/events/EventDBEmitter";
 import { PartType, QuestionEntity, TextPart } from "#modules/questions/domain";
+import { assertDefined } from "#shared/utils/validation/asserts";
+import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
+import { QuizEntity, QuizID } from "../../../domain";
+import { QuizCacheRepo } from "../repos/QuizCache";
+import { quizDocToEntity, QuizDocument, QuizRelationalRepo } from "../repos/QuizRelational";
+import { QuizUpdateQuery } from "../repos/QuizRelational/schemas";
+import { GenerateQuizzesCacheService } from "./GenerateQuizzesCache.service.port";
 
 @Injectable()
 export class GenerateQuizzesCacheServiceImp implements GenerateQuizzesCacheService {
@@ -19,6 +24,10 @@ export class GenerateQuizzesCacheServiceImp implements GenerateQuizzesCacheServi
   constructor(
     @Inject(QuizRelationalRepo)
     private readonly quizRelationalRepo: QuizRelationalRepo,
+    @Inject(QuestionRepo)
+    private readonly questionRepo: QuestionRepo,
+    @Inject(TextAnswerRepo)
+    private readonly textAnswerRepo: TextAnswerRepo,
     @Inject(QuizCacheRepo)
     private readonly quizCacheRepo: QuizCacheRepo,
   ) {
@@ -46,22 +55,22 @@ export class GenerateQuizzesCacheServiceImp implements GenerateQuizzesCacheServi
 
   @OnPatchEvent(QuestionEntity)
   async handleOnPatchQuestion(event: PatchEventDB<string, Question>) {
-    if (!event.doc)
-      return;
-
-    const { id, updateDoc } = event;
+    const { id: questionId, updateQuery: updateDoc } = event;
     const quizzes = await this.quizCacheRepo.findAll();
-
+    const question = await this.questionRepo.findOneByInnerId(questionId);
+    assertDefined(question, "Question not found for id=" + questionId);
+    const questionAnswerId = question.id
     for (const quiz of quizzes) {
       quiz.questionAnswers ??= [];
       let haveToUpdateQuiz = false;
 
       for (const questionAnswer of quiz.questionAnswers) {
-        if (questionAnswer.id === id) {
-          if (updateDoc.text) {
+        if (questionAnswer.id === questionAnswerId) {
+          const newText = updateDoc.$set?.text;
+          if (newText) {
             for (const part of questionAnswer.question.parts) {
               if (part.type === PartType.Text) {
-                (part as TextPart).text = updateDoc.text;
+                (part as TextPart).text = newText;
                 break;
               }
             }
@@ -78,23 +87,24 @@ export class GenerateQuizzesCacheServiceImp implements GenerateQuizzesCacheServi
 
   @OnPatchEvent(TextAnswerEntity)
   async handleOnPatchTextAnswer(event: PatchEventDB<string, TextAnswer>) {
-    if (!event.updateDoc)
-      return;
-
-    const { id, updateDoc } = event;
+    const { id: answerId, updateQuery } = event;
     const quizzes = await this.quizCacheRepo.findAll();
+    const answer = await this.textAnswerRepo.findOneByInnerId(answerId);
+    assertDefined(answer, "Answer not found for id=" + answerId);
+    const questionAnswerId = answer.id;
 
     for (const quiz of quizzes) {
       quiz.questionAnswers ??= [];
       let haveToUpdateQuiz = false;
 
       for (const questionAnswer of quiz.questionAnswers) {
+        const newText = updateQuery.$set?.text;
         if (
-          questionAnswer.id === id
+          questionAnswer.id === questionAnswerId
           && questionAnswer.answer.type === AnswerType.Text
-          && updateDoc.text
+          && newText
         ) {
-          (questionAnswer.answer as TextAnswerVO).text = updateDoc.text;
+          (questionAnswer.answer as TextAnswerVO).text = newText;
 
           haveToUpdateQuiz = true;
         }
@@ -106,15 +116,15 @@ export class GenerateQuizzesCacheServiceImp implements GenerateQuizzesCacheServi
   }
 
   @OnPatchEvent(QuizEntity)
-  async handleOnPatchQuiz(event: PatchEventDB<QuizID, QuizUpdateEntity>) {
-    const addedQuestionsAnswersIds = event.updateDoc.questionAnswersIds?.added;
+  async handleOnPatchQuiz(event: PatchEventDB<QuizID, QuizEntity, QuizUpdateQuery>) {
+    const addedQuestionsAnswersIds = event.updateQuery.$addToSet?.questionsAnswersIds?.$each?.map(String);
 
     if (addedQuestionsAnswersIds)
       await this.quizCacheRepo.addQuestionsAnswers(event.id, addedQuestionsAnswersIds);
 
-    const removedIds = event.updateDoc.questionAnswersIds?.removed;
+    const removedIds = getRemovedIdsFromPulledAttribute(event.updateQuery.$pull?.questionsAnswersIds);
 
-    if (removedIds)
+    if (removedIds && removedIds.length > 0)
       await this.quizCacheRepo.removeQuestionsAnswers(event.id, removedIds);
   }
 
