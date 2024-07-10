@@ -1,6 +1,6 @@
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { SetAnswerVO, TextSetItemVO } from "#modules/answers/models/SetAnswer.model";
+import { ArrayAnswerVO } from "#modules/answers/models/ArrayAnswer.model";
 import { QuestionAnswerVO } from "#modules/question-answers/models";
 import { ChoicesPart, ImagePart, TextPart } from "#modules/questions/models";
 
@@ -45,20 +45,21 @@ it("should create the entities for this use case without errors", async () => {
       ],
     },
     answer: {
-      type: "set",
-      set: [
+      type: "array",
+      arrayType: "set",
+      content: [
         {
           type: "text",
           text: "orange",
-        } as TextSetItemVO,
+        } as TextPart,
         {
           type: "text",
           text: "lemon",
-        } as TextSetItemVO,
+        } as TextPart,
       ],
-    } as SetAnswerVO,
+    } as ArrayAnswerVO,
   } );
   const errors = await validate(questionAnswer);
 
-  expect(errors.length).toBe(0);
+  expect(errors).toEqual([]);
 } );

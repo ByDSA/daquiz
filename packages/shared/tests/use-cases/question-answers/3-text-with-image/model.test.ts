@@ -1,6 +1,6 @@
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { TextAnswerVO } from "#/modules/answers/models";
+import { TextAnswerVO } from "#modules/answers/models";
 import { QuestionAnswerVO } from "#modules/question-answers/models";
 import { ChoicesPart, ImagePart, TextPart } from "#modules/questions/models";
 

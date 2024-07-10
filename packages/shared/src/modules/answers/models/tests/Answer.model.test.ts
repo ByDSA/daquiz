@@ -20,7 +20,7 @@ describe("answerVO", () => {
   it("should fail validation if type property is incorrect", async () => {
     const answer = generateValidAnswerVO();
 
-    answer.type = "se" as AnswerType.Set;
+    answer.type = "se" as AnswerType.Array;
 
     const errors = await validate(answer);
 

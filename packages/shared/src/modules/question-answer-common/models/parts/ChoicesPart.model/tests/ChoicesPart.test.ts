@@ -1,12 +1,12 @@
 import "reflect-metadata";
 
 import { validate } from "class-validator";
-import { AudioPart } from "../AudioPart.model";
-import { ImagePart } from "../ImagePart.model";
-import { PartType } from "../Part.model";
-import { VideoPart } from "../VideoPart.model";
+import { AudioPart } from "../../AudioPart.model";
+import { ImagePart } from "../../ImagePart.model";
+import { PartType } from "../../Part.model";
+import { generateInvalidTextPart } from "../../tests/TextPart.fixtures";
+import { VideoPart } from "../../VideoPart.model";
 import { generateValidChoicesPart } from "./ChoicesPart.fixtures";
-import { generateInvalidTextPart } from "./TextPart.fixtures";
 
 describe("choicesPart", () => {
   it("should pass validation if VO is valid", async () => {

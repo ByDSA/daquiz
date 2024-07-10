@@ -9,3 +9,5 @@ export * from "./Part.model";
 export * from "./TextPart.model";
 
 export * from "./VideoPart.model";
+
+export * from "./LeafPart";

@@ -1,5 +1,5 @@
 import { validate } from "class-validator";
-import { generateInvalidTextPart, generateValidTextPart } from "../parts/tests/TextPart.fixtures";
+import { generateInvalidTextPart, generateValidTextPart } from "../../../question-answer-common/models/parts/tests/TextPart.fixtures";
 import { generateInvalidTextQuestionVO, generateValidQuestionVO, generateValidTextQuestionVO } from "./fixtures";
 
 it("should pass on valid VO", async () => {

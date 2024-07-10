@@ -1,6 +1,6 @@
-import { ChoicesPart } from "../ChoicesPart.model";
-import { PartType } from "../Part.model";
-import { generateValidTextPart } from "./TextPart.fixtures";
+import { ChoicesPart } from "..";
+import { PartType } from "../../Part.model";
+import { generateValidTextPart } from "../../tests/TextPart.fixtures";
 
 export function generateValidChoicesPart() {
   const ret = new ChoicesPart();

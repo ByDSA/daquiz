@@ -1,5 +1,5 @@
-import { generateValidImagePart } from "../parts/tests/ImagePart.fixtures";
-import { generateInvalidTextPart, generateValidTextPart } from "../parts/tests/TextPart.fixtures";
+import { generateValidImagePart } from "../../../question-answer-common/models/parts/tests/ImagePart.fixtures";
+import { generateInvalidTextPart, generateValidTextPart } from "../../../question-answer-common/models/parts/tests/TextPart.fixtures";
 import { QuestionVO } from "../Question.model";
 import { TextQuestionVO } from "../TextQuestion.model";
 

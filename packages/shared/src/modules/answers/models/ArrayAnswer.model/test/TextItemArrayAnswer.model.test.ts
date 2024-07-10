@@ -1,26 +1,26 @@
 import { validate } from "class-validator";
-import { ItemSetAnswerType } from "../ItemSetAnswer.model";
-import { generateInvalidTextItemSetAnswerVO, generateValidItemSetAnswerVO, generateValidTextItemSetAnswerVO } from "./ItemSetAnswer.fixtures";
+import { generateInvalidTextItemArrayAnswerVO, generateValidItemArrayAnswerVO, generateValidTextItemArrayAnswerVO } from "./ItemArrayAnswer.fixtures";
+import { PartType } from "#modules/questions/models";
 
-describe("textItemSetAnswerVO", () => {
+describe("textItemArrayAnswerVO", () => {
   it("should pass validation if VO is valid", async () => {
-    const item = generateValidTextItemSetAnswerVO();
+    const item = generateValidTextItemArrayAnswerVO();
     const errors = await validate(item);
 
     expect(errors.length).toBe(0);
   } );
 
   it("should fail validation if VO is invalid", async () => {
-    const item = generateInvalidTextItemSetAnswerVO();
+    const item = generateInvalidTextItemArrayAnswerVO();
     const errors = await validate(item);
 
     expect(errors.length).toBe(1);
   } );
 
   it("should fail validation if type property is incorrect", async () => {
-    const item = generateValidItemSetAnswerVO();
+    const item = generateValidItemArrayAnswerVO();
 
-    item.type = "te" as ItemSetAnswerType.Text;
+    item.type = "te" as PartType.Text;
 
     const errors = await validate(item);
 
@@ -28,7 +28,7 @@ describe("textItemSetAnswerVO", () => {
   } );
 
   it("should fail validation if text property is invalid", async () => {
-    const item = generateValidTextItemSetAnswerVO();
+    const item = generateValidTextItemArrayAnswerVO();
 
     item.text = 123 as any;
 

@@ -1,10 +1,11 @@
 import { ClassConstructor, plainToInstance } from "class-transformer";
 import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator, validateSync } from "class-validator";
+import { ArrayPart } from "./ArrayPart.model";
 import { AudioPart } from "./AudioPart.model";
 import { ChoicesPart } from "./ChoicesPart.model";
 import { ImagePart } from "./ImagePart.model";
-import { MatchingPart } from "./MatchingPart.model";
 import { Part, PartType } from "./Part.model";
+import { SetsPart } from "./SetsPart.model";
 import { TextPart } from "./TextPart.model";
 import { VideoPart } from "./VideoPart.model";
 import { neverCase } from "#utils/typescript";
@@ -26,8 +27,6 @@ class IsPartConstraint implements ValidatorConstraintInterface {
 
     const errors = validateSync(instancePart);
 
-    _args.constraints = errors;
-
     return errors.length === 0;
   };
 
@@ -48,8 +47,10 @@ function determineClassByType(type: PartType): ClassConstructor<Part> {
       return ChoicesPart;
     case PartType.Video:
       return VideoPart;
-    case PartType.Matching:
-      return MatchingPart;
+    case PartType.Sets:
+      return SetsPart;
+    case PartType.Array:
+      return ArrayPart;
     default:
       return neverCase(type);
   }

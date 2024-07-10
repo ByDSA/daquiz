@@ -1,4 +1,4 @@
-import { Choice, ChoicesPart, PartType, TextPart } from "./parts";
+import { Choice, ChoicesPart, PartType, TextPart } from "../../question-answer-common/models/parts";
 import { QuestionVO } from "./Question.model";
 
 export function findFirstTextPart(question: QuestionVO): TextPart | undefined {

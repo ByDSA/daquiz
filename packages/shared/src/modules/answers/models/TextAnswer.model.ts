@@ -2,7 +2,7 @@ import { IsString } from "class-validator";
 import { AnswerVO } from "./Answer.model";
 import { AnswerType } from "./AnswerType.enum";
 import { IsSpecificString } from "#utils/validation/decorators/IsSpecificString";
-import { BaseEntity } from "#/utils/entity";
+import { BaseEntity } from "#utils/entity";
 
 export class TextAnswerVO extends AnswerVO {
   @IsSpecificString(AnswerType.Text)

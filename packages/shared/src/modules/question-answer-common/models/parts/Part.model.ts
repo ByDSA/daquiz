@@ -6,7 +6,8 @@ export enum PartType {
   Video = "video",
   Audio = "audio",
   Choices = "choices",
-  Matching = "matching",
+  Sets = "sets",
+  Array = "array",
 }
 
 export abstract class Part {

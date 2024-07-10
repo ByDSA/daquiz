@@ -1,16 +1,15 @@
 import { ClassConstructor, plainToInstance } from "class-transformer";
-import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator, validateSync } from "class-validator";
+import { ValidationArguments, ValidationError, ValidationOptions, ValidatorConstraintInterface, registerDecorator, validateSync } from "class-validator";
 import { AnswerVO } from "./Answer.model";
 import { AnswerType } from "./AnswerType.enum";
-import { SetAnswerVO } from "./SetAnswer.model";
+import { ArrayAnswerVO } from "./ArrayAnswer.model";
 import { TextAnswerVO } from "./TextAnswer.model";
+import { plainErrors } from "#utils/validation/decorators/errorsHelpers";
 import { neverCase } from "#utils/typescript";
 
-// eslint-disable-next-line custom/no-blank-lines-after-decorator
-@ValidatorConstraint( {
-  async: false,
-} )
 class IsAnswerConstraint implements ValidatorConstraintInterface {
+  protected errors: ValidationError[] = [];
+
   validate(answer: any, _args: ValidationArguments) {
     if (typeof answer !== "object")
       return false;
@@ -23,11 +22,17 @@ class IsAnswerConstraint implements ValidatorConstraintInterface {
 
     const errors = validateSync(instancePart);
 
-    return errors.length === 0;
+    if (errors.length > 0) {
+      this.errors = errors;
+
+      return false;
+    }
+
+    return true;
   };
 
   defaultMessage(_args: ValidationArguments) {
-    return "Each part must be valid and have a known type.";
+    return plainErrors(this.errors, "Answer must be valid and have a known type.");
   }
 }
 
@@ -35,8 +40,8 @@ function determineClassByType(type: AnswerType): ClassConstructor<AnswerVO> {
   switch (type) {
     case AnswerType.Text:
       return TextAnswerVO;
-    case AnswerType.Set:
-      return SetAnswerVO;
+    case AnswerType.Array:
+      return ArrayAnswerVO;
     default:
       return neverCase(type);
   }
@@ -45,6 +50,7 @@ function determineClassByType(type: AnswerType): ClassConstructor<AnswerVO> {
 export function IsAnswer(validationOptions?: ValidationOptions) {
   return (object: object, propertyName: string) => {
     registerDecorator( {
+      async: false,
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,

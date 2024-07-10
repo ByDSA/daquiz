@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { TextPart } from "../parts";
-import { generateInvalidImagePart } from "../parts/tests/ImagePart.fixtures";
+import { TextPart } from "../../../question-answer-common/models/parts";
+import { generateInvalidImagePart } from "../../../question-answer-common/models/parts/tests/ImagePart.fixtures";
 import { QuestionVO } from "../Question.model";
 import { generateValidQuestionTextWithImageVO, generateValidQuestionVO } from "./fixtures";
 

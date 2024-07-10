@@ -2,7 +2,7 @@ import "reflect-metadata"; // Para evitar errores de que no encuentra Reflect.ge
 
 import { Type } from "class-transformer";
 import { IsArray, ValidateNested } from "class-validator";
-import { TextPart } from "./parts";
+import { TextPart } from "../../question-answer-common/models/parts";
 import { ArrayLength } from "#utils/validation/decorators/ArrayLength";
 
 export class TextQuestionVO {

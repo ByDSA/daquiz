@@ -1,7 +1,7 @@
 import { validate } from "class-validator";
 import { generateValidQuestionAnswerVO } from "./fixtures";
 import { generateInvalidAnswerVO } from "#modules/answers/models/tests/fixtures";
-import { generateInvalidImagePart } from "#modules/questions/models/parts/tests/ImagePart.fixtures";
+import { generateInvalidImagePart } from "#modules/question-answer-common/models/parts/tests/ImagePart.fixtures";
 import { generateInvalidQuestionVO, generateInvalidTextQuestionVO, generateValidTextQuestionVO } from "#modules/questions/models/tests/fixtures";
 
 describe("questionAnswerVO", () => {

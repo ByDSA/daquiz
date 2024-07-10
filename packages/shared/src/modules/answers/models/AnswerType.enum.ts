@@ -1,4 +1,4 @@
 export enum AnswerType {
   Text = "text",
-  Set = "set",
+  Array = "array",
 }

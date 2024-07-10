@@ -1,11 +1,12 @@
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
-import { MatchingPart } from "#/modules/questions/models/parts/MatchingPart.model";
-import { SetAnswerVO, TextArraySetItemVO } from "#modules/answers/models/SetAnswer.model";
+import { validateSync } from "class-validator";
+import { ArrayAnswerVO } from "#modules/answers/models/ArrayAnswer.model";
+import { ArrayPart } from "#modules/question-answer-common/models/parts/ArrayPart.model";
+import { SetsPart } from "#modules/question-answer-common/models/parts/SetsPart.model";
 import { QuestionAnswerVO } from "#modules/question-answers/models";
 import { TextPart } from "#modules/questions/models";
 
-it("should create the entities for this use case without errors", async () => {
+it("should create the entities for this use case without errors", () => {
   const questionAnswer = plainToInstance(QuestionAnswerVO, {
     question: {
       parts: [
@@ -14,45 +15,92 @@ it("should create the entities for this use case without errors", async () => {
           text: "Empareja los países con sus capitales",
         } as TextPart,
         {
-          type: "matching",
+          type: "sets",
+          objective: "matching",
           sets: [
             {
               content: [
-                "España",
-                "Francia",
-                "Alemania",
+                {
+                  type: "text",
+                  text: "España",
+                },
+                {
+                  type: "text",
+                  text: "Francia",
+                },
+                {
+                  type: "text",
+                  text: "Alemania",
+                },
               ],
             },
             {
               content: [
-                "Madrid",
-                "París",
-                "Berlín",
+                {
+                  type: "text",
+                  text: "Madrid",
+                },
+                {
+                  type: "text",
+                  text: "París",
+                },
+                {
+                  type: "text",
+                  text: "Berlín",
+                },
               ],
             },
           ],
-        } as MatchingPart,
+        } as SetsPart,
       ],
     },
     answer: {
-      type: "set",
-      set: [
+      type: "array",
+      arrayType: "set",
+      content: [
         {
-          type: "text-array",
-          texts: ["España", "Madrid"],
-        } as TextArraySetItemVO,
+          type: "array",
+          content: [
+            {
+              type: "text",
+              text: "España",
+            },
+            {
+              type: "text",
+              text: "Madrid",
+            },
+          ],
+        } as ArrayPart,
         {
-          type: "text-array",
-          texts: ["Francia", "París"],
-        } as TextArraySetItemVO,
+          type: "array",
+          content: [
+            {
+              type: "text",
+              text: "Francia",
+            },
+            {
+              type: "text",
+              text: "París",
+            },
+          ],
+        } as ArrayPart,
         {
-          type: "text-array",
-          texts: ["Alemania", "Berlín"],
-        } as TextArraySetItemVO,
+          type: "array",
+          content: [
+            {
+              type: "text",
+              text: "Alemania",
+            },
+            {
+              type: "text",
+              text: "Berlín",
+            },
+          ],
+        } as ArrayPart,
       ],
-    } as SetAnswerVO,
+    } as ArrayAnswerVO,
   } );
-  const errors = await validate(questionAnswer);
+  const errors = validateSync(questionAnswer);
 
   expect(errors.length).toBe(0);
 } );
