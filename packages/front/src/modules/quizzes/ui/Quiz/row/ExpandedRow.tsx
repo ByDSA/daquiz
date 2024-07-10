@@ -1,9 +1,9 @@
 import Choices from "./Choices";
 import styles from "./ExpandedRow.module.css";
-import { QuestionAnswerEntity } from "#/modules/question-answers";
 import { AnswerType, TextAnswerVO } from "#modules/answers";
+import { QuestionAnswerEntity } from "#modules/question-answers";
 import { Choice, ChoicesPart, PartType, usePatchOneQuestionAndGet } from "#modules/questions";
-import { ChoiceDto } from "#modules/questions/services/crud/crud.dto";
+import { TextChoiceDto } from "#modules/questions/services/crud/crud.dto";
 
 type Props = {
   data: QuestionAnswerEntity;
@@ -30,7 +30,7 @@ const ExpandedRow = ( { data, revalidateData }: Props) => {
     if (!value)
       return;
 
-    const valueDto: ChoiceDto[] = value.map((choice) => {
+    const valueDto: TextChoiceDto[] = value.map((choice) => {
       if (choice.type === PartType.Text) {
         return {
           text: choice.text,
@@ -38,7 +38,7 @@ const ExpandedRow = ( { data, revalidateData }: Props) => {
       }
 
       return undefined;
-    } ).filter((choice) => choice !== undefined) as ChoiceDto[];
+    } ).filter((choice) => choice !== undefined) as TextChoiceDto[];
     const choicesDto = [
       ...valueDto,
       {

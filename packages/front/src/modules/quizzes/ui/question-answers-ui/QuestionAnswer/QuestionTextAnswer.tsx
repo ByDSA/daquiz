@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
-import { QuestionAnswerEntity } from "#/modules/question-answers";
 import { AnswerType, TextAnswerVO, usePatchOneTextAnswerAndGet } from "#modules/answers";
+import { QuestionAnswerEntity } from "#modules/question-answers";
 import { findFirstTextPart, usePatchOneQuestionAndGet } from "#modules/questions";
 import { classNames } from "#utils/styling";
 

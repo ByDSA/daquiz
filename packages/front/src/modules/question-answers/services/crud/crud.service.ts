@@ -1,6 +1,6 @@
+import { CreateQuestionAnswerDto } from "./crud.dto";
 import { QuestionEntity } from "#modules/questions";
 import { createFetchPipeCreateOneAndGet } from "#utils/fetching";
-import { CreateQuestionAnswerDto } from "./crud.dto";
 
 const URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/question-answers";
 

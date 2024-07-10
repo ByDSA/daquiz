@@ -1,8 +1,8 @@
-import { QuestionAnswerID } from "#/modules/question-answers";
-import { AnswerVO } from "#modules/answers";
 import { AnswerCheckResult, QuestionAnswerCheckingDto } from "#shared/modules/question-answers/services/checking";
 import urlJoin from "#shared/utils/urls/urlJoin";
 import { assertDefined } from "#shared/utils/validation/asserts";
+import { QuestionAnswerID } from "#modules/question-answers";
+import { AnswerVO } from "#modules/answers";
 import { UseMutation, checkForErrors, createApi } from "#utils/fetching";
 
 type Props = {

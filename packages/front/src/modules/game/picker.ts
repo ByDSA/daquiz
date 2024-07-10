@@ -1,9 +1,9 @@
-import { QuestionAnswerID } from "#/modules/question-answers";
-import { ChoicesPart, QuestionVO } from "#modules/questions";
-import { QuizID } from "#modules/quizzes";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { useEffect, useState } from "react";
 import { useFetchPickQuestion } from "./services/pick-question/pick-question.service";
+import { QuestionAnswerID } from "#modules/question-answers";
+import { ChoicesPart, QuestionVO } from "#modules/questions";
+import { QuizID } from "#modules/quizzes";
 
 type Props = {
   quizId: QuizID;

@@ -1,6 +1,6 @@
-import { QuestionAnswerID } from "#/modules/question-answers";
-import { UseMutation, createApi, responseNoDataHandler } from "#utils/fetching";
 import { QuizID } from "../../models";
+import { QuestionAnswerID } from "#modules/question-answers";
+import { UseMutation, createApi, responseNoDataHandler } from "#utils/fetching";
 
 type AddQuestionAnswerQuery = {
   quizId: QuizID;

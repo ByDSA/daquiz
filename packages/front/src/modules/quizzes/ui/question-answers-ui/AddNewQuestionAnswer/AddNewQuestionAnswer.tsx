@@ -6,8 +6,8 @@ import { useChoices } from "./hooks/UseChoices";
 import styles from "./styles.module.css";
 import { useAddQuestionAnswer } from "#modules/quizzes/services";
 import { Choice, ChoicesPart, PartType, QuestionVO, TextPart } from "#modules/questions";
+import { useCreateOneQuestionAnswerAndGet } from "#modules/question-answers";
 import { AnswerType, TextAnswerVO } from "#modules/answers";
-import { useCreateOneQuestionAnswerAndGet } from "#/modules/question-answers";
 
 type AddNewQuestionAnswerProps = {
   quizId: string;
