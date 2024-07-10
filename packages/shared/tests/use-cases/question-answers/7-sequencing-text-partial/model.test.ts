@@ -106,5 +106,5 @@ it("should create the entities for this use case without errors", async () => {
   } );
   const errors = await validate(questionAnswer);
 
-  expect(errors.length).toBe(0);
+  expect(errors).toEqual([]);
 } );

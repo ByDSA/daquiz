@@ -9,7 +9,7 @@ describe("questionAnswerVO", () => {
     const vo = generateValidQuestionAnswerVO();
     const errors = await validate(vo);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should fail validation if question is invalid", async () => {

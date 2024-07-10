@@ -7,6 +7,7 @@ export const generateValidImagePart = () => {
   part.type = PartType.Image;
   part.url = "https://example.com/image.jpg";
   part.caption = "Valid caption";
+  part.name = "idName";
 
   return part;
 };
@@ -14,7 +15,7 @@ export const generateValidImagePart = () => {
 export const generateInvalidImagePart = () => {
   const part = generateValidImagePart();
 
-  part.url = undefined as any;
+  part.name = undefined as any;
 
   return part;
 };

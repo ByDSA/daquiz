@@ -6,7 +6,7 @@ it("should pass on valid VO", async () => {
   const questionVO = generateValidTextQuestionVO();
   const errors = await validate(questionVO);
 
-  expect(errors.length).toBe(0);
+  expect(errors).toEqual([]);
 } );
 
 it("should fail on invalid VO", async () => {

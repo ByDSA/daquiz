@@ -7,7 +7,7 @@ describe("imagePart", () => {
     const vo = generateValidImagePart();
     const errors = await validate(vo);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should fail validation if VO is invalid", async () => {
@@ -46,7 +46,7 @@ describe("imagePart", () => {
 
     const errors = await validate(textPart);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should validate undefined caption property", async () => {
@@ -56,6 +56,6 @@ describe("imagePart", () => {
 
     const errors = await validate(textPart);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 } );

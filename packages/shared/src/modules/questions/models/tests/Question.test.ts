@@ -9,7 +9,7 @@ it("should pass on valid QuestionVO", async () => {
   const questionVO = generateValidQuestionVO();
   const errors = await validate(questionVO);
 
-  expect(errors.length).toBe(0);
+  expect(errors).toEqual([]);
 } );
 
 it("should have one or more parts", async () => {
@@ -46,7 +46,7 @@ describe("validate multiple parts", () => {
       const questionVO = generateValidQuestionTextWithImageVO();
       const errors = await validate(questionVO);
 
-      expect(errors.length).toBe(0);
+      expect(errors).toEqual([]);
     } );
   } );
   describe("using abstract classes", () => {
@@ -68,7 +68,7 @@ describe("validate multiple parts", () => {
       questionVO = plainToInstance(QuestionVO, questionVO);
       const errors = await validate(questionVO);
 
-      expect(errors.length).toBe(0);
+      expect(errors).toEqual([]);
     } );
   } );
 } );

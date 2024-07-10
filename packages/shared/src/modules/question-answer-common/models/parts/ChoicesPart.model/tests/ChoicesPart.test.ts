@@ -13,7 +13,7 @@ describe("choicesPart", () => {
     const choicesPart = generateValidChoicesPart();
     const errors = await validate(choicesPart);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should fail validation if type is not PartType.Choices", async () => {
@@ -59,7 +59,7 @@ describe("choicesPart", () => {
 
       if (expectedValid)
         // eslint-disable-next-line jest/no-conditional-expect
-        expect(errors.length).toBe(0);
+        expect(errors).toEqual([]);
       else
         // eslint-disable-next-line jest/no-conditional-expect
         expect(errors.length).toBeGreaterThan(0);

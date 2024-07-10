@@ -13,7 +13,7 @@ describe("arrayPart", () => {
     const part = generateValidChoicesPart();
     const errors = await validate(part);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should fail validation if type is not PartType.Array", async () => {

@@ -7,7 +7,7 @@ describe("textItemArrayAnswerVO", () => {
     const item = generateValidTextItemArrayAnswerVO();
     const errors = await validate(item);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should fail validation if VO is invalid", async () => {

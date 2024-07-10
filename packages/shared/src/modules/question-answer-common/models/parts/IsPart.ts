@@ -1,5 +1,5 @@
 import { ClassConstructor, plainToInstance } from "class-transformer";
-import { ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator, validateSync } from "class-validator";
+import { ValidationArguments, ValidationError, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator, validateSync } from "class-validator";
 import { ArrayPart } from "./ArrayPart.model";
 import { AudioPart } from "./AudioPart.model";
 import { ChoicesPart } from "./ChoicesPart.model";
@@ -8,6 +8,7 @@ import { Part, PartType } from "./Part.model";
 import { SetsPart } from "./SetsPart.model";
 import { TextPart } from "./TextPart.model";
 import { VideoPart } from "./VideoPart.model";
+import { plainErrors } from "#utils/validation/decorators/errorsHelpers";
 import { neverCase } from "#utils/typescript";
 
 // eslint-disable-next-line custom/no-blank-lines-after-decorator
@@ -15,6 +16,8 @@ import { neverCase } from "#utils/typescript";
   async: false,
 } )
 class IsPartConstraint implements ValidatorConstraintInterface {
+  #errors: ValidationError[] = [];
+
   validate(part: any, _args: ValidationArguments) {
     if (typeof part !== "object")
       return false;
@@ -27,11 +30,17 @@ class IsPartConstraint implements ValidatorConstraintInterface {
 
     const errors = validateSync(instancePart);
 
-    return errors.length === 0;
+    if (errors.length > 0) {
+      this.#errors = errors;
+
+      return false;
+    }
+
+    return true;
   };
 
   defaultMessage(_args: ValidationArguments) {
-    return "Each part must be valid and have a known type.";
+    return plainErrors(this.#errors, "Each part must be valid and have a known type.");
   }
 }
 

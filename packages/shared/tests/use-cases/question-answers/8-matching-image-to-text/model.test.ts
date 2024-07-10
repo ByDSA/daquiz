@@ -4,7 +4,7 @@ import { ArrayAnswerVO } from "#modules/answers/models/ArrayAnswer.model";
 import { ArrayPart } from "#modules/question-answer-common/models/parts/ArrayPart.model";
 import { SetsPart } from "#modules/question-answer-common/models/parts/SetsPart.model";
 import { QuestionAnswerVO } from "#modules/question-answers/models";
-import { TextPart } from "#modules/questions/models";
+import { ImagePart, TextPart } from "#modules/questions/models";
 
 it("should create the entities for this use case without errors", () => {
   const questionAnswer = plainToInstance(QuestionAnswerVO, {
@@ -12,7 +12,7 @@ it("should create the entities for this use case without errors", () => {
       parts: [
         {
           type: "text",
-          text: "Empareja los países con sus capitales",
+          text: "Empareja las imágenes de los animales con sus nombres",
         } as TextPart,
         {
           type: "sets",
@@ -21,32 +21,35 @@ it("should create the entities for this use case without errors", () => {
             {
               content: [
                 {
-                  type: "text",
-                  text: "España",
-                },
+                  type: "image",
+                  url: "https://www.example.com/dog.jpg",
+                  name: "dog",
+                } as ImagePart,
                 {
-                  type: "text",
-                  text: "Francia",
-                },
+                  type: "image",
+                  url: "https://www.example.com/cat.jpg",
+                  name: "cat",
+                } as ImagePart,
                 {
-                  type: "text",
-                  text: "Alemania",
-                },
+                  type: "image",
+                  url: "https://www.example.com/rabbit.jpg",
+                  name: "rabbit",
+                } as ImagePart,
               ],
             },
             {
               content: [
                 {
                   type: "text",
-                  text: "Madrid",
+                  text: "Perro",
                 },
                 {
                   type: "text",
-                  text: "París",
+                  text: "Gato",
                 },
                 {
                   type: "text",
-                  text: "Berlín",
+                  text: "Conejo",
                 },
               ],
             },
@@ -63,24 +66,11 @@ it("should create the entities for this use case without errors", () => {
           content: [
             {
               type: "text",
-              text: "España",
+              text: "dog",
             },
             {
               type: "text",
-              text: "Madrid",
-            },
-          ],
-        } as ArrayPart,
-        {
-          type: "array",
-          content: [
-            {
-              type: "text",
-              text: "Francia",
-            },
-            {
-              type: "text",
-              text: "París",
+              text: "Perro",
             },
           ],
         } as ArrayPart,
@@ -89,11 +79,24 @@ it("should create the entities for this use case without errors", () => {
           content: [
             {
               type: "text",
-              text: "Alemania",
+              text: "cat",
             },
             {
               type: "text",
-              text: "Berlín",
+              text: "Gato",
+            },
+          ],
+        } as ArrayPart,
+        {
+          type: "array",
+          content: [
+            {
+              type: "text",
+              text: "rabbit",
+            },
+            {
+              type: "text",
+              text: "Conejo",
             },
           ],
         } as ArrayPart,

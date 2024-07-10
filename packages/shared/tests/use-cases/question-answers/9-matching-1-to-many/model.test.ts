@@ -12,7 +12,7 @@ it("should create the entities for this use case without errors", () => {
       parts: [
         {
           type: "text",
-          text: "Empareja los países con sus capitales",
+          text: "Clasifica las palabras en las categorías correctas.",
         } as TextPart,
         {
           type: "sets",
@@ -22,15 +22,19 @@ it("should create the entities for this use case without errors", () => {
               content: [
                 {
                   type: "text",
-                  text: "España",
+                  text: "Manzana",
                 },
                 {
                   type: "text",
-                  text: "Francia",
+                  text: "Zanahoria",
                 },
                 {
                   type: "text",
-                  text: "Alemania",
+                  text: "Plátano",
+                },
+                {
+                  type: "text",
+                  text: "Lechuga",
                 },
               ],
             },
@@ -38,15 +42,11 @@ it("should create the entities for this use case without errors", () => {
               content: [
                 {
                   type: "text",
-                  text: "Madrid",
+                  text: "Frutas",
                 },
                 {
                   type: "text",
-                  text: "París",
-                },
-                {
-                  type: "text",
-                  text: "Berlín",
+                  text: "Verduras",
                 },
               ],
             },
@@ -63,24 +63,11 @@ it("should create the entities for this use case without errors", () => {
           content: [
             {
               type: "text",
-              text: "España",
+              text: "Manzana",
             },
             {
               type: "text",
-              text: "Madrid",
-            },
-          ],
-        } as ArrayPart,
-        {
-          type: "array",
-          content: [
-            {
-              type: "text",
-              text: "Francia",
-            },
-            {
-              type: "text",
-              text: "París",
+              text: "Frutas",
             },
           ],
         } as ArrayPart,
@@ -89,11 +76,37 @@ it("should create the entities for this use case without errors", () => {
           content: [
             {
               type: "text",
-              text: "Alemania",
+              text: "Zanahoria",
             },
             {
               type: "text",
-              text: "Berlín",
+              text: "Verduras",
+            },
+          ],
+        } as ArrayPart,
+        {
+          type: "array",
+          content: [
+            {
+              type: "text",
+              text: "Plátano",
+            },
+            {
+              type: "text",
+              text: "Frutas",
+            },
+          ],
+        } as ArrayPart,
+        {
+          type: "array",
+          content: [
+            {
+              type: "text",
+              text: "Lechuga",
+            },
+            {
+              type: "text",
+              text: "Verduras",
             },
           ],
         } as ArrayPart,

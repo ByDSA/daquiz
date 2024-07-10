@@ -1,55 +1,49 @@
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { ArrayAnswerVO } from "#modules/answers/models/ArrayAnswer.model";
+import { TextAnswerVO } from "#modules/answers/models";
 import { QuestionAnswerVO } from "#modules/question-answers/models";
-import { ChoicesPart, PartType, TextPart } from "#modules/questions/models";
+import { ChoicesPart, ImagePart, TextPart } from "#modules/questions/models";
 
 it("should create the entities for this use case without errors", async () => {
   const questionAnswer = plainToInstance(QuestionAnswerVO, {
     question: {
       parts: [
         {
-          type: "text" as PartType.Text,
-          text: "¿Cuáles de los siguientes son lenguajes de programación?",
+          type: "text",
+          text: "¿A qué país pertenece esta bandera?",
         } as TextPart,
+       {
+         type: "image",
+         url: "https://example.com/flag.jpg",
+         name: "flag",
+       } as ImagePart,
         {
-          type: "choices" as PartType.Choices,
-          pick: "multiple",
+          type: "choices",
           choices: [
             {
               type: "text",
-              text: "JavaScript",
+              text: "Italia",
             },
             {
               type: "text",
-              text: "HTML",
+              text: "Francia",
             },
             {
               type: "text",
-              text: "Python",
+              text: "Alemania",
             },
             {
               type: "text",
-              text: "CSS",
+              text: "España",
             },
           ],
         } as ChoicesPart,
       ],
     },
     answer: {
-      type: "array",
-      arrayType: "set",
-      content: [
-        {
-          type: "text",
-          text: "JavaScript",
-        } as TextPart,
-        {
-          type: "text",
-          text: "Python",
-        } as TextPart,
-      ],
-    } as ArrayAnswerVO,
+      type: "text",
+      text: "Italia",
+    } as TextAnswerVO,
   } );
   const errors = await validate(questionAnswer);
 

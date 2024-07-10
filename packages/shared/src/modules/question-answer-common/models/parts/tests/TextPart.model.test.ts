@@ -7,7 +7,7 @@ describe("textPart", () => {
     const textPart = generateValidTextPart();
     const errors = await validate(textPart);
 
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   } );
 
   it("should fail validation if VO is invalid", async () => {
