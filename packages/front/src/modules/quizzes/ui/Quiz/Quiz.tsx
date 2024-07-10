@@ -1,17 +1,17 @@
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { useEffect, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { QuestionAnswerInQuizEntity, QuizEntity } from "../../models";
-import { useAddQuestionAnswer, useRemoveManyQuestionAnswer, useRemoveOneQuestionAnswer } from "../../services/questions-answers-fetching/fetching.service";
-import AddNewQuestionAnswer from "../questions-answers-ui/AddNewQuestionAnswer/AddNewQuestionAnswer";
+import { QuizEntity } from "../../models";
+import { useAddQuestionAnswer, useRemoveManyQuestionAnswer, useRemoveOneQuestionAnswer } from "../../services/question-answers-fetching/fetching.service";
+import AddNewQuestionAnswer from "../question-answers-ui/AddNewQuestionAnswer/AddNewQuestionAnswer";
 import { genExpandedRow } from "./row/ExpandedRow";
 import styles from "./styles.module.css";
 import { TextEditableSaveable } from "#ui/TextEditable";
 import { SendToButton } from "#ui/SendToButton";
 import { DeleteButton } from "#ui/DeleteButton";
-import { QuestionAnswerID } from "#modules/questions-answers";
-import { usePatchOneQuestionAndGet } from "#modules/questions";
-import { usePatchOneTextAnswerAndGet } from "#modules/answers";
+import { ChoicesPart, findFirstTextPart, hasChoices, PartType, TextPart, usePatchOneQuestionAndGet } from "#modules/questions";
+import { QuestionAnswerEntity, QuestionAnswerID } from "#modules/question-answers";
+import { AnswerType, TextAnswerVO, usePatchOneTextAnswerAndGet } from "#modules/answers";
 
 type GenColumnsProps = {
   data: QuizEntity;
@@ -20,7 +20,7 @@ type GenColumnsProps = {
   patchOneTextAnswerAndGet: ReturnType<typeof usePatchOneTextAnswerAndGet>[0];
   patchOneQuestionAndGet: ReturnType<typeof usePatchOneQuestionAndGet>[0];
 };
-type GenColumnsFn = (props: GenColumnsProps)=> TableColumn<QuestionAnswerInQuizEntity>[];
+type GenColumnsFn = (props: GenColumnsProps)=> TableColumn<QuestionAnswerEntity>[];
 const genColumns: GenColumnsFn = (
   { data,
     revalidateData,
@@ -30,8 +30,8 @@ const genColumns: GenColumnsFn = (
 ) =>([
   {
     name: "Pregunta",
-    selector: (row: QuestionAnswerInQuizEntity) => {
-      const ret = row.question.text;
+    selector: (row: QuestionAnswerEntity) => {
+      let ret = findFirstTextPart(row.question)?.text ?? "(no text)";
 
       assertDefined(ret);
 
@@ -40,13 +40,13 @@ const genColumns: GenColumnsFn = (
     wrap: true,
     sortable: true,
     sortFunction: (a, b) => a.id.localeCompare(b.id),
-    cell: (row: QuestionAnswerInQuizEntity) => {
+    cell: (row: QuestionAnswerEntity) => {
       const onSave = async (value: string | undefined) => {
         if (!value)
           return;
 
         await patchOneQuestionAndGet( {
-          id: row.questionId,
+          id: row.id,
           dto: {
             text: value,
           },
@@ -54,38 +54,52 @@ const genColumns: GenColumnsFn = (
 
         await revalidateData();
       };
+      let text = findFirstTextPart(row.question)?.text ?? "(no text)";
+
+      assertDefined(text);
 
       return <TextEditableSaveable
-        initialValue={row.question.text}
+        initialValue={text}
         onSave={onSave}
       />;
     },
   },
   {
     name: "Respuesta",
-    selector: (row: QuestionAnswerInQuizEntity) => row.answer.text,
+    selector: (row: QuestionAnswerEntity) => row.answer.type === AnswerType.Text ? (row.answer as TextAnswerVO).text : "(no text)",
     wrap: true,
-    cell: (row: QuestionAnswerInQuizEntity) => {
+    cell: (row: QuestionAnswerEntity) => {
       const onSave = async (value: string | undefined) => {
         if (!value)
           return;
 
         await patchOneTextAnswerAndGet(
           {
-            id: row.answerId,
+            id: row.id,
             dto: {
               text: value,
             },
           },
         );
 
-        if (row.question.choices) {
+        if (hasChoices(row.question)) {
+          const answerText = row.answer.type === AnswerType.Text ? (row.answer as TextAnswerVO).text : "";
+          const choices = (row.question.parts.find((part) => part.type === "choices") as ChoicesPart)?.choices ?? [];
+          const textChoices = choices.filter(
+            (choice) => choice.type === PartType.Text,
+          ) as TextPart[];
+          const textChoiceToDto = (choice: TextPart) => ( {
+            text: choice.text,
+          } );
+
           await patchOneQuestionAndGet(
             {
-              id: row.questionId,
+              id: row.id,
               dto: {
                 choices: [
-                  ...row.question.choices.filter((choice) => choice.text !== row.answer.text),
+                  ...textChoices.filter(
+                    (choice) => choice.text !== answerText,
+                  ).map(textChoiceToDto),
                   {
                     text: value,
                   },
@@ -97,16 +111,17 @@ const genColumns: GenColumnsFn = (
 
         await revalidateData();
       };
+      const text = row.answer.type === AnswerType.Text ? (row.answer as TextAnswerVO).text : "(no text)";
 
       return <TextEditableSaveable
-        initialValue={row.answer.text}
+        initialValue={text}
         onSave={onSave}
       />;
     },
   },
   {
     name: "Acciones",
-    cell: (row: QuestionAnswerInQuizEntity) => {
+    cell: (row: QuestionAnswerEntity) => {
       return <><DeleteButton onClick={async ()=>{
         await removeOneQuestionAnswer( {
           quizId: data.id,
@@ -125,9 +140,9 @@ type Props = {
   revalidateData: ()=> Promise<any>;
 };
 const Quiz = ( { data, revalidateData }: Props) => {
-  const [selectedRows, setSelectedRows] = useState<QuestionAnswerInQuizEntity[]>([]);
+  const [selectedRows, setSelectedRows] = useState<QuestionAnswerEntity[]>([]);
   const questionAnswers = data?.questionAnswers;
-  const filterExistingRows = (rows: QuestionAnswerInQuizEntity[]) => {
+  const filterExistingRows = (rows: QuestionAnswerEntity[]) => {
     return rows
       .filter((selectedRow) => questionAnswers?.some((dataRow) => dataRow.id === selectedRow.id));
   };
@@ -194,7 +209,7 @@ const Quiz = ( { data, revalidateData }: Props) => {
           if (filteredRows.length !== selectedRows.length)
             setSelectedRows(filteredRows);
         }}
-        selectableRowSelected={(row: QuestionAnswerInQuizEntity) => {
+        selectableRowSelected={(row: QuestionAnswerEntity) => {
           return selectedRows.includes(row);
         }}
         selectableRowsHighlight

@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Inject, Param, Patch, Post, UseInterceptors } from "@nestjs/common";
-import { CreateTextAnswerDto, PatchOneTextAnswerDto, ResultManyTextAnswerDto, ResultOneTextAnswerDto, TextAnswerID } from "../domain";
+import { CreateTextAnswerDto, PatchOneTextAnswerDto, ResultManyTextAnswerDto, ResultOneTextAnswerDto } from "../domain";
 import { TextAnswerRepo } from "./persistence";
 import { Repo } from "./persistence/repos/repository.port";
 import { ObjectIdPipe } from "#/utils/validation";
 import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
 import { CreateOneAndGetController, FindAllController, FindOneController, PatchOneAndGetController } from "#/utils/controllers/crud";
+
+type TextAnswerID = string;
 
 @Controller("text")
 export class TextAnswersController

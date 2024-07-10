@@ -1,6 +1,6 @@
 import { IsArray, IsObject, IsString } from "class-validator";
-import { QuestionAnswerID } from "#modules/questions-answers/models";
-import { QuestionEntity } from "#modules/questions/models";
+import { QuestionAnswerID } from "#modules/question-answers/models";
+import { QuestionVO } from "#modules/questions/models";
 import { ResultOneDto } from "#utils/dtos";
 
 class QuestionAnswerPicked {
@@ -8,7 +8,7 @@ class QuestionAnswerPicked {
   id!: QuestionAnswerID;
 
   @IsObject()
-  question!: QuestionEntity;
+  question!: QuestionVO;
 }
 class ResultQuizPickQuestionsAnswers {
   @IsArray()

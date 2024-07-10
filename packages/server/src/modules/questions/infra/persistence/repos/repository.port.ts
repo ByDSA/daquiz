@@ -1,14 +1,16 @@
-import { CreateOneQuestionDto, PatchOneQuestionDto, QuestionEntity, QuestionVO } from "../../../domain";
 import { CreateOneAndGetService, FindAllService, FindOneService, PatchOneAndGetService } from "#/utils/services/crud";
+import { CreateOneQuestionDto, PatchOneQuestionDto, QuestionEntity } from "../../../domain";
 
 export interface Repo extends
 CreateOneAndGetService<CreateOneQuestionDto, QuestionEntity>,
 FindOneService<QuestionEntity>,
 FindAllService<QuestionEntity>,
 PatchOneAndGetService<PatchOneQuestionDto, QuestionEntity> {
-  patchOneAndGet(id: string, props: QuestionVO): Promise<QuestionEntity | null>;
+  patchOneAndGet(id: string, dto: PatchOneQuestionDto): Promise<QuestionEntity | null>;
 
   createOneAndGet(dto: CreateOneQuestionDto): Promise<QuestionEntity>;
+
+  findOneByInnerId(id: string): Promise<QuestionEntity | null>;
 }
 
 export const Repo = Symbol("QuestionRepo");

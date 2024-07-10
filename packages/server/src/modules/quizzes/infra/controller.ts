@@ -2,16 +2,15 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, UseInterceptors } f
 import { QuestionAnswerPickerService } from "../app/QuestionAnswerPicker.service.port";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizID, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "../domain";
 import { QuizRepo } from "./persistence";
-import { TextAnswerID } from "#/modules/answers/submodules/text-answer/domain";
 import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
 import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
 import { ObjectIdPipe } from "#/utils/validation";
-import { QuestionAnswerID } from "#modules/questions-answers/domain";
+import { QuestionAnswerID } from "#modules/question-answers/domain";
 
 @Controller()
 export class QuizzesController
 implements CreateOneAndGetController<CreateQuizDto, ResultOneQuizDto>,
-FindOneController<TextAnswerID, ResultOneQuizDto>,
+FindOneController<QuestionAnswerID, ResultOneQuizDto>,
 FindAllController<ResultManyQuizDto> {
   constructor(
     @Inject(QuizRepo)

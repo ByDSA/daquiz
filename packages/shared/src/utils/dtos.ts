@@ -1,5 +1,7 @@
 import { IsArray, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from "class-validator";
 
+export type DtoBase = object;
+
 export abstract class ResultCommon {
   @IsOptional()
   @IsString()

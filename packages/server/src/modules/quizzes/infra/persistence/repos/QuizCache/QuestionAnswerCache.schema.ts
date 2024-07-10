@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, model } from "mongoose";
-import { QuestionAnswerInQuizEntity } from "../../../../domain";
-import { TextAnswerEntity } from "#/modules/answers/submodules/text-answer/domain";
+import { TextAnswerEntity, TextAnswerVO } from "#/modules/answers/submodules/text-answer/domain";
 import { TextAnswerDocument, textAnswerDocToEntity, textAnswerEntityToDoc } from "#/modules/answers/submodules/text-answer/infra/persistence";
+import { QuestionAnswerEntity } from "#/modules/question-answers";
 import { AnswerType } from "#modules/answers/domain";
 import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEntityToDocument } from "#modules/questions/infra/persistence/repos/schemas";
 
@@ -37,32 +37,29 @@ const Model = model(
 );
 const docToEntity = (
   doc: Doc,
-): QuestionAnswerInQuizEntity => {
-  const entity: QuestionAnswerInQuizEntity = {
+): QuestionAnswerEntity => {
+  const entity: QuestionAnswerEntity = {
     id: doc._id.toString(),
-    answerType: doc.answerType,
-    questionId: doc.question._id.toString(),
     question: questionDocumentToEntity(doc.question),
-    answerId: (doc.answer as any)._id.toString(),
     answer: textAnswerDocToEntity(doc.answer as TextAnswerDocument),
   };
 
   return entity;
 };
 const entityToDoc = (
-  entity: QuestionAnswerInQuizEntity,
+  entity: QuestionAnswerEntity,
 ): Doc => {
   const questionEntity = {
-    id: entity.questionId,
+    id: entity.id,
     ...entity.question,
   };
   const answerEntity: TextAnswerEntity = {
-    id: entity.answerId,
-    ...entity.answer,
+    id: entity.id,
+    ...(entity.answer as TextAnswerVO),
   };
   const docObj: QuestionAnswerCache & {_id: Types.ObjectId} = {
     _id: new Types.ObjectId(entity.id),
-    answerType: entity.answerType,
+    answerType: entity.answer.type,
     question: questionEntityToDocument(questionEntity),
     answer: textAnswerEntityToDoc(answerEntity),
   };

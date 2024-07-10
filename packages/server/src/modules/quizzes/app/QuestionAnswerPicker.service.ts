@@ -1,11 +1,10 @@
 import { HistoryEntryEntity } from "#shared/modules/history-entries/models";
-import { QuestionAnswerEntity } from "#shared/modules/questions-answers/models";
-import { QuestionEntity } from "#shared/modules/questions/models";
+import { QuestionAnswerEntity } from "#shared/modules/question-answers/models";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { BadRequestException, Inject } from "@nestjs/common";
 import { Filter, WeightPicker } from "rand-picker";
 import { createSafeIntegerMaxWeightFixer } from "rand-picker/dist/weight-fixers";
-import { QuestionAnswerInQuizEntity, QuizID, ResultQuizPickQuestionsAnswersDto } from "../domain";
+import { QuizID, ResultQuizPickQuestionsAnswersDto } from "../domain";
 import { QuizRepo } from "../infra/persistence";
 import { QuestionAnswerPickerService } from "./QuestionAnswerPicker.service.port";
 import { HistoryEntryRepo } from "#modules/history-entries";
@@ -42,7 +41,7 @@ export class QuestionAnswerPickerServiceImp implements QuestionAnswerPickerServi
     const lastHistoryEntry = await this.historyEntryRepo.findAll().then((historyEntries) => {
       return historyEntries.at(-1);
     } );
-    const preventLastFilter: Filter<QuestionAnswerEntity> = (qa: QuestionAnswerInQuizEntity) => {
+    const preventLastFilter: Filter<QuestionAnswerEntity> = (qa: QuestionAnswerEntity) => {
       return qa.id !== lastHistoryEntry?.questionAnswerId;
     };
     const lastHistoryEntriesOfEach: Record<QuestionAnswerEntity["id"], HistoryEntryEntity | undefined> = {};
@@ -80,14 +79,9 @@ export class QuestionAnswerPickerServiceImp implements QuestionAnswerPickerServi
     const pickedPartialQuestionAnswer = retQuestionsAnswers.map((qa) => {
       assertDefined(qa.question);
 
-      const questionEntity: QuestionEntity = {
-        id: qa.questionId,
-        ...qa.question,
-      };
-
       return {
         id: qa.id,
-        question: questionEntity,
+        question: qa.question,
       };
     } );
 

@@ -1,11 +1,11 @@
 import { EventHandler } from "react";
-import { QuestionEntity } from "../../models";
+import { Choice, PartType } from "../../models";
 import styles from "./Choices.module.css";
 import { UseChoicesRet } from "./use-choices.hook";
 
-type ChoicesInQuestionEntity = NonNullable<QuestionEntity["choices"]>;
+type ChoicesInQuestionEntity = Choice[];
 
-type Props = UseChoicesRet & {
+type Props = Partial<UseChoicesRet> & {
   data: ChoicesInQuestionEntity;
   disabled?: boolean;
 };
@@ -19,11 +19,17 @@ const Choices = ( { data, selectedIndex, onClickEach, disabled }: Props) => {
           const handleOnClick: EventHandler<any> = (_event) => {
             onClickEach?.(data[index], index);
           };
+          const value: string | undefined = (() => {
+            if (choice.type === PartType.Text)
+              return choice.text;
+
+            return undefined;
+          } )();
 
           return (
             <section key={index} className={styles.choice}>
-              <input type="radio" value={choice.text} checked={checked} onChange={handleOnClick} disabled={disabled}/>
-              <label onClick={!checked && !disabled ? handleOnClick : undefined}>{choice.text}</label>
+              <input type="radio" value={value} checked={checked} onChange={handleOnClick} disabled={disabled}/>
+              <label onClick={!checked && !disabled ? handleOnClick : undefined}>{value}</label>
             </section>
           );
         } )

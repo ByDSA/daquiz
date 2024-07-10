@@ -1,12 +1,24 @@
-import { Types, model } from "mongoose";
-import { TextAnswerEntity as Entity } from "../../../../domain";
+import { model } from "mongoose";
+import { AnswerType, TextAnswerEntity, TextAnswerVO as VO } from "../../../../domain";
 import { DocumentOdm, SchemaOdm } from "./schema";
 
-export const docToEntity = (doc: DocumentOdm): Entity => {
+export const docToVO = (doc: DocumentOdm): VO => {
   return {
-
-    id: doc._id.toString(),
     text: doc.text,
+    type: AnswerType.Text,
+  };
+};
+
+/**
+ * @deprecated
+ */
+// eslint-disable-next-line require-await
+export const docToEntity = async (doc: DocumentOdm): Promise<TextAnswerEntity> => {
+  const id = ""; // TODO: usar la de QuestionAnswerEntity
+
+  return {
+    id,
+    ...docToVO(doc),
   };
 };
 
@@ -14,20 +26,16 @@ export const modelName = "TextAnswer";
 
 export const ModelOdm = model(modelName, SchemaOdm);
 
-export const entityToDoc = (entity: Entity): DocumentOdm => {
+export const voToDoc = (vo: VO): DocumentOdm => {
   return new ModelOdm( {
-    _id: new Types.ObjectId(entity.id),
-    text: entity.text,
+    text: vo.text,
   } );
 };
 
-export const partialDocToPartialEntity = (
+export const partialDocToPartialVO = (
   doc: Partial<DocumentOdm>,
-): Partial<Entity> => {
-  const partial: Partial<Entity> = {};
-
-  if (doc._id)
-    partial.id = doc._id.toString();
+): Partial<VO> => {
+  const partial: Partial<VO> = {};
 
   if (doc.text)
     partial.text = doc.text;

@@ -1,4 +1,4 @@
-import { TextAnswerEntity } from "../../models";
+import { TextAnswerVO } from "../../models";
 import { ResultManyDto } from "#utils/dtos";
 
-export class ResultManyTextAnswerDto extends ResultManyDto<TextAnswerEntity> {};
+export class ResultManyTextAnswerDto extends ResultManyDto<TextAnswerVO> {};

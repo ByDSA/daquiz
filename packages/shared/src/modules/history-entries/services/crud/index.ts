@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsObject, IsString } from "class-validator";
-import { QuestionAnswerID } from "#modules/questions-answers/models";
-import { AnswerCheckResult } from "#modules/questions-answers/services/checking";
+import { QuestionAnswerID } from "#modules/question-answers/models";
+import { AnswerCheckResult } from "#modules/question-answers/services/checking";
 
 export class CreateOneHistoryEntryDto {
   @IsString()

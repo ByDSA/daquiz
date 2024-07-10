@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { QuizEntity } from "../../../../domain";
-import { SchemaOdm as QuizSchema, docToEntity, updateQueryToUpdateEntity as quizUpdateQueryToUpdateEntity } from "./schemas";
+import { SchemaOdm as QuizSchema } from "./schemas";
 import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 import { registerEventEmitterPlugin } from "#/utils/db/mongoose/EventEmitterPlugin";
 
@@ -12,12 +12,10 @@ export class DBService {
     registerEventEmitterPlugin(QuizSchema, {
       dbEventEmitter,
       typeEventName: QuizEntity.name,
-      documentToEntity: docToEntity,
       createEmission: {
         use: true,
       },
       patchEmission: {
-        updateQueryToUpdateEntity: quizUpdateQueryToUpdateEntity,
         use: true,
       },
       deleteEmission: {

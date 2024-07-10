@@ -1,22 +1,21 @@
-import { IsArray, IsOptional, IsString } from "class-validator";
-import { QuestionEntity } from "../../models/Question.model";
 import { ResultManyDto, ResultOneDto } from "#utils/dtos";
+import { IsArray, IsOptional, IsString } from "class-validator";
+import { QuestionVO } from "../../models/Question.model";
 
 import "reflect-metadata"; // Para evitar errores de que no encuentra Reflect.getMetadata cuando se importa en otros paquetes
 
-export class ChoiceDto {
+export class TextChoiceDto {
   @IsString()
-  @IsOptional()
-  text?: string;
+  text!: string;
 }
 
 export class CreateOneQuestionDto {
   @IsString()
-  text?: string;
+  text!: string;
 
   @IsArray()
   @IsOptional()
-  choices?: ChoiceDto[];
+  choices?: TextChoiceDto[];
 };
 
 export class PatchOneQuestionDto {
@@ -26,9 +25,9 @@ export class PatchOneQuestionDto {
 
   @IsArray()
   @IsOptional()
-  choices?: ChoiceDto[];
+  choices?: TextChoiceDto[];
 };
 
-export type ResultOneQuestionDto = ResultOneDto<QuestionEntity>;
+export type ResultOneQuestionDto = ResultOneDto<QuestionVO>;
 
-export type ResultManyQuestionDto = ResultManyDto<QuestionEntity>;
+export type ResultManyQuestionDto = ResultManyDto<QuestionVO>;

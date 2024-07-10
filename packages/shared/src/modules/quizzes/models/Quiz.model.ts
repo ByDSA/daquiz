@@ -1,8 +1,7 @@
 import { Type } from "class-transformer";
 import { IsArray, IsOptional, IsString } from "class-validator";
-import { QuestionAnswerInQuizEntity } from "./QuestionAnswerInQuiz.model";
 import { SubquizVO } from "./Subquiz.model";
-import { QuestionAnswerID } from "#modules/questions-answers/models";
+import { QuestionAnswerEntity, QuestionAnswerID } from "#modules/question-answers/models";
 
 export class QuizVO {
   @IsString()
@@ -13,8 +12,8 @@ export class QuizVO {
 
   @IsArray()
   @IsOptional()
-  @Type(() => QuestionAnswerInQuizEntity)
-  questionAnswers?: QuestionAnswerInQuizEntity[];
+  @Type(() => QuestionAnswerEntity)
+  questionAnswers?: QuestionAnswerEntity[];
 
   @IsArray()
   @IsOptional()
@@ -50,5 +49,5 @@ export class QuizUpdateEntity {
 
   @IsArray()
   @Type(() => ArrayUpdate<QuestionAnswerID>)
-  questionAnswers?: ArrayUpdate<QuestionAnswerInQuizEntity>;
+  questionAnswers?: ArrayUpdate<QuestionAnswerEntity>;
 };

@@ -8,8 +8,8 @@ export {
 } from "./schemas";
 
 export {
-  docToEntity as textAnswerDocToEntity,
-  entityToDoc as textAnswerEntityToDoc,
+  docToVO as textAnswerDocToEntity,
+  voToDoc as textAnswerEntityToDoc,
   modelName as textAnswerModelName,
 } from "./schemas";
 

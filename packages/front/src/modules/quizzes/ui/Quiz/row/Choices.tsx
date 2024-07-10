@@ -3,7 +3,7 @@ import compare from "just-compare";
 import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styles from "./Choices.module.css";
-import { QuestionEntity } from "#modules/questions";
+import { Choice, PartType, TextPart } from "#modules/questions";
 import { AddButton } from "#ui/AddButton";
 import { DeleteButton } from "#ui/DeleteButton";
 import { TextEditableSaveable } from "#ui/TextEditable";
@@ -11,8 +11,8 @@ import { UndoButton } from "#ui/UndoButton";
 import { ConfirmButton } from "#utils/components/buttons/ConfirmButton";
 
 type Props = {
-  initChoices: QuestionEntity["choices"];
-  onSave: (value: QuestionEntity["choices"])=> void;
+  initChoices: Choice[] ;
+  onSave: (value: Choice[])=> void;
 };
 const Choices = ( { initChoices, onSave }: Props) => {
   const { choices, resetChoices, addNewChoice, isChanged, removeChoice } = useChoices( {
@@ -20,12 +20,13 @@ const Choices = ( { initChoices, onSave }: Props) => {
   } );
   const handleAddChoice = () => {
     addNewChoice( {
+      type: PartType.Text,
       text: "New choice",
     } );
   };
   // eslint-disable-next-line require-await
   const handleSave = async () => {
-    onSave(choices?.map(choiceRepresentationToModel));
+    onSave(choices?.map(choiceRepresentationToModel) ?? []);
   };
 
   return (
@@ -54,12 +55,12 @@ const Choices = ( { initChoices, onSave }: Props) => {
 export default Choices;
 
 type UseChoicesProps = {
-  initValue: QuestionEntity["choices"];
+  initValue: Choice[];
 };
 type UseChoicesRet = {
   choices: ChoiceRepresentation[] | undefined;
   resetChoices: ()=> void;
-  addNewChoice: (newChoice: NonNullable<QuestionEntity["choices"]>[0])=> void;
+  addNewChoice: (newChoice: Choice)=> void;
   removeChoice: (id: ChoiceRepresentation["id"])=> void;
   isChanged: boolean;
 };
@@ -93,17 +94,22 @@ function useChoices( { initValue }: UseChoicesProps): UseChoicesRet {
   };
 }
 
-type ChoiceRepresentation = NonNullable<QuestionEntity["choices"]>[0] & { id: string };
+type ChoiceRepresentation = Omit<TextPart, "type"> & { id: string };
 
-function choiceToRepresentation(choice: NonNullable<QuestionEntity["choices"]>[0]): ChoiceRepresentation {
-  return {
-    id: uuidv4(),
-    text: choice.text,
-  };
+function choiceToRepresentation(choice: Choice): ChoiceRepresentation {
+  if (choice.type === PartType.Text) {
+    return {
+      id: uuidv4(),
+      text: (choice as TextPart).text,
+    };
+  }
+
+  throw new Error("Choice type not supported");
 }
 
-function choiceRepresentationToModel(choice: ChoiceRepresentation): NonNullable<QuestionEntity["choices"]>[0] {
+function choiceRepresentationToModel(choice: ChoiceRepresentation): Choice {
   return {
+    type: PartType.Text,
     text: choice.text,
   };
 }
