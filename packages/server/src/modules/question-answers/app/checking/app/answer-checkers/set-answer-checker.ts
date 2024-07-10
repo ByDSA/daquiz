@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { WithRequired } from "#shared/utils/typescript";
 import { AnswerCheckResult } from "../models";
 import { AnswerChecker, AnswerCheckerProps } from "./answer-checker";
-import { ItemSetAnswerVO } from "#/modules/answers/submodules/text-answer/domain";
+import { ItemSetAnswerVO } from "#modules/answers/submodules/text-answer/domain";
 
 type CheckerProps = WithRequired<AnswerCheckerProps<ItemSetAnswerVO[]>, "correctAnswer">;
 

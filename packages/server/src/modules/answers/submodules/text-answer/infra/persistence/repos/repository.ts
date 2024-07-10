@@ -1,6 +1,3 @@
-import { QuestionAnswerID } from "#/modules/question-answers";
-import { QuestionAnswer } from "#/modules/question-answers/infra/persistence/schema";
-import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
@@ -8,6 +5,9 @@ import { Model } from "mongoose";
 import { CreateTextAnswerDto, PatchOneTextAnswerDto, TextAnswerEntity } from "../../../domain";
 import { Repo } from "./repository.port";
 import { SchemaClass, docToEntity } from "./schemas";
+import { QuestionAnswer } from "#modules/question-answers/infra/persistence/schema";
+import { QuestionAnswerID } from "#modules/question-answers";
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
 export class RepoImp implements Repo {
@@ -19,7 +19,10 @@ export class RepoImp implements Repo {
     this.dbEventEmitter.registerEventDBLoggerFor(TextAnswerEntity);
   }
 
-  async patchOneAndGet(questionAnswerId: string, dto: PatchOneTextAnswerDto): Promise<TextAnswerEntity | null> {
+  async patchOneAndGet(
+    questionAnswerId: string,
+    dto: PatchOneTextAnswerDto,
+  ): Promise<TextAnswerEntity | null> {
     const partialDoc: Partial<TextAnswerEntity> = dto;
     const questionAnswerDoc = await this.QuestionAnswerModel.findById(questionAnswerId);
 
@@ -58,6 +61,7 @@ export class RepoImp implements Repo {
 
     return this.findOneByInnerId(answerId);
   }
+
   async findOneByInnerId(id: string): Promise<TextAnswerEntity | null> {
     const doc = await this.TextAnswerModel.findById(id).exec();
 
@@ -65,8 +69,9 @@ export class RepoImp implements Repo {
       return null;
 
     const ret = await docToEntity(doc);
-
-    const questionAnswer = await this.QuestionAnswerModel.findOne({answerId: id});
+    const questionAnswer = await this.QuestionAnswerModel.findOne( {
+      answerId: id,
+    } );
 
     assertDefined(questionAnswer, "Failed to find questionAnswer by answerId");
     ret.id = questionAnswer.id;

@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types, model } from "mongoose";
-import { TextAnswerEntity, TextAnswerVO } from "#/modules/answers/submodules/text-answer/domain";
-import { TextAnswerDocument, textAnswerDocToEntity, textAnswerEntityToDoc } from "#/modules/answers/submodules/text-answer/infra/persistence";
-import { QuestionAnswerEntity } from "#/modules/question-answers";
 import { AnswerType } from "#modules/answers/domain";
+import { TextAnswerEntity, TextAnswerVO } from "#modules/answers/submodules/text-answer/domain";
+import { TextAnswerDocument, textAnswerDocToEntity, textAnswerEntityToDoc } from "#modules/answers/submodules/text-answer/infra/persistence";
+import { QuestionAnswerEntity } from "#modules/question-answers";
 import { QuestionDocument, QuestionSchema, questionDocumentToEntity, questionEntityToDocument } from "#modules/questions/infra/persistence/repos/schemas";
 
 @Schema()

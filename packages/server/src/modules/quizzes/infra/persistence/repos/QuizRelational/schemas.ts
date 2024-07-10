@@ -45,23 +45,22 @@ export type QuizUpdateQuery = {
   $addToSet?: {
     questionsAnswersIds?: {
       $each: Types.ObjectId[];
-    }
+    };
     subquizzes?: {
       $each: Types.ObjectId[];
-    }
+    };
   };
   $pull?: {
-    questionsAnswersIds?: Types.ObjectId| {
+    questionsAnswersIds?: Types.ObjectId | {
       $in: Types.ObjectId[];
-    }
-    subquizzes?: Types.ObjectId| {
+    };
+    subquizzes?: Types.ObjectId | {
       $in: Types.ObjectId[];
-    }
+    };
   };
 };
 
 export {
   Doc, docToEntity, Quiz as SchemaClass,
-  SchemaOdm
+  SchemaOdm,
 };
-

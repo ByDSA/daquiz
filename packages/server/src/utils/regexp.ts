@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 export function extractRegexParts(regexString) {
   const regexPattern = /^\/(.+)\/([a-z]*)$/;
   const match = regexString.match(regexPattern);

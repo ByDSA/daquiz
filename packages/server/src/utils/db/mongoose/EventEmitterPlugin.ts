@@ -1,9 +1,9 @@
 /* eslint-disable func-names */
 /* eslint-disable no-invalid-this */
-import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#modules/events/EventDB";
-import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { FilterQuery, UpdateQuery } from "mongoose";
+import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#modules/events/EventDB";
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 type CreateEventAdapterFn<ID, DOC>
 = (args: {
@@ -151,9 +151,8 @@ const defaultDeleteEventAdapter = <ID, DOC>(
 const defaultPatchEventAdapter = <ID, DOC>(
   { updateQuery,
     filters,
-    updateResult}: Parameters<PatchEventAdapterFn<ID, DOC>>[0],
+    updateResult }: Parameters<PatchEventAdapterFn<ID, DOC>>[0],
 ): PatchEventDB<ID, DOC> => {
-
   const id: ID = filters?._id?.toString();
 
   assertDefined(id);

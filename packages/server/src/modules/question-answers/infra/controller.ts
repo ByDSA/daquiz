@@ -4,7 +4,7 @@ import { CreateQuestionAnswerDto, ResultManyQuestionAnswerDto, ResultOneQuestion
 import { QuestionAnswerRepo as Repo } from "./persistence";
 import { ObjectIdPipe } from "src/utils/validation";
 import { NotFoundInterceptor } from "src/utils/interceptors/NotFoundInterceptor";
-import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
+import { CreateOneAndGetController, FindAllController, FindOneController } from "#utils/controllers/crud";
 
 @Controller()
 export class QuestionAnswerController implements

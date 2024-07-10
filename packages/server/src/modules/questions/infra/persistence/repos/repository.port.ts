@@ -1,5 +1,5 @@
-import { CreateOneAndGetService, FindAllService, FindOneService, PatchOneAndGetService } from "#/utils/services/crud";
 import { CreateOneQuestionDto, PatchOneQuestionDto, QuestionEntity } from "../../../domain";
+import { CreateOneAndGetService, FindAllService, FindOneService, PatchOneAndGetService } from "#utils/services/crud";
 
 export interface Repo extends
 CreateOneAndGetService<CreateOneQuestionDto, QuestionEntity>,

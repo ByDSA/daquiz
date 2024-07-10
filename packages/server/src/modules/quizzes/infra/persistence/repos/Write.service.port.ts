@@ -1,6 +1,6 @@
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID } from "../../../domain/models";
-import { CreateOneAndGetService } from "#/utils/services/crud";
 import { QuestionAnswerID } from "#modules/question-answers/domain";
+import { CreateOneAndGetService } from "#utils/services/crud";
 
 export interface WriteService extends
 CreateOneAndGetService<CreateQuizDto, QuizEntity> {

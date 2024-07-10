@@ -18,7 +18,7 @@
     "build": "pnpm build:clean && pnpm build:raw",
     "build:clean": "rm -rf build",
     "build:raw": "tsc -p tsconfig-build.json && tsc-alias -p tsconfig-build.json",
-    "lint:eslint": "eslint {src,tests}/**/*.{ts,js}",
+    "lint": "eslint {src,tests}/**/*.{ts,js}",
     "test": "NODE_ENV=test jest",
     "test:coverage": "pnpm run test --coverage",
     "test:coverage:clean": "rm -rf coverage",

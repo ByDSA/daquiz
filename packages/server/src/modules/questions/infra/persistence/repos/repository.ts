@@ -1,6 +1,3 @@
-import { QuestionAnswer } from "#/modules/question-answers/infra/persistence";
-import { EventDBEmitter } from "#modules/events/EventDBEmitter";
-import { QuestionAnswerID } from "#modules/question-answers";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
@@ -9,6 +6,9 @@ import { CreateOneQuestionDto, PatchOneQuestionDto, QuestionEntity } from "../..
 import { Repo } from "./repository.port";
 import { docToEntity } from "./schemas/adapters";
 import { Question } from "./schemas/schema";
+import { QuestionAnswer } from "#modules/question-answers/infra/persistence";
+import { QuestionAnswerID } from "#modules/question-answers";
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
 export class RepoImp implements Repo {
@@ -65,6 +65,7 @@ export class RepoImp implements Repo {
 
     return this.findOneByInnerId(questionId);
   }
+
   async findOneByInnerId(id: string): Promise<QuestionEntity | null> {
     const doc = await this.QuestionModel.findById(id).exec();
 
@@ -72,8 +73,9 @@ export class RepoImp implements Repo {
       return null;
 
     const ret = docToEntity(doc);
-
-    const questionAnswer = await this.QuestionAnswerModel.findOne({questionId: id});
+    const questionAnswer = await this.QuestionAnswerModel.findOne( {
+      questionId: id,
+    } );
 
     assertDefined(questionAnswer, "Failed to find questionAnswer by questionId");
     ret.id = questionAnswer.id;

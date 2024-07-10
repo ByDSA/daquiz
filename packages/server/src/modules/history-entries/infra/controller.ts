@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Post } from "@nestjs/common";
 import { CreateOneHistoryEntryDto, ResultManyHistoryEntryDto } from "../domain";
 import { HistoryEntryRepo } from "./persistence";
-import { CreateOneController, FindAllController } from "#/utils/controllers/crud";
+import { CreateOneController, FindAllController } from "#utils/controllers/crud";
 
 @Controller()
 export class HistoryEntriesController implements

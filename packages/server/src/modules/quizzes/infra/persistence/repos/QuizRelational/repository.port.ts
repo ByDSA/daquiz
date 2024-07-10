@@ -1,6 +1,6 @@
 import { QuizEntity } from "../../../../domain/models";
 import { WriteService } from "../Write.service.port";
-import { FindAllService, FindOneService } from "#/utils/services/crud";
+import { FindAllService, FindOneService } from "#utils/services/crud";
 
 export type RepoFindOptions = {
   include?: {

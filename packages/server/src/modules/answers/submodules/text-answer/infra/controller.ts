@@ -2,9 +2,9 @@ import { Body, Controller, Get, Inject, Param, Patch, Post, UseInterceptors } fr
 import { CreateTextAnswerDto, PatchOneTextAnswerDto, ResultManyTextAnswerDto, ResultOneTextAnswerDto } from "../domain";
 import { TextAnswerRepo } from "./persistence";
 import { Repo } from "./persistence/repos/repository.port";
-import { ObjectIdPipe } from "#/utils/validation";
-import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
-import { CreateOneAndGetController, FindAllController, FindOneController, PatchOneAndGetController } from "#/utils/controllers/crud";
+import { ObjectIdPipe } from "#utils/validation";
+import { NotFoundInterceptor } from "#utils/interceptors/NotFoundInterceptor";
+import { CreateOneAndGetController, FindAllController, FindOneController, PatchOneAndGetController } from "#utils/controllers/crud";
 
 type TextAnswerID = string;
 

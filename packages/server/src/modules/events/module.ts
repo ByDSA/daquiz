@@ -12,7 +12,7 @@ import { EventDBEmitter } from "./EventDBEmitter";
   exports: [EventDBEmitter],
 } )
 export class CustomEventEmitterModule {
-  static forRoot(config?: any): DynamicModule {
+  static forRoot(_config?: any): DynamicModule {
     return {
       module: CustomEventEmitterModule,
       providers: [

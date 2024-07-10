@@ -1,5 +1,3 @@
-import { TextAnswerDBModule } from "#/modules/answers/submodules/text-answer";
-import { QuestionDBModule } from "#/modules/questions";
 import { Module } from "@nestjs/common";
 import { QuizCacheDBModule } from "./repos/QuizCache";
 import { QuizRelationalDBModule } from "./repos/QuizRelational";
@@ -7,6 +5,8 @@ import { RepoImp } from "./repos/repository";
 import { Repo } from "./repos/repository.port";
 import { GenerateQuizzesCacheServiceImp } from "./services/GenerateQuizzesCache.service";
 import { GenerateQuizzesCacheService } from "./services/GenerateQuizzesCache.service.port";
+import { QuestionDBModule } from "#modules/questions";
+import { TextAnswerDBModule } from "#modules/answers/submodules/text-answer";
 
 @Module( {
   imports: [

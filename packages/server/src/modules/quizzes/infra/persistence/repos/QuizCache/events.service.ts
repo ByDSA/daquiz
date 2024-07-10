@@ -1,8 +1,8 @@
-import { EventDBEmitter } from "#modules/events/EventDBEmitter";
-import { EventEmitterPluginOptions, eventEmitterPlugin } from "#utils/db/mongoose/EventEmitterPlugin";
 import { Injectable } from "@nestjs/common";
 import { QuizEntity } from "../../../../domain";
 import { QuizCache, QuizCacheDocument, QuizCacheSchema, quizCacheDocToEntity } from "./QuizCache.schema";
+import { EventEmitterPluginOptions, eventEmitterPlugin } from "#utils/db/mongoose/EventEmitterPlugin";
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
 export class DBService {

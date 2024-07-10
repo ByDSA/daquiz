@@ -1,7 +1,3 @@
-import { TextAnswer } from "#/modules/answers/submodules/text-answer/infra/persistence/repos/schemas/schema";
-import { Question } from "#/modules/questions/infra/persistence/repos/schemas";
-import { TextAnswerRepo, TextAnswerVO } from "#modules/answers/submodules/text-answer";
-import { PartType, QuestionRepo, TextPart, findChoices, findFirstTextPart } from "#modules/questions";
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -10,6 +6,10 @@ import { CreateQuestionAnswerDto } from "../domain";
 import { docToEntity } from "./adapters";
 import { Repo } from "./repository.port";
 import { QuestionAnswer, QuestionAnswerDocument } from "./schema";
+import { Question } from "#modules/questions/infra/persistence/repos/schemas";
+import { PartType, QuestionRepo, TextPart, findChoices, findFirstTextPart } from "#modules/questions";
+import { TextAnswer } from "#modules/answers/submodules/text-answer/infra/persistence/repos/schemas/schema";
+import { TextAnswerRepo, TextAnswerVO } from "#modules/answers/submodules/text-answer";
 
 @Injectable()
 export class RepoImp implements Repo {
@@ -24,31 +24,34 @@ export class RepoImp implements Repo {
   async createOneAndGet(dto: CreateQuestionAnswerDto): Promise<QuestionAnswerEntity> {
     if (dto.answer.type !== "text")
       throw new Error("Unsupported answer type");
+
     const choices = findChoices(dto.question);
     const text = findFirstTextPart(dto.question)?.text;
-    const choicesDto = choices.length > 0 ? (choices.filter(c=>c.type === PartType.Text)).map((c: TextPart)=> {
-      return {
-        text: c.text
-      }
-      }) : undefined;
-
+    const choicesDto = choices.length > 0
+      ? (choices.filter(c=>c.type === PartType.Text)).map((c: TextPart)=> {
+        return {
+          text: c.text,
+        };
+      } )
+      : undefined;
 
     if (!choicesDto && !text)
       throw new Error("No choices or text found in the question");
+
     const questionDocInput: Question = {
       choices: choicesDto,
       text,
-    }
+    };
     const answerDocInput: TextAnswer = {
       text: (dto.answer as TextAnswerVO).text,
     };
     const questionDocGot = await this.QuestionModel.create(questionDocInput);
     const answerDocGot = await this.TextAnswerModel.create(answerDocInput);
-    let created = new this.QuestionAnswerModel({
+    let created = new this.QuestionAnswerModel( {
       questionId: questionDocGot.id,
       answerId: answerDocGot.id,
       answerType: "text",
-    });
+    } );
 
     created = await created.save();
 

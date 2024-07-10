@@ -12,7 +12,11 @@ export abstract class EventDBWithOptionalDoc<ID, DOC> extends EventDB<ID> {
   doc?: DOC;
 }
 
-export class PatchEventDB<ID, DOC, UQ extends UpdateQuery<DOC> = UpdateQuery<DOC>> extends EventDBWithOptionalDoc<ID, DOC> {
+export class PatchEventDB<
+ID,
+DOC,
+UQ extends UpdateQuery<DOC> = UpdateQuery<DOC>
+> extends EventDBWithOptionalDoc<ID, DOC> {
   updateQuery: UQ;
 
   updateResult?: {matchedCount: number; modifiedCount: number};

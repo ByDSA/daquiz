@@ -39,6 +39,7 @@
   "private": true,
   "scripts": {
     "build": "nest build",
+    "lint": "eslint {src,tests}/**/*.{ts,js}",
     "start": "nest start",
     "start:debug": "NODE_ENV=development nest start --debug --watch",
     "start:dev": "NODE_ENV=development nest start --watch",

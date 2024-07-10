@@ -1,8 +1,8 @@
 import { UpdateWriteOpResult } from "mongoose";
 import { QuizEntity, QuizID } from "../../../../domain/models";
 import { ReadService } from "../Read.service.port";
+import { CreateManyService, CreateOneService, DeleteAllService, DeleteOneByIdService } from "#utils/services/crud";
 import { QuestionAnswerEntity, QuestionAnswerID } from "#modules/question-answers/domain";
-import { CreateManyService, CreateOneService, DeleteAllService, DeleteOneByIdService } from "#/utils/services/crud";
 
 export interface Repo extends
 ReadService,

@@ -2,10 +2,10 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, UseInterceptors } f
 import { QuestionAnswerPickerService } from "../app/QuestionAnswerPicker.service.port";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizID, RemoveManyQuestionsAnswersDto, ResultManyQuizDto, ResultOneQuizDto, ResultQuizPickQuestionsAnswersDto } from "../domain";
 import { QuizRepo } from "./persistence";
-import { CreateOneAndGetController, FindAllController, FindOneController } from "#/utils/controllers/crud";
-import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
-import { ObjectIdPipe } from "#/utils/validation";
 import { QuestionAnswerID } from "#modules/question-answers/domain";
+import { CreateOneAndGetController, FindAllController, FindOneController } from "#utils/controllers/crud";
+import { NotFoundInterceptor } from "#utils/interceptors/NotFoundInterceptor";
+import { ObjectIdPipe } from "#utils/validation";
 
 @Controller()
 export class QuizzesController

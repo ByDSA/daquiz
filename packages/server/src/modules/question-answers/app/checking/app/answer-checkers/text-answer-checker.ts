@@ -2,8 +2,8 @@ import { WithRequired } from "#shared/utils/typescript";
 import { AnswerCheckResult } from "../models";
 import { AnswerChecker, AnswerCheckerProps } from "./answer-checker";
 import { getAnswersFromRegex } from "./get-answers-regex";
-import { extractRegexParts } from "#/utils/regexp";
-import { TextAnswerVO } from "#/modules/answers/submodules/text-answer/domain";
+import { extractRegexParts } from "#utils/regexp";
+import { TextAnswerVO } from "#modules/answers/submodules/text-answer/domain";
 
 type TextAnswerCheckerProps = WithRequired<AnswerCheckerProps<TextAnswerVO>, "correctAnswer">;
 

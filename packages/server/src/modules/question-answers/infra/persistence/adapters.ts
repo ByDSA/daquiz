@@ -1,8 +1,8 @@
-import { TextAnswerRepo } from "#/modules/answers/submodules/text-answer";
-import { QuestionRepo } from "#/modules/questions/infra";
 import { assertDefined } from "#shared/utils/validation/asserts";
 import { QuestionAnswerEntity } from "../../domain";
 import { QuestionAnswerDocument } from "./schema";
+import { QuestionRepo } from "#modules/questions/infra";
+import { TextAnswerRepo } from "#modules/answers/submodules/text-answer";
 
 type DocToEntityDeps = {
   questionRepo: QuestionRepo;

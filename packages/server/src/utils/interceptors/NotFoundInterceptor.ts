@@ -6,7 +6,7 @@ export class NotFoundInterceptor implements NestInterceptor {
   constructor(private readonly msg?: string) {
   }
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle()
       .pipe(tap(data => {
         if (isNullOrUndefined(data) || isObjectWithDataNullOrUndefined(data))

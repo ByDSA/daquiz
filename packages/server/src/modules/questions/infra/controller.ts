@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Inject, Param, Patch, Post, UseInterceptors } from "@nestjs/common";
 import { CreateOneQuestionDto, PatchOneQuestionDto, ResultManyQuestionDto, ResultOneQuestionDto } from "../domain";
 import { QuestionRepo } from "./persistence";
-import { QuestionAnswerID } from "#/modules/question-answers";
-import { CreateOneAndGetController, FindAllController, FindOneController, PatchOneAndGetController } from "#/utils/controllers/crud";
-import { NotFoundInterceptor } from "#/utils/interceptors/NotFoundInterceptor";
-import { ObjectIdPipe } from "#/utils/validation";
+import { QuestionAnswerID } from "#modules/question-answers";
+import { CreateOneAndGetController, FindAllController, FindOneController, PatchOneAndGetController } from "#utils/controllers/crud";
+import { NotFoundInterceptor } from "#utils/interceptors/NotFoundInterceptor";
+import { ObjectIdPipe } from "#utils/validation";
 
 @Controller()
 export class QuestionController implements
