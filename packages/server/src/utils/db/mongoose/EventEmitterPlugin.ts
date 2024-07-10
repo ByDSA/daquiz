@@ -1,62 +1,58 @@
 /* eslint-disable func-names */
 /* eslint-disable no-invalid-this */
-import { assertDefined } from "#shared/utils/validation/asserts";
-import { FilterQuery, UpdateQuery } from "mongoose";
 import { CreateEventDB, DeleteEventDB, PatchEventDB } from "#modules/events/EventDB";
 import { EventDBEmitter } from "#modules/events/EventDBEmitter";
+import { assertDefined } from "#shared/utils/validation/asserts";
+import { FilterQuery, UpdateQuery } from "mongoose";
 
-type CreateEventAdapterFn<DOC, ENTITY extends {id: unknown}>
+type CreateEventAdapterFn<ID, DOC>
 = (args: {
   newDoc: DOC;
-  documentToEntity?: (doc: DOC)=> ENTITY;
-} )=> CreateEventDB<ENTITY>;
-type PatchEventAdapterFn<DOC, ENTITY extends {id: unknown}, UE = Partial<Omit<ENTITY, "id">>>
+} )=> CreateEventDB<ID, DOC>;
+type PatchEventAdapterFn<ID, DOC>
 = (args: {
   doc?: DOC;
-  updateQueryToUpdateEntity?: (updateQuery: UpdateQuery<DOC>)=> UE;
   filters?: FilterQuery<DOC>;
   updateQuery: UpdateQuery<DOC>;
-  updateResult?: PatchEventDB<ENTITY, UE>["updateResult"];
-} )=> PatchEventDB<ENTITY, UE>;
+  updateResult?: PatchEventDB<ID, DOC>["updateResult"];
+} )=> PatchEventDB<ID, DOC>;
 
-type DeleteEventAdapterFn<_DOC, ENTITY extends {id: unknown}>
-= (args: { filters: FilterQuery<ENTITY> } )=> DeleteEventDB<ENTITY>;
+type DeleteEventAdapterFn<ID, DOC>
+= (args: { filters: FilterQuery<DOC> } )=> DeleteEventDB<ID, DOC>;
 
-export type EventEmitterPluginOptions<DOC, ENTITY extends {id: unknown}, UE = Partial<Omit<ENTITY, "id">>> = {
+export type EventEmitterPluginOptions<ID, DOC> = {
   dbEventEmitter: EventDBEmitter;
   typeEventName: string;
-  documentToEntity?: (doc: DOC)=> ENTITY;
   createEmission?: {
     use: boolean;
-    customAdapter?: CreateEventAdapterFn<DOC, ENTITY>;
+    customAdapter?: CreateEventAdapterFn<ID, DOC>;
   };
   patchEmission?: {
     use: boolean;
-    updateQueryToUpdateEntity?: (updateQuery: UpdateQuery<DOC>)=> UE;
-    customAdapter?: PatchEventAdapterFn<DOC, ENTITY, UE>;
+    customAdapter?: PatchEventAdapterFn<ID, DOC>;
   };
   deleteEmission?: {
     use: boolean;
-    customAdapter?: DeleteEventAdapterFn<DOC, ENTITY>;
+    customAdapter?: DeleteEventAdapterFn<ID, DOC>;
   };
 };
 
-export function registerEventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Partial<Omit<ENTITY, "id">>>(
+export function registerEventEmitterPlugin<ID, DOC>(
   schema,
-  options: EventEmitterPluginOptions<DOC, ENTITY, UE>,
+  options: EventEmitterPluginOptions<ID, DOC>,
 ) {
-  eventEmitterPlugin<DOC, ENTITY, UE>(schema, options);
+  eventEmitterPlugin<ID, DOC>(schema, options);
 }
 
-export function eventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Partial<Omit<ENTITY, "id">>>(
+export function eventEmitterPlugin<ID, DOC>(
   schema,
-  options: EventEmitterPluginOptions<DOC, ENTITY, UE>,
+  options: EventEmitterPluginOptions<ID, DOC>,
 ) {
   const { dbEventEmitter, createEmission, patchEmission, deleteEmission, typeEventName } = options;
 
   if (patchEmission?.use) {
-    let patchEventAdapter: PatchEventAdapterFn<DOC, ENTITY, UE> = patchEmission.customAdapter
-    ?? defaultPatchEventAdapter<DOC, ENTITY, UE>;
+    let patchEventAdapter: PatchEventAdapterFn<ID, DOC> = patchEmission.customAdapter
+    ?? defaultPatchEventAdapter<ID, DOC>;
 
     schema.post("findOneAndUpdate", function (doc, next) {
       const filters = this.getFilter() as FilterQuery<DOC>;
@@ -67,7 +63,6 @@ export function eventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Parti
       const event = patchEventAdapter( {
         doc: doc,
         filters,
-        updateQueryToUpdateEntity: patchEmission.updateQueryToUpdateEntity,
         updateQuery,
       } );
 
@@ -86,7 +81,6 @@ export function eventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Parti
         const event = patchEventAdapter( {
           filters,
           updateQuery,
-          updateQueryToUpdateEntity: patchEmission.updateQueryToUpdateEntity,
           updateResult,
         } );
 
@@ -99,7 +93,7 @@ export function eventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Parti
 
   if (deleteEmission?.use) {
     schema.post("deleteOne", function (_obj, next) {
-      const deleteEventAdapter: DeleteEventAdapterFn<DOC, ENTITY> = deleteEmission.customAdapter
+      const deleteEventAdapter: DeleteEventAdapterFn<ID, DOC> = deleteEmission.customAdapter
       ?? defaultDeleteEventAdapter;
       const filters = this.getFilter();
       const event = deleteEventAdapter( {
@@ -113,13 +107,12 @@ export function eventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Parti
   }
 
   if (createEmission?.use) {
-    const createEventAdapter: CreateEventAdapterFn<DOC, ENTITY> = createEmission.customAdapter
+    const createEventAdapter: CreateEventAdapterFn<ID, DOC> = createEmission.customAdapter
     ?? defaultCreateEventAdapter;
 
     schema.post("save", function (newDoc, next) {
       const event = createEventAdapter( {
         newDoc,
-        documentToEntity: options.documentToEntity,
       } );
 
       dbEventEmitter.emitCreate(typeEventName, event);
@@ -130,50 +123,44 @@ export function eventEmitterPlugin<DOC, ENTITY extends {id: unknown}, UE = Parti
 }
 
 const defaultCreateEventAdapter: CreateEventAdapterFn<any, any> = <
-  _DOC,
-  ENTITY extends {id: unknown}
+  ID,
+  DOC,
 >(
-    { newDoc, documentToEntity }: Parameters<CreateEventAdapterFn<_DOC, ENTITY>>[0],
-  ): CreateEventDB<ENTITY> => {
-  if (!documentToEntity)
-    throw new Error("documentToEntity is required");
-
-  const { id, ...valueObject } = documentToEntity(newDoc);
-  const event: CreateEventDB<ENTITY> = {
+    { newDoc }: Parameters<CreateEventAdapterFn<ID, DOC>>[0],
+  ): CreateEventDB<ID, DOC> => {
+  const id = (newDoc as any)._id;
+  const event: CreateEventDB<ID, DOC> = {
     id,
-    valueObject,
+    doc: newDoc,
   };
 
   return event;
 };
-const defaultDeleteEventAdapter = <_DOC, ENTITY extends {id: unknown}>(
-  { filters }: Parameters<DeleteEventAdapterFn<_DOC, ENTITY>>[0],
-): DeleteEventDB<ENTITY> => {
+const defaultDeleteEventAdapter = <ID, DOC>(
+  { filters }: Parameters<DeleteEventAdapterFn<ID, DOC>>[0],
+): DeleteEventDB<ID, DOC> => {
   const id = filters?._id?.toString();
 
   assertDefined(id);
-  const event: DeleteEventDB<ENTITY> = {
+  const event: DeleteEventDB<ID, DOC> = {
     id,
   };
 
   return event;
 };
-const defaultPatchEventAdapter = <DOC, ENTITY extends {id: unknown}, UE = Partial<Omit<ENTITY, "id">>>(
+const defaultPatchEventAdapter = <ID, DOC>(
   { updateQuery,
     filters,
-    updateResult,
-    updateQueryToUpdateEntity }: Parameters<PatchEventAdapterFn<DOC, ENTITY, UE>>[0],
-): PatchEventDB<ENTITY, UE> => {
-  if (!updateQueryToUpdateEntity)
-    throw new Error("updateQueryToUpdateEntity is required");
+    updateResult}: Parameters<PatchEventAdapterFn<ID, DOC>>[0],
+): PatchEventDB<ID, DOC> => {
 
-  const id: string = filters?._id?.toString();
+  const id: ID = filters?._id?.toString();
 
   assertDefined(id);
-  const event: PatchEventDB<ENTITY, UE> = {
+  const event: PatchEventDB<ID, DOC> = {
     id,
     updateResult,
-    updateEntity: updateQueryToUpdateEntity(updateQuery),
+    updateQuery,
   };
 
   return event;

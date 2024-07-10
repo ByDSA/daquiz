@@ -1,5 +1,5 @@
 import { IsString } from "class-validator";
-import { QuestionAnswerID } from "#modules/questions-answers/models";
+import { QuestionAnswerID } from "#modules/question-answers/models";
 import { RemoveManyDto } from "#utils/dtos";
 
 export class AddQuestionsAnswersDto {

@@ -1,19 +1,21 @@
 import { IsString } from "class-validator";
-import { AnswerID } from "./Answer.model";
-import { parseObject } from "#utils/validation/objects";
+import { AnswerVO } from "./Answer.model";
+import { AnswerType } from "./AnswerType.enum";
+import { IsSpecificString } from "#utils/validation/decorators/IsSpecificString";
+import { BaseEntity } from "#/utils/entity";
 
-export class TextAnswerVO {
+export class TextAnswerVO extends AnswerVO {
+  @IsSpecificString(AnswerType.Text)
+  type!: AnswerType.Text;
+
   @IsString()
   text!: string;
 };
 
-export type TextAnswerID = AnswerID;
-
-export class TextAnswerEntity extends TextAnswerVO {
+/**
+ * @deprecated
+ */
+export class TextAnswerEntity extends TextAnswerVO implements BaseEntity<string> {
   @IsString()
-  id!: TextAnswerID;
-};
-
-export function parseTextAnswer(obj: object): Promise<TextAnswerVO> {
-  return parseObject(obj, TextAnswerVO);
+  id!: string;
 }

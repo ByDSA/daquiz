@@ -1,28 +1,39 @@
 import Choices from "./Choices";
 import { useChoices } from "./use-choices.hook";
-import { QuestionEntity } from "#modules/questions";
+import { ChoicesPart, PartType, QuestionVO, TextPart } from "#modules/questions";
 
 type Props = {
-  data: QuestionEntity;
+  data: QuestionVO;
   disabled?: boolean;
   choicesStatus?: ReturnType<typeof useChoices>;
 };
 const Question = ( { data, choicesStatus, disabled }: Props) => {
-  let choices = null;
+  const parts = [];
 
-  if (data.choices && choicesStatus) {
-    choices = Choices( {
-      data: data.choices,
-      disabled,
-      ...choicesStatus,
-    } );
+  for (let i = 0; i < data.parts.length; i++) {
+    const part = data.parts[i];
+
+    if (part.type === PartType.Choices) {
+      const parsedPart = part as ChoicesPart;
+      const choicesData = parsedPart.choices;
+      const el = Choices( {
+        data: choicesData,
+        disabled,
+        ...choicesStatus,
+      } );
+
+      parts.push(el);
+    } else if (part.type === PartType.Text) {
+      const parsedPart = part as TextPart;
+
+      parts.push(<p key={i + part.type}>{parsedPart.text}</p>);
+    }
   }
 
   return (
     <section>
       <p>Pregunta:</p>
-      {data.text && <p>{data.text}</p>}
-      {choices}
+      {parts}
     </section>
   );
 };

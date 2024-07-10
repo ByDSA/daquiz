@@ -3,41 +3,41 @@ import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { CreateEventDB, DeleteEventDB, EventDB, PatchEventDB } from "./EventDB";
 import { EventDBType } from "./EventDBType";
 
-type Listener<T extends {id: unknown}> = (event: EventDB<T>)=> void;
-type PatchListener<T extends {id: unknown}, UE> = (event: PatchEventDB<T, UE>)=> void;
-type DeleteListener<T extends {id: unknown}> = (event: DeleteEventDB<T>)=> void;
-type CreateListener<T extends {id: unknown}> = (event: CreateEventDB<T>)=> void;
+type Listener<ID> = (event: EventDB<ID>)=> void;
+type PatchListener<ID, DOC> = (event: PatchEventDB<ID, DOC>)=> void;
+type DeleteListener<ID, DOC> = (event: DeleteEventDB<ID, DOC>)=> void;
+type CreateListener<ID, DOC> = (event: CreateEventDB<ID, DOC>)=> void;
 
-type EntityClass<T extends {id: unknown}> = string | (new ()=> T);
-function getName<T extends {id: unknown}>(entityClass: EntityClass<T>): string {
+type EntityClass = string | (new ()=> unknown);
+function getName(entityClass: EntityClass): string {
   if (typeof entityClass === "string")
     return entityClass;
 
   return entityClass.name;
 }
 
-type OnEventDBType<T extends {id: unknown}> = EntityClass<T>;
+type OnEventDBType = EntityClass;
 
-function entityAndActionToEventName<T extends {id: unknown}>(
-  entity: EntityClass<T>,
+function entityAndActionToEventName(
+  entity: EntityClass,
   action: EventDBType,
 ): string {
   return getName(entity) + "." + action;
 }
 
-export function OnPatchEvent<T extends {id: unknown}>(entity: OnEventDBType<T>): MethodDecorator {
+export function OnPatchEvent(entity: OnEventDBType): MethodDecorator {
   const name = entityAndActionToEventName(entity, EventDBType.PATCHED);
 
   return OnEvent(name);
 }
 
-export function OnCreateEvent<T extends {id: unknown}>(entity: OnEventDBType<T>): MethodDecorator {
+export function OnCreateEvent(entity: OnEventDBType): MethodDecorator {
   const name = entityAndActionToEventName(entity, EventDBType.CREATED);
 
   return OnEvent(name);
 }
 
-export function OnDeleteEvent<T extends {id: unknown}>(entity: OnEventDBType<T>): MethodDecorator {
+export function OnDeleteEvent(entity: OnEventDBType): MethodDecorator {
   const name = entityAndActionToEventName(entity, EventDBType.DELETED);
 
   return OnEvent(name);
@@ -48,10 +48,10 @@ export class EventDBEmitter {
   constructor(private nestEventEmitter: EventEmitter2) {
   }
 
-  #on<T extends {id: unknown}>(
-    entityClass: EntityClass<T>,
+  #on<ID>(
+    entityClass: EntityClass,
     eventType: EventDBType,
-    listener: Listener<T>,
+    listener: Listener<ID>,
   ): this {
     const entityName = getName(entityClass);
 
@@ -60,7 +60,7 @@ export class EventDBEmitter {
     return this;
   }
 
-  registerEventDBLoggerFor<T extends {id: unknown}>(entityClass: EntityClass<T>) {
+  registerEventDBLoggerFor(entityClass: EntityClass) {
     const entityName = getName(entityClass);
     const logger = new Logger(entityName.toString());
 
@@ -77,58 +77,58 @@ export class EventDBEmitter {
     } );
   }
 
-  #emit<T extends {id: unknown}>(
+  #emit<ID>(
     entityName: string,
     eventType: EventDBType,
-    event: EventDB<T>,
+    event: EventDB<ID>,
   ): this {
     this.nestEventEmitter.emit(entityName + "." + eventType, event);
 
     return this;
   }
 
-  onPatch<T extends {id: unknown}, UE = Partial<Omit<T, "id">>>(
-    entityClass: EntityClass<T>,
-    listener: PatchListener<T, UE>,
+  onPatch<ID, DOC>(
+    entityClass: EntityClass,
+    listener: PatchListener<ID, DOC>,
   ): this {
     return this.#on(entityClass, EventDBType.PATCHED, listener);
   }
 
-  onDelete<T extends {id: unknown}>(
-    entityClass: EntityClass<T>,
-    listener: DeleteListener<T>,
+  onDelete<ID, DOC>(
+    entityClass: EntityClass,
+    listener: DeleteListener<ID, DOC>,
   ): this {
     return this.#on(entityClass, EventDBType.DELETED, listener);
   }
 
-  onCreate<T extends {id: unknown}>(
-    entityClass: EntityClass<T>,
-    listener: CreateListener<T>,
+  onCreate<ID, DOC>(
+    entityClass: EntityClass,
+    listener: CreateListener<ID, DOC>,
   ): this {
     return this.#on(entityClass, EventDBType.CREATED, listener);
   }
 
-  emitPatch<T extends {id: unknown}, UE = Partial<Omit<T, "id">>>(
-    entityClass: EntityClass<T>,
-    event: PatchEventDB<T, UE>,
+  emitPatch<ID, DOC>(
+    entityClass: EntityClass,
+    event: PatchEventDB<ID, DOC>,
   ): this {
     const entityName = getName(entityClass);
 
     return this.#emit(entityName, EventDBType.PATCHED, event);
   }
 
-  emitDelete<T extends {id: unknown}>(
-    entityClass: EntityClass<T>,
-    event: DeleteEventDB<T>,
+  emitDelete<ID, DOC>(
+    entityClass: EntityClass,
+    event: DeleteEventDB<ID, DOC>,
   ): this {
     const entityName = getName(entityClass);
 
     return this.#emit(entityName, EventDBType.DELETED, event);
   }
 
-  emitCreate<T extends {id: unknown}>(
-    entityClass: EntityClass<T>,
-    event: CreateEventDB<T>,
+  emitCreate<ID, DOC>(
+    entityClass: EntityClass,
+    event: CreateEventDB<ID, DOC>,
   ): this {
     const entityName = getName(entityClass);
 

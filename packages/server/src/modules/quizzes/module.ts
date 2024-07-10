@@ -3,7 +3,7 @@ import { QuestionAnswerPickerServiceImp } from "./app/QuestionAnswerPicker.servi
 import { QuestionAnswerPickerService } from "./app/QuestionAnswerPicker.service.port";
 import { QuizzesController } from "./infra";
 import { QuizDBModule } from "./infra/persistence";
-import { QuestionsAnswersModule } from "#modules/questions-answers/";
+import { QuestionsAnswersModule } from "#modules/question-answers/";
 import { HistoryEntryModule } from "#modules/history-entries";
 import { CustomEventEmitterModule } from "#modules/events/module";
 

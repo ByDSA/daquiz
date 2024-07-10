@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { QuestionEntity } from "../../models";
+import { Choice } from "../../models";
 
-type ChoicesInQuestionEntity = NonNullable<QuestionEntity["choices"]>;
+type ChoicesInQuestionEntity = Choice[];
 
 type Props = {
   onSelected?: (choice: ChoicesInQuestionEntity[number], index: number)=> void;

@@ -1,25 +1,25 @@
-import { Type } from "class-transformer";
-import { IsArray, IsOptional, IsString } from "class-validator";
+import { ArrayMinSize, IsArray, IsString, ValidateNested } from "class-validator";
 
 import "reflect-metadata"; // Para evitar errores de que no encuentra Reflect.getMetadata cuando se importa en otros paquetes
-import { QuestionChoice } from "./QuestionChoice.model";
-import { QuestionGroup } from "./QuestionGroup.model";
-import { QuestionMultimedia } from "./QuestionMultimedia.model";
+import { IsPart } from "./parts/IsPart";
+import { Part } from "./parts/Part.model";
 
-export class QuestionVO extends QuestionMultimedia {
+export class QuestionVO {
   @IsArray()
-  @IsOptional()
-  groups?: QuestionGroup[];
-
-  @IsArray()
-  @IsOptional()
-  @Type(() => QuestionChoice)
-  choices?: QuestionChoice[];
+  @ArrayMinSize(1)
+  @ValidateNested( {
+    each: true,
+  } )
+  @IsPart( {
+    each: true,
+  } )
+  parts!: Part[];
 };
 
-export type QuestionID = string;
-
+/**
+ * @deprecated
+ */
 export class QuestionEntity extends QuestionVO {
   @IsString()
-  id!: QuestionID;
-};
+  id!: string;
+}

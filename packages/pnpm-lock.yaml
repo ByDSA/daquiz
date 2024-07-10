@@ -182,8 +182,8 @@ importers:
         specifier: 1.10.0
         version: 1.10.0(@nestjs/common@10.3.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.13.0)
       rand-picker:
-        specifier: 2.1.1
-        version: 2.1.1
+        specifier: 2.1.2
+        version: 2.1.2
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -3916,8 +3916,8 @@ packages:
     resolution: {integrity: sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==}
     engines: {node: '>=8'}
 
-  rand-picker@2.1.1:
-    resolution: {integrity: sha512-h3uTcD32LCewP8uCXOqNIYi4s13IOkPSbQo4hhT9d3rAxKSO1m2yRgYASlwnqpfO5a7PSXE/ZG1h+I1k42IFtA==}
+  rand-picker@2.1.2:
+    resolution: {integrity: sha512-5iZH68yG6WEb9OzYL6ahHxgTqpOxQNWByiYDFQ5wnkxpdUIitgBPZwLipxSHtLUYi0C8OnIMRUh9GaO5r+1GDA==}
 
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
@@ -9219,7 +9219,7 @@ snapshots:
 
   quick-lru@4.0.1: {}
 
-  rand-picker@2.1.1:
+  rand-picker@2.1.2:
     dependencies:
       seed-random: 2.2.0
 

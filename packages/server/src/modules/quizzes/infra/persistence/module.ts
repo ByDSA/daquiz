@@ -1,3 +1,5 @@
+import { TextAnswerDBModule } from "#/modules/answers/submodules/text-answer";
+import { QuestionDBModule } from "#/modules/questions";
 import { Module } from "@nestjs/common";
 import { QuizCacheDBModule } from "./repos/QuizCache";
 import { QuizRelationalDBModule } from "./repos/QuizRelational";
@@ -8,6 +10,8 @@ import { GenerateQuizzesCacheService } from "./services/GenerateQuizzesCache.ser
 
 @Module( {
   imports: [
+    QuestionDBModule,
+    TextAnswerDBModule,
     QuizCacheDBModule,
     QuizRelationalDBModule,
   ],

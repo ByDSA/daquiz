@@ -3,8 +3,6 @@ export {
 } from "./schema";
 
 export {
-  partialDocToPartialEntity as partialQuestionDocumentToPartialEntity,
   docToEntity as questionDocumentToEntity,
-  entityToDocument as questionEntityToDocument,
-  modelName as questionModelName,
+  entityToDoc as questionEntityToDocument,
 } from "./adapters";

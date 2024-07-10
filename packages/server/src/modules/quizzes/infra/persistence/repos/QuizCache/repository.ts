@@ -1,11 +1,11 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { QuestionAnswerInQuizEntity, QuizEntity, QuizID, questionAnswerEntityToQuestionAnswerInQuizEntity } from "../../../../domain";
+import { QuizEntity, QuizID } from "../../../../domain";
 import { quizCacheEntityToDoc } from "./QuizCache.schema";
 import { Repo } from "./repository.port";
 import { QuestionAnswerCacheDocument, QuizCache, questionAnswerCacheEntityToDoc, quizCacheDocToEntity } from ".";
-import { QuestionAnswerID, QuestionAnswerRepo } from "#modules/questions-answers";
+import { QuestionAnswerEntity, QuestionAnswerID, QuestionAnswerRepo } from "#modules/question-answers";
 import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
@@ -35,7 +35,7 @@ export class RepoImp implements Repo {
     await this.QuizCacheModel.create(doc);
   }
 
-  async deleteOne(id: QuizID): Promise<void> {
+  async deleteOneById(id: QuizID): Promise<void> {
     await this.QuizCacheModel.deleteOne( {
       _id: id,
     } );
@@ -78,20 +78,12 @@ export class RepoImp implements Repo {
     const questionsAnswersDocs: QuestionAnswerCacheDocument[] = [];
 
     for (const questionAnswerId of ids) {
-      const questionAnswerEntity = await this.questionAnswerRepo.findOne(questionAnswerId, {
-        includeRelations: {
-          question: true,
-          answer: true,
-        },
-      } );
+      const questionAnswerEntity = await this.questionAnswerRepo.findOne(questionAnswerId);
 
       if (!questionAnswerEntity)
         throw new BadRequestException("Failed to find question answer");
 
-      const questionAnswerInQuizEntity = questionAnswerEntityToQuestionAnswerInQuizEntity(
-        questionAnswerEntity,
-      );
-      const doc = questionAnswerCacheEntityToDoc(questionAnswerInQuizEntity);
+      const doc = questionAnswerCacheEntityToDoc(questionAnswerEntity);
 
       questionsAnswersDocs.push(doc);
     }
@@ -108,7 +100,7 @@ export class RepoImp implements Repo {
       throw new BadRequestException("Failed to add questions answers");
   }
 
-  async updateOneQuestionsAnswers(id: QuizID, questionsAnswers: QuestionAnswerInQuizEntity[]) {
+  async updateOneQuestionsAnswers(id: QuizID, questionsAnswers: QuestionAnswerEntity[]) {
     const result = await this.QuizCacheModel.updateOne( {
       _id: id,
     }, {

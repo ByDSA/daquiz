@@ -1,5 +1,5 @@
 import { EventHandler } from "react";
-import { TextAnswerVO } from "#modules/answers";
+import { AnswerType, TextAnswerVO } from "#modules/answers";
 
 export type Props = {
   setAnswer: (answer: TextAnswerVO | null)=> void;
@@ -26,6 +26,7 @@ export const TextAnswer = ( { answer, setAnswer, onPressEnter, disabled, inputRe
       <p>Respuesta:</p>
       <input type="text" ref={inputRef} autoFocus={true} autoComplete="off" onKeyDown={handleOnKeyDown} onChange={(event) =>{
         setAnswer( {
+          type: AnswerType.Text,
           text: event.target.value,
         } );
       }} disabled={disabled} value={answer?.text ?? ""}/>

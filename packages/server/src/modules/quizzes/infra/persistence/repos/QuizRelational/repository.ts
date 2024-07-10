@@ -1,12 +1,11 @@
-import { assertDefined } from "#shared/utils/validation/asserts";
+import { EventDBEmitter } from "#modules/events/EventDBEmitter";
+import { QuestionAnswerID, QuestionAnswerRepo } from "#modules/question-answers";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AddQuestionsAnswersDto, CreateQuizDto, QuizEntity, QuizID } from "../../../../domain";
 import { Repo, RepoFindOptions } from "./repository.port";
 import { SchemaClass, docToEntity } from "./schemas";
-import { QuestionAnswerID, QuestionAnswerRepo } from "#modules/questions-answers";
-import { EventDBEmitter } from "#modules/events/EventDBEmitter";
 
 @Injectable()
 export class RepoImp implements Repo {
@@ -31,7 +30,7 @@ export class RepoImp implements Repo {
       const promises: Promise<unknown>[] = [];
 
       if (options.include?.questionsAnswers)
-        promises.push(this.#populateQuestionsAnswers(entity, options));
+        promises.push(this.#populateQuestionsAnswers(entity));
 
       if (options.include?.subquizzes)
         promises.push(this.#populateSubquizzes(entity));
@@ -55,7 +54,7 @@ export class RepoImp implements Repo {
 
       if (options.include?.questionsAnswers) {
         for (const entity of entities)
-          promises.push(this.#populateQuestionsAnswers(entity, options));
+          promises.push(this.#populateQuestionsAnswers(entity));
       }
 
       if (options.include?.subquizzes) {
@@ -77,10 +76,7 @@ export class RepoImp implements Repo {
       for (const subquiz of subquizzes) {
         const p = this.findOne(subquiz.id, {
           include: {
-            questionsAnswers: {
-              answer: true,
-              question: true,
-            },
+            questionsAnswers: true,
           },
         } );
 
@@ -96,29 +92,15 @@ export class RepoImp implements Repo {
     return Promise.all(promises);
   }
 
-  #populateQuestionsAnswers(entity: QuizEntity, options: RepoFindOptions): Promise<unknown> {
+  #populateQuestionsAnswers(entity: QuizEntity): Promise<unknown> {
     const promises: Promise<void>[] = [];
 
     entity.questionAnswers = [];
 
     for (const questionAnswerId of entity.questionAnswersIds) {
-      const p = this.questionAnswerRepo.findOne(questionAnswerId, {
-        includeRelations: options.include?.questionsAnswers,
-      } ).then((questionAnswer) => {
-        if (questionAnswer) {
-          assertDefined(questionAnswer.question);
-          assertDefined(questionAnswer.answer);
-          const questionAnswerEntity = {
-            id: questionAnswer.id,
-            answerType: questionAnswer.answerType,
-            answerId: questionAnswer.answerId,
-            answer: questionAnswer.answer,
-            questionId: questionAnswer.questionId,
-            question: questionAnswer.question,
-          };
-
-          entity.questionAnswers?.push(questionAnswerEntity);
-        }
+      const p = this.questionAnswerRepo.findOne(questionAnswerId).then((questionAnswer) => {
+        if (questionAnswer)
+          entity.questionAnswers?.push(questionAnswer);
       } );
 
       promises.push(p);
