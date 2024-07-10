@@ -31,25 +31,6 @@ const projectConfig = [
         ],
       },
       ],
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["\\#modules/utils**", "*/modules/utils**"],
-              message: "Use #utils instead of another access",
-            },
-            {
-              group: ["\\#/modules/**"],
-              message: "Use \"#modules\" instead of \"#/modules\"",
-            },
-            {
-              group: ["\\#shared/models/**"],
-              message: "Cannot import from \"#shared\"",
-            },
-          ],
-        },
-      ],
       "import/no-extraneous-dependencies": ["error", {
         packageDir,
       }],

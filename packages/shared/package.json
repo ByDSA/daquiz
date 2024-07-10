@@ -9,15 +9,16 @@
     "@types/node": "20.12.12",
     "tsc-alias": "1.8.10"
   },
- "peerDependencies": {
-      "jest": "*"
-    },
   "main": "build/index.js",
   "name": "@project/shared",
+  "peerDependencies": {
+    "jest": "*"
+  },
   "scripts": {
     "build": "pnpm build:clean && pnpm build:raw",
     "build:clean": "rm -rf build",
     "build:raw": "tsc -p tsconfig-build.json && tsc-alias -p tsconfig-build.json",
+    "lint:eslint": "eslint {src,tests}/**/*.{ts,js}",
     "test": "NODE_ENV=test jest",
     "test:coverage": "pnpm run test --coverage",
     "test:coverage:clean": "rm -rf coverage",

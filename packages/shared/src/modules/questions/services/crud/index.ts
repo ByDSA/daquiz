@@ -1,6 +1,6 @@
-import { ResultManyDto, ResultOneDto } from "#utils/dtos";
 import { IsArray, IsOptional, IsString } from "class-validator";
 import { QuestionVO } from "../../models/Question.model";
+import { ResultManyDto, ResultOneDto } from "#utils/dtos";
 
 import "reflect-metadata"; // Para evitar errores de que no encuentra Reflect.getMetadata cuando se importa en otros paquetes
 

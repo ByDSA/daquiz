@@ -1,6 +1,6 @@
+/* eslint-disable no-use-before-define */
 import { Type } from "class-transformer";
-import { IsArray, IsOptional, IsString } from "class-validator";
-import { SubquizVO } from "./Subquiz.model";
+import { IsArray, IsObject, IsOptional, IsString } from "class-validator";
 import { QuestionAnswerEntity, QuestionAnswerID } from "#modules/question-answers/models";
 
 export class QuizVO {
@@ -22,6 +22,15 @@ export class QuizVO {
 };
 
 export type QuizID = string;
+
+export class SubquizVO {
+  @IsObject()
+  @Type(() => QuizVO)
+  quiz?: QuizVO;
+
+  @IsString()
+  id!: QuizID;
+};
 
 export class QuizEntity extends QuizVO {
   @IsString()

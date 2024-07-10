@@ -3,9 +3,8 @@ import { QuestionVO } from "./Question.model";
 
 export function findFirstTextPart(question: QuestionVO): TextPart | undefined {
   for (let part of question.parts) {
-    if (part.type === PartType.Text) {
+    if (part.type === PartType.Text)
       return part as TextPart;
-    }
   }
 
   return undefined;
@@ -16,11 +15,12 @@ export function hasChoices(question: QuestionVO): boolean {
 }
 
 export function findChoices(question: QuestionVO): Choice[] {
-  const choicePart = question.parts.find(part => part.type === PartType.Choices) as ChoicesPart | undefined;
+  const choicePart = question.parts.find(
+    part => part.type === PartType.Choices,
+  ) as ChoicesPart | undefined;
 
-  if (!choicePart) {
+  if (!choicePart)
     return [];
-  }
 
   return choicePart.choices;
 }
